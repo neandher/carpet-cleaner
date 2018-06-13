@@ -14,10 +14,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class DefaultController extends AbstractController
 {
     /**
-     * @Route("/", name="index")
+     * @Route("/", name="dashboard")
      */
-    public function index()
+    public function dashboard()
     {
-
+        return $this->render('admin/dashboard/index.html.twig');
     }
 }
