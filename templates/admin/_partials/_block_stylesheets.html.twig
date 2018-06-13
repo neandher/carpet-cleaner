@@ -1,35 +1,6 @@
-<!-- BEGIN GLOBAL MANDATORY STYLES -->
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet"
-      type="text/css"/>
-<link href="{{ asset('bower_components/components-font-awesome/css/font-awesome.min.css') }}" rel="stylesheet"
-      type="text/css"/>
-<link href="{{ asset('bower_components/simple-line-icons/css/simple-line-icons.css') }}" rel="stylesheet"
-      type="text/css"/>
-<link href="{{ asset('bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet"
-      type="text/css"/>
-<link href="{{ asset('bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css') }}"
-      rel="stylesheet" type="text/css"/>
-<!-- END GLOBAL MANDATORY STYLES -->
-
-<!-- BEGIN PAGE LEVEL PLUGINS -->
-{% block page_level_plugins %}{% endblock %}
-<!-- END PAGE LEVEL PLUGINS -->
-
-<!-- BEGIN THEME GLOBAL STYLES -->
-<link href="{{ asset('admin/assets/global/css/components-rounded.min.css') }}" rel="stylesheet" id="style_components"
-      type="text/css"/>
-<link href="{{ asset('admin/assets/global/css/plugins.min.css') }}" rel="stylesheet" type="text/css"/>
-<!-- END THEME GLOBAL STYLES -->
-
-<!-- BEGIN THEME LAYOUT STYLES -->
-<link href="{{ asset('admin/assets/layouts/layout2/css/layout.css') }}" rel="stylesheet" type="text/css"/>
-<link href="{{ asset('admin/assets/layouts/layout2/css/themes/blue.min.css') }}" rel="stylesheet"
-      type="text/css" id="style_color"/>
-<link href="{{ asset('admin/assets/layouts/layout2/css/custom.min.css') }}" rel="stylesheet" type="text/css"/>
-<!-- END THEME LAYOUT STYLES -->
-
-<!-- BEGIN PAGE LEVEL STYLES -->
-{% block page_level_styles %}{% endblock %}
-<!-- END PAGE LEVEL STYLES -->
-
-<link rel="stylesheet" href="{{ asset('admin/assets/global/css/custom.css') }}">
+<!--begin::Base Styles -->
+{% block stylesheets_base %}
+    <link href="{{ asset('assets/base/vendors/vendors.bundle.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/base/style.bundle.css') }}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+<!--end::Base Styles -->

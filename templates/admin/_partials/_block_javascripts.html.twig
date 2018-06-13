@@ -1,38 +1,10 @@
-<!-- BEGIN CORE PLUGINS -->
-<!--[if lt IE 9]>
-<script src="{{ asset('bower_components/respond/dest/respond.min.js') }}"></script>
-<script src="{{ asset('bower_components/ExplorerCanvas/excanvas.js') }}"></script>
-<![endif]-->
-<script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('bower_components/bootstrap/dist/js/bootstrap.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('bower_components/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js') }}"
-        type="text/javascript"></script>
-<script src="{{ asset('bower_components/jquery-slimscroll/jquery.slimscroll.min.js') }}"
-        type="text/javascript"></script>
-<script src="{{ asset('bower_components/blockUI/jquery.blockUI.js') }}" type="text/javascript"></script>
-<script src="{{ asset('bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js') }}"
-        type="text/javascript"></script>
-<!-- END CORE PLUGINS -->
+<!--begin::Base Scripts -->
+{% block javascripts_base %}
+    <script src="{{ asset('assets/base/vendors/vendors.bundle.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('assets/base/scripts.bundle.js') }}" type="text/javascript"></script>
+{% endblock %}
+<!--end::Base Scripts -->
 
-<!-- BEGIN PAGE LEVEL PLUGINS -->
-{% block page_level_plugins %}{% endblock %}
-<!-- END PAGE LEVEL PLUGINS -->
-
-<!-- BEGIN THEME GLOBAL SCRIPTS -->
-<script src="{{ asset('admin/assets/global/scripts/app.min.js') }}" type="text/javascript"></script>
-<!-- END THEME GLOBAL SCRIPTS -->
-
-<!-- BEGIN PAGE LEVEL SCRIPTS -->
-{% block page_level_scripts %}{% endblock %}
-<!-- END PAGE LEVEL SCRIPTS -->
-
-<!-- BEGIN THEME LAYOUT SCRIPTS -->
-<script src="{{ asset('admin/assets/layouts/layout2/scripts/layout.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('admin/assets/layouts/layout2/scripts/demo.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('admin/assets/layouts/global/scripts/quick-sidebar.min.js') }}"
-        type="text/javascript"></script>
-<!-- END THEME LAYOUT SCRIPTS -->
-
-<script src="{{ asset('admin/assets/global/scripts/custom.js') }}" type="text/javascript"></script>
-<script src="{{ asset('admin/assets/global/scripts/fields_format.js') }}" type="text/javascript"></script>
-<script src="{{ asset('admin/assets/global/scripts/form-input-mask.js') }}"></script>
+<!--begin::Page Snippets -->
+{% block javascripts_page_snippets %}{% endblock %}
+<!--end::Page Snippets -->

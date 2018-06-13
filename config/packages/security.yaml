@@ -18,6 +18,9 @@ security:
             pattern: ^/
             form_login:
                 provider: fos_userbundle
+                default_target_path: admin_dashboard
+                use_forward: false
+                use_referer: true
                 csrf_token_generator: security.csrf.token_manager
             logout:       true
             anonymous:    true
