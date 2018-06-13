@@ -1,0 +1,16 @@
+{% if visible is not defined %}{% set visible = 'footer' %}{% endif %}
+
+{% if visible == 'footer' %}
+    <!-- BEGIN FOOTER -->
+    <div class="page-footer">
+        <div class="page-footer-inner"> {{ "now"|date("Y") }} &copy; RC Info.</div>
+        <div class="scroll-to-top">
+            <i class="icon-arrow-up"></i>
+        </div>
+    </div>
+    <!-- END FOOTER -->
+{% endif %}
+
+{% if visible == 'footer_security' %}
+    <div class="copyright"> {{ "now"|date("Y") }} &copy; RC Info.</div>
+{% endif %}

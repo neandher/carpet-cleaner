@@ -1,0 +1,79 @@
+<div class="row">
+    <div class="col-md-12">
+
+        {% block form_start %}{% endblock %}
+
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    {% block icon_list %}
+                        <i class="icon-list font-green-sharp"></i>
+                    {% endblock %}
+                    <span class="caption-subject font-green-sharp bold uppercase">
+                        {% block caption_subject %}{% endblock %}
+                    </span>
+                </div>
+
+                <div class="actions btn-set">
+                    {% block actions %}
+                        {% include('admin/_partials/_form_submit_buttons.html.twig') %}
+                        <a href="{{ path(route_index) ~ pagination.buildQuery }}"
+                           class="btn red">
+                            <span class="fa fa-remove"></span> Cancelar
+                        </a>
+                    {% endblock %}
+                </div>
+
+            </div>
+
+            <div class="portlet-body">
+
+                {{ form_errors(form) }}
+
+                {% include('_partials/_flash_messages.html.twig') %}
+
+                <ul class="nav nav-tabs" role="tablist">
+                    {% block nav_tabs %}{% endblock %}
+                </ul>
+
+                <div class="tab-content"><br>
+                    {% block tab_pane %}{% endblock %}
+                </div>
+
+            </div>
+
+        </div>
+
+        {% block form_end %}
+            {{ form_widget(form._token) }}
+            {{ form_end(form, {'render_rest': false}) }}
+        {% endblock %}
+
+    </div>
+</div>
+
+{#{{ form_row(form.firstName, {
+    fh_col_md: 'col-md-10',
+    'label_attr': {'class' : 'col-md-2'},
+    'attr': {'autofocus': true}
+}) }}
+{{ form_row(form.lastName, {
+    fh_col_md: 'col-md-10',
+    'label_attr': {'class' : 'col-md-2'},
+}) }}
+{{ form_row(form.email, {
+    fh_col_md: 'col-md-10',
+    'label_attr': {'class' : 'col-md-2'}
+}) }}
+{{ form_row(form.plainPassword.first, {
+    fh_col_md: 'col-md-10',
+    'label_attr': {'class' : 'col-md-2'}
+}) }}
+{{ form_row(form.plainPassword.second, {
+    fh_col_md: 'col-md-10',
+    'label_attr': {'class' : 'col-md-2'}
+}) }}
+{{ form_row(form.isEnabled, {
+    fh_col_md: 'col-md-10',
+    'label_attr': {'class' : 'col-md-2'}
+}) }}#}

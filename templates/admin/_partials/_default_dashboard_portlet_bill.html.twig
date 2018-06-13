@@ -1,0 +1,40 @@
+<div class="portlet light">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="icon-share font-dark hide"></i>
+            <span class="caption-subject font-green bold uppercase">{{ caption_subject }}</span>
+            <span class="caption-helper">{{ caption_helper }}</span>
+        </div>
+        <div class="actions">
+            {#<a href="javascript:;" class="btn green">
+                <i class="fa fa-share"></i> Ver Todos
+            </a>#}
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div class="scroller" style="height: 300px;" data-always-visible="1" data-rail-visible="0">
+            <div class="table-responsive">
+                <table class="table table-striped table-light table-advance table-hover">
+                    <thead>
+                    {% block thead %}
+                    {% endblock %}
+                    </thead>
+                    <tbody>
+                    {% block tbody %}
+                    {% endblock %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="scroller-footer">
+            <div class="btn-arrow-link pull-left">
+                Exibindo {{ bills.currentPageOffsetStart }} a
+                {{ bills.currentPageOffsetEnd }} de
+                {{ bills.nbResults }} registros
+            </div>
+            <div class="btn-arrow-link pull-right bold _font-green uppercase">
+                Total Geral: R$ {{ billsTotal|number_format }}
+            </div>
+        </div>
+    </div>
+</div>

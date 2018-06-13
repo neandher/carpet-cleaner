@@ -1,0 +1,120 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_content %}
+
+    {% embed 'admin/_partials/_default_table_list.html.twig' %}
+
+        {% block icon_list %}
+            <i class="icon-user font-green-sharp bold"></i>
+        {% endblock %}
+
+        {% block caption_subject %}
+            Usuários ({{ adminUsers.nbResults }} registros)
+        {% endblock %}
+
+        {% block actions %}
+            <a href="{{ path('user_new') ~ pagination.buildQuery }}" class="btn green">
+                <i class="fa fa-plus"></i> Novo Usuário
+            </a>
+        {% endblock %}
+
+        {% block filters %}
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="busca" name="search"
+                       value="{% if app.request.query.has('search') %}{{ app.request.query.get('search') }}{% endif %}">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-default form-control">
+                    <i class="fa fa-search"></i> Buscar
+                </button>
+            </div>
+            <div class="form-group">
+                <a href="{{ path('admin_user_index') }}"
+                   class="btn btn-default form-control">
+                    <i class="fa fa-times"></i> Limpar
+                </a>
+            </div>
+        {% endblock %}
+
+        {% block table_tr_th %}
+            <tr>
+                <th>ID</th>
+                <th>E-mail</th>
+                <th>Ativo</th>
+                <th>Último Login</th>
+                <th>
+                    <a href="{{ path('admin_user_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
+                        Criado em
+                    </a>
+                </th>
+                <th>Ações</th>
+            </tr>
+        {% endblock %}
+
+        {% block table_tr_td %}
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.isEnabled == '1' %}
+                            <span class="label label-sm label-success">
+                                <i class="fa fa-check"></i>
+                            </span>
+                        {% else %}
+                            <span class="label label-sm label-danger">
+                                <i class="fa fa-remove"></i>
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>{% if user.lastLoginAt is not null %}
+                            {{ user.lastLoginAt|date('d/m/Y H:i') }}
+                        {% else %}
+                            -
+                        {% endif %}</td>
+                    <td>{{ user.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% embed 'admin/_partials/_actions_btn_group.html.twig' %}
+                            {% block buttons %}
+                                <a href="{{ path('admin_user_edit', { id: user.id }) ~ pagination.buildQuery }}"
+                                   title="Editar" class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-pencil"></span> Editar
+                                </a>
+                                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                        data-toggle="dropdown" data-close-others="true">
+                                    <i class="fa fa-angle-down"></i>
+                                </button>
+                            {% endblock %}
+                            {% block li_actions %}
+                                <li>
+                                    <a href="javascript:;" data-toggle="modal"
+                                       data-target="#modalConfirmation"
+                                       data-path="{{ path('admin_user_delete', {id: user.id})|escape }}"
+                                       data-crf="{{ form_widget(delete_forms[user.id]._token)|escape }}"
+                                    >
+                                        <i class="fa fa-trash"></i> Deletar
+                                    </a>
+                                </li>{
+                            {% endblock %}
+                        {% endembed %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block list_info %}
+            Exibindo {{ adminUsers.currentPageOffsetStart }} a
+            {{ adminUsers.currentPageOffsetEnd }} de
+            {{ adminUsers.nbResults }} registros
+        {% endblock %}
+
+        {% block list_pagination %}
+            {{ pagerfanta(adminUsers, 'twitter_bootstrap3',{
+                routeName: 'admin_user_index',
+                routeParams: app.request.query.all
+            }) }}
+        {% endblock %}
+
+    {% endembed %}
+
+{% endblock %}
