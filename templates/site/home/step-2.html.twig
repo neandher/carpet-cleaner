@@ -1,0 +1,249 @@
+{% extends 'site/base.html.twig' %}
+
+{% block page_content %}
+    <div class="row">
+        <div class="col-xl-9">
+            <!--Begin::Main Portlet-->
+            <div class="m-portlet">
+                <!--begin: Portlet Head-->
+                <div class="m-portlet__head">
+                    <div class="m-portlet__head-caption">
+                        <div class="m-portlet__head-title">
+                            <h3 class="m-portlet__head-text">
+                                Carpet Cleaning Estimate
+                                <small>
+                                    Select Cleaning Services
+                                </small>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="m-portlet__head-tools">
+
+                    </div>
+                </div>
+                <!--end: Portlet Head-->
+                <!--begin: Form Wizard-->
+                <div class="m-wizard m-wizard--5 m-wizard--success" id="m_wizard">
+                    <!--begin: Message container -->
+                    <div class="m-portlet__padding-x">
+                        <!-- Here you can put a message or alert -->
+                    </div>
+                    <!--end: Message container -->
+                    <!--begin: Form Wizard Head -->
+                    <div class="m-wizard__head m-portlet__padding-x">
+                        <div class="row">
+                            <div class="col-xl-10 offset-xl-1">
+                                <!--begin: Form Wizard Nav -->
+                                <div class="m-wizard__nav">
+                                    <div class="m-wizard__steps">
+                                        <div class="m-wizard__step" m-wizard-target="m_wizard_form_step_1">
+                                            <div class="m-wizard__step-info">
+                                                <a href="#" class="m-wizard__step-number">
+                                                    <span class="m-wizard__step-seq">
+                                                        1.
+                                                    </span>
+                                                    <span class="m-wizard__step-label">
+                                                        Services
+                                                    </span>
+                                                    <span class="m-wizard__step-icon">
+                                                        <i class="la la-check"></i>
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="m-wizard__step m-wizard__step--current"
+                                             m-wizard-target="m_wizard_form_step_2">
+                                            <div class="m-wizard__step-info">
+                                                <a href="#" class="m-wizard__step-number">
+                                                    <span class="m-wizard__step-seq">
+                                                        2.
+                                                    </span>
+                                                    <span class="m-wizard__step-label">
+                                                        Appoitament
+                                                    </span>
+                                                    <span class="m-wizard__step-icon">
+                                                        <i class="la la-check"></i>
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end: Form Wizard Nav -->
+                            </div>
+                        </div>
+                    </div>
+                    <!--end: Form Wizard Head -->
+                    <!--begin: Form Wizard Form-->
+                    <div class="m-wizard__form">
+                        <!--
+                            1) Use m-form--label-align-left class to alight the form input lables to the right
+                            2) Use m-form--state class to highlight input control borders on form validation
+                        -->
+                        <form class="m-form m-form--label-align-left- m-form--state-" id="m_form">
+                            <!--begin: Form Body -->
+                            <div class="m-portlet__body">
+                                <!--begin: Form Wizard Step 1-->
+                                <div class="m-wizard__form-step m-wizard__form-step--current" id="m_wizard_form_step_1">
+                                    <div class="row">
+                                        <div class="col-xl-10 offset-xl-1">
+                                            <div class="m-form__section m-form__section--first">
+                                                <div class="m-form__heading">
+                                                    <h3 class="m-form__heading-title">
+                                                        Client Details
+                                                    </h3>
+                                                </div>
+                                                <div class="form-group m-form__group row">
+                                                    <label class="col-xl-3 col-lg-3 col-form-label">
+                                                        * Name:
+                                                    </label>
+                                                    <div class="col-xl-9 col-lg-9">
+                                                        <input type="text" name="name" class="form-control m-input"
+                                                               placeholder="" value="Nick Stone">
+                                                        <span class="m-form__help">
+																				Please enter your first and last names
+																			</span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group m-form__group row">
+                                                    <label class="col-xl-3 col-lg-3 col-form-label">
+                                                        * Email:
+                                                    </label>
+                                                    <div class="col-xl-9 col-lg-9">
+                                                        <input type="email" name="email" class="form-control m-input"
+                                                               placeholder="" value="nick.stone@gmail.com">
+                                                        <span class="m-form__help">
+																				We'll never share your email with anyone else
+																			</span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group m-form__group row">
+                                                    <label class="col-xl-3 col-lg-3 col-form-label">
+                                                        * Phone
+                                                    </label>
+                                                    <div class="col-xl-9 col-lg-9">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+																					<span class="input-group-text">
+																						<i class="la la-phone"></i>
+																					</span>
+                                                            </div>
+                                                            <input type="text" name="phone" class="form-control m-input"
+                                                                   placeholder="" value="1-541-754-3010">
+                                                        </div>
+                                                        <span class="m-form__help">
+																				Enter your valid phone in US phone format. E.g: 1-541-754-3010
+																			</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end: Form Wizard Step 1-->
+                            </div>
+                            <!--end: Form Body -->
+                            <!--begin: Form Actions -->
+                            <div class="m-portlet__foot m-portlet__foot--fit m--margin-top-40">
+                                <div class="m-form__actions m-form__actions">
+                                    <div class="row">
+                                        <div class="col-lg-1"></div>
+                                        <div class="col-lg-4 m--align-left">
+                                        </div>
+                                        <div class="col-lg-6 m--align-right">
+                                            <a href="#" class="btn btn-warning m-btn m-btn--custom m-btn--icon"
+                                               data-wizard-action="next">
+                                                <span>
+                                                    <span>
+                                                        Save & Continue
+                                                    </span>&nbsp;&nbsp;
+                                                    <i class="la la-arrow-right"></i>
+                                                </span>
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end: Form Actions -->
+                        </form>
+                    </div>
+                    <!--end: Form Wizard Form-->
+                </div>
+                <!--end: Form Wizard-->
+            </div>
+            <!--End::Main Portlet-->
+        </div>
+        <div class="col-xl-3">
+            <div class="m-portlet">
+                <div class="m-portlet__body">
+                    <div class="m-widget1 m-widget1--paddingless">
+                        <div class="m-section">
+                            <h2 class="m-section__heading">
+                                Appoitaments Details
+                            </h2>
+                        </div>
+                        <div class="m-widget1__item">
+                            <div class="row m-row--no-padding align-items-center">
+                                <div class="col">
+                                    <h3 class="m-widget1__title">
+                                        Subtotal
+                                    </h3>
+                                </div>
+                                <div class="col m--align-right">
+                                    <span class="m-widget1__number m--font-success">
+                                        $27,49
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-widget1__item">
+                            <div class="row m-row--no-padding align-items-center">
+                                <div class="col">
+                                    <h3 class="m-widget1__title">
+                                        Discount
+                                    </h3>
+                                </div>
+                                <div class="col m--align-right">
+                                    <span class="m-widget1__number m--font-success">
+                                        $27,49
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-widget1__item">
+                            <div class="row m-row--no-padding align-items-center">
+                                <div class="col">
+                                    <h3 class="m-widget1__title">
+                                        Tax
+                                    </h3>
+                                </div>
+                                <div class="col m--align-right">
+                                    <span class="m-widget1__number m--font-success">
+                                        $27,49
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-widget1__item">
+                            <div class="row m-row--no-padding align-items-center">
+                                <div class="col">
+                                    <h3 class="m-widget1__title">
+                                        Total Price
+                                    </h3>
+                                </div>
+                                <div class="col m--align-right">
+                                    <span class="m-widget1__number m--font-success">
+                                        $27,49
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end: Form Wizard Step 4-->
+                </div>
+                <!--end: Form Body -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
