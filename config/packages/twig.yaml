@@ -6,3 +6,4 @@ twig:
         - 'bootstrap_4_layout.html.twig'
     globals:
         title: '%title%'
+        title_site: '%title_site%'

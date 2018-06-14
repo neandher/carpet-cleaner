@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class DefaultController extends AbstractController
 {
     /**
-     * @Route("/", name="dashboard")
+     * @Route("/", name="index")
      */
     public function dashboard()
     {

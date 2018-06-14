@@ -2,7 +2,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
-    title: Carpet Cleaner
+    title: AZAP ADMIN
+    title_site: AZAP - Carpet Cleaner
 
 services:
     # default configuration for services in *this* file
@@ -27,3 +28,7 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Form\UserEditType:
+        tags:
+            - { name: form.type, alias: app_user_registration }
