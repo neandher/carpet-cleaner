@@ -36,7 +36,7 @@ $kernel = new Kernel($env, $debug);
 $request = Request::createFromGlobals();
 
 if($env === 'prod'){
-    Request::setTrustedProxies(array($request->server->get('REMOTE_ADDR')), Request::HEADER_X_FORWARDED_ALL ^ Request::HEADER_X_FORWARDED_HOST);
+    Request::setTrustedProxies(array($request->server->get('REMOTE_ADDR')), Request::HEADER_X_FORWARDED_ALL);
 }
 
 $response = $kernel->handle($request);
