@@ -34,18 +34,6 @@ if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
 
 $kernel = new Kernel($env, $debug);
 $request = Request::createFromGlobals();
-
-//if($env === 'prod'){
-//    Request::setTrustedProxies(array($request->server->get('REMOTE_ADDR')), Request::HEADER_X_FORWARDED_ALL);
-//}
-
-Request::setTrustedProxies(
-// trust *all* requests
-    array('127.0.0.1', $request->server->get('REMOTE_ADDR')),
-    // if you're using ELB, otherwise use a constant from above
-    Request::HEADER_X_FORWARDED_ALL
-);
-
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);
