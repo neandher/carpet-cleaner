@@ -93,7 +93,7 @@
                                                             <span class="m-nav__link-title">
                                                                 <span class="m-nav__link-wrap">
                                                                     <span class="m-nav__link-text">
-                                                                        My Profile
+                                                                        {{ 'user.menu.profile'|trans }}
                                                                     </span>
                                                                 </span>
                                                             </span>
@@ -104,7 +104,7 @@
                                                            class="m-nav__link">
                                                             <i class="m-nav__link-icon flaticon-edit"></i>
                                                             <span class="m-nav__link-text">
-                                                                Change Password
+                                                                {{ 'user.menu.change_passaword'|trans }}
                                                             </span>
                                                         </a>
                                                     </li>
@@ -112,7 +112,7 @@
                                                     <li class="m-nav__item">
                                                         <a href="{{ path('fos_user_security_logout') }}"
                                                            class="btn m-btn--pill btn-secondary m-btn m-btn--custom m-btn--label-brand m-btn--bolder">
-                                                            Logout
+                                                            {{ 'user.menu.logout'|trans }}
                                                         </a>
                                                     </li>
                                                 </ul>

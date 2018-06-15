@@ -4,7 +4,6 @@
         {% block form_start %}{% endblock %}
 
         <div class="m-portlet m-portlet--rounded">
-
             <div class="m-portlet__head">
                 <div class="m-portlet__head-caption">
                     <div class="m-portlet__head-title">
@@ -25,30 +24,23 @@
                         <li class="m-portlet__nav-item">
                             <a href="{{ path(route_index) ~ pagination.buildQuery }}"
                                class="m-portlet__nav-link btn btn-danger m-btn m-btn--air">
-                                <span class="fa fa-remove"></span> Cancel
+                                <span class="fa fa-remove"></span> {{ 'resource.actions.items.cancel'|trans }}
                             </a>
                         </li>
                         {% endblock %}
                     </ul>
                 </div>
             </div>
-
             <div class="m-portlet__body">
-
                 {{ form_errors(form) }}
-
                 {% include('_partials/_flash_messages.html.twig') %}
-
                 <ul class="nav nav-tabs" role="tablist">
                     {% block nav_tabs %}{% endblock %}
                 </ul>
-
                 <div class="tab-content"><br>
                     {% block tab_pane %}{% endblock %}
                 </div>
-
             </div>
-
         </div>
 
         {% block form_end %}
@@ -58,29 +50,3 @@
 
     </div>
 </div>
-
-{#{{ form_row(form.firstName, {
-    fh_col_md: 'col-md-10',
-    'label_attr': {'class' : 'col-md-2'},
-    'attr': {'autofocus': true}
-}) }}
-{{ form_row(form.lastName, {
-    fh_col_md: 'col-md-10',
-    'label_attr': {'class' : 'col-md-2'},
-}) }}
-{{ form_row(form.email, {
-    fh_col_md: 'col-md-10',
-    'label_attr': {'class' : 'col-md-2'}
-}) }}
-{{ form_row(form.plainPassword.first, {
-    fh_col_md: 'col-md-10',
-    'label_attr': {'class' : 'col-md-2'}
-}) }}
-{{ form_row(form.plainPassword.second, {
-    fh_col_md: 'col-md-10',
-    'label_attr': {'class' : 'col-md-2'}
-}) }}
-{{ form_row(form.isEnabled, {
-    fh_col_md: 'col-md-10',
-    'label_attr': {'class' : 'col-md-2'}
-}) }}#}

@@ -1,5 +1,5 @@
 {% extends 'admin/base.html.twig' %}
-{% block title %}Users New{% endblock %}
+{% block title %}{{ 'user.actions.edit'|trans }}{% endblock %}
 
 {% block page_content %}
 
@@ -17,13 +17,13 @@
 
         {% block caption_subject %}
             <span class="caption-subject font-green-sharp bold uppercase">
-                Edit User
+                {{ 'user.actions.edit'|trans }}
             </span>
         {% endblock %}
 
         {% block nav_tabs %}
             <li class="nav-item">
-                <a href="#geral" class="nav-link active" data-toggle="tab">Geral</a>
+                <a href="#geral" class="nav-link active" data-toggle="tab">{{ 'resource.tabs.details'|trans }}</a>
             </li>
         {% endblock %}
 

@@ -1,5 +1,5 @@
 {% extends 'admin/base.html.twig' %}
-{% block title %}Users{% endblock %}
+{% block title %}{{ 'user.title'|trans }}{% endblock %}
 
 {% block page_content %}
 
@@ -10,7 +10,7 @@
         {% endblock %}
 
         {% block caption_subject %}
-            Users ({{ users.nbResults }} records)
+            {{ 'resource.caption'|trans({'%resourceName%': 'user.title'|trans, '%nbResults%' : users.nbResults}) }}
         {% endblock %}
 
         {% block head_tools %}{% endblock %}
@@ -21,9 +21,11 @@
                     <div class="form-group m-form__group row align-items-center">
                         <div class="col-md-4">
                             <div class="m-input-icon m-input-icon--left">
-                                <input type="text" class="form-control m-input m-input--solid" placeholder="Search..."
-                                       name="search" id="generalSearch"
-                                       value="{% if app.request.query.has('search') %}{{ app.request.query.get('search') }}{% endif %}">
+                                <input type="text" class="form-control m-input m-input--solid"
+                                       placeholder="{{ 'resource.filters.search'|trans }}..."
+                                       name="search" id="search"
+                                       value="{% if app.request.query.has('search') %}{{ app.request.query.get('search') }}{% endif %}"
+                                >
                                 <span class="m-input-icon__icon m-input-icon__icon--left">
                                     <span><i class="la la-search"></i></span>
                                 </span>
@@ -33,7 +35,10 @@
                         <div class="col-md-4">
                             <a href="{{ path('admin_user_index') }}"
                                class="btn btn-secondary m-btn m-btn--custom btn-sm">
-                                <span><i class="fa fa-times"></i><span> Clear</span></span>
+                                <span>
+                                    <i class="fa fa-times"></i>
+                                    <span> {{ 'resource.actions.items.reset'|trans }}</span>
+                                </span>
                             </a>
                         </div>
                     </div>
@@ -41,7 +46,7 @@
                 <div class="col-xl-4 order-1 order-xl-2 m--align-right">
                     <a href="{{ path('admin_user_new') ~ pagination.buildQuery }}"
                        class="btn btn-accent m-btn m-btn--custom m-btn--icon">
-                        <span><i class="la la-plus"></i><span> New User</span></span>
+                        <span><i class="la la-plus"></i><span> {{ 'user.actions.new'|trans }}</span></span>
                     </a>
                     <div class="m-separator m-separator--dashed d-xl-none"></div>
                 </div>
@@ -51,16 +56,16 @@
         {% block table_tr_th %}
             <tr class="m-datatable__row">
                 <th>ID</th>
-                <th>E-mail</th>
-                <th>Username</th>
-                <th>Enabled</th>
-                <th>Last Login</th>
+                <th>{{ 'user.fields.email'|trans }}</th>
+                <th>{{ 'user.fields.username'|trans }}</th>
+                <th>{{ 'resource.toglleable.is_enabled_title'|trans }}</th>
+                <th>{{ 'user.fields.lastLogin'|trans }}</th>
                 <th>
                     <a href="{{ path('admin_user_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
-                        Created At
+                        {{ 'resource.timestampable.createdAt'|trans }}
                     </a>
                 </th>
-                <th>Actions</th>
+                <th>{{ 'resource.actions.title'|trans }}</th>
             </tr>
         {% endblock %}
 
@@ -97,13 +102,13 @@
                                    data-path="{{ path('admin_user_delete', {id: user.id})|escape }}"
                                    data-crf="{{ form_widget(delete_forms[user.id]._token)|escape }}"
                                 >
-                                    <i class="fa fa-trash"></i> Delete
+                                    <i class="fa fa-trash"></i> {{ 'resource.actions.items.delete'|trans }}
                                 </a>
                             {% endblock %}
                         {% endembed %}
                         <a href="{{ path('admin_user_edit', { id: user.id }) ~ pagination.buildQuery }}"
                            class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
-                           title="Edit details"> <i class="la la-edit"></i>
+                           title="{{ 'resource.actions.items.edit'|trans }}"> <i class="la la-edit"></i>
                         </a>
                     </td>
                 </tr>
@@ -111,9 +116,11 @@
         {% endblock %}
 
         {% block list_info %}
-            Showing {{ users.currentPageOffsetStart }} to
-            {{ users.currentPageOffsetEnd }} of
-            {{ users.nbResults }} records
+            {{ 'resource.pagination.list_info'|trans({
+                '%currentPageOffsetStart%': users.currentPageOffsetStart,
+                '%currentPageOffsetEnd%': users.currentPageOffsetEnd,
+                '%nbResults%': users.nbResults
+            }) }}
         {% endblock %}
 
         {% block list_pagination %}

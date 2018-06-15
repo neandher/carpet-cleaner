@@ -1,0 +1,72 @@
+resource:
+    flashbag:
+        success:
+            inserted: The record has been created successfully
+            updated: The record has been updated successfully
+            deleted: The record has been deleted successfully
+        error:
+            inserted: An error has occurred
+            updated: An error has occurred
+            deleted: An error has occurred
+    filters:
+        search: Search
+        num_items: Per Page
+        date_start: Date Start
+        date_end: Date End
+    toglleable:
+        is_enabled_title: Enabled
+        is_enabled: Yes
+        is_not_enabled: No
+    timestampable:
+        createdAt: Created At
+        updatedAt: Updated At
+    delete_confirm:
+        title: Confirmation
+        text: Do you want to confirm the deletion?
+        btns:
+            confirm: Confirm
+    tabs:
+        details: Details
+    caption: '%resourceName% (%nbResults% records)'
+    pagination:
+        list_info: 'Showing %currentPageOffsetStart% to %currentPageOffsetEnd% of %nbResults% records'
+    actions:
+        title: Actions
+        items:
+            save_and_new: Save and new
+            save_and_keep: Save
+            save_and_close: Save and close
+            search: Search
+            reset: Clear
+            send: Send
+            edit: Edit
+            delete: Delete
+            cancel: Cancelar
+            go_back: Back
+
+user:
+    title: Users
+    title_single: User
+    actions:
+        new: New User
+        edit: Edit User
+    fields:
+        email: E-mail
+        username: Username
+        lastLogin: Last Login
+    menu:
+        profile: My Profile
+        profile_update: Update Profile
+        details: Personal Details
+        change_passaword: Change Password
+        logout: Logout
+    resetting:
+        request:
+            title: Forgotten Password ?
+            subtitle: Enter your username to reset your password
+            not_found: User not found
+        reset:
+            title: Reset Password
+    login:
+        title: Admin Login
+        title_small: Login

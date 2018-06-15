@@ -12,10 +12,10 @@
                 <div class="m-login__forget-password" style="display: contents">
                     <div class="m-login__head">
                         <h3 class="m-login__title">
-                            Forgotten Password ?
+                            {{ 'user.resetting.request.title'|trans({}, 'messages') }}
                         </h3>
                         <div class="m-login__desc">
-                            Enter your username to reset your password:
+                            {{ 'user.resetting.request.subtitle'|trans({}, 'messages') }}:
                         </div>
                     </div>
                     <form class="m-login__form m-form" action="{{ path('fos_user_resetting_send_email') }}"
@@ -30,9 +30,9 @@
                                     class="btn btn-focus m-btn m-btn--pill m-btn--custom m-btn--air  m-login__btn m-login__btn--primaryr">
                                 {{ 'resetting.request.submit'|trans }}
                             </button>
-                            <a href="{{ path('admin_dashboard') }}" id=""
+                            <a href="{{ path('admin_index') }}" id=""
                                class="btn btn-outline-focus m-btn m-btn--pill m-btn--custom m-login__btn">
-                                Cancel
+                                {{ 'resource.form.btns.cancel'|trans({}, 'messages') }}
                             </a>
                         </div>
                     </form>
