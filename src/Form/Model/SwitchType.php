@@ -17,8 +17,8 @@ class SwitchType extends AbstractType
             'attr' => [
                 'data-on-color' => 'success',
                 'data-off-color' => 'danger',
-                'data-on-text' => 'Sim',
-                'data-off-text' => 'Não',
+                'data-on-text' => 'Yes',
+                'data-off-text' => 'No',
                 'data-switch' => 'true',
             ]
         ]);

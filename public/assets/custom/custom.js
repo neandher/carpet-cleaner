@@ -1,3 +1,7 @@
+$(document).ready(function () {
+    showTabError();
+});
+
 $('#modalConfirmation').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     var path = button.data('path');
@@ -32,3 +36,23 @@ $('.delete-resource-form').on('click', function () {
 
     return false;
 });
+
+function showTabError() {
+
+    var $tab_content = $(".tab-content");
+
+    $tab_content.find("div.tab-pane:has(span.invalid-feedback)").each(function (index, tab) {
+
+        var id = $(tab).attr("id");
+        $('a[href="#' + id + '"]').tab('show');
+
+        $(tab).find('span.invalid-feedback').each(function (_index, _field) {
+            $('html, body').animate({
+                scrollTop: $(_field).offset().top
+            }, 2000);
+            return false;
+        });
+
+        return false;
+    });
+}

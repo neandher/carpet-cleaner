@@ -41,4 +41,10 @@ class CleaningItemCategoryRepository extends BaseRepository
 
         return $paginator;
     }
+
+    public function queryLatestForm()
+    {
+        return $this->createQueryBuilder('cleaningItemCategory')
+            ->orderBy('cleaningItemCategory.title', 'ASC');
+    }
 }

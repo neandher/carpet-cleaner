@@ -23,6 +23,21 @@
                 </span>
             </a>
         </li>
+        <li class="m-menu__section ">
+            <h4 class="m-menu__section-text">Cleaning Items</h4>
+            <i class="m-menu__section-icon flaticon-more-v3"></i>
+        </li>
+        <li class="m-menu__item " aria-haspopup="true">
+            <a href="{{ path('admin_cleaning_item_index') }}" class="m-menu__link ">
+                <span class="m-menu__item-here"></span>
+                <i class="m-menu__link-icon flaticon-map"></i>
+                <span class="m-menu__link-title">
+                    <span class="m-menu__link-wrap">
+                        <span class="m-menu__link-text">{{ 'cleaningItem.title'|trans }}</span>
+                    </span>
+                </span>
+            </a>
+        </li>
         <li class="m-menu__item " aria-haspopup="true">
             <a href="{{ path('admin_cleaning_item_category_index') }}" class="m-menu__link ">
                 <span class="m-menu__item-here"></span>
@@ -30,6 +45,17 @@
                 <span class="m-menu__link-title">
                     <span class="m-menu__link-wrap">
                         <span class="m-menu__link-text">{{ 'cleaningItemCategory.title'|trans }}</span>
+                    </span>
+                </span>
+            </a>
+        </li>
+        <li class="m-menu__item " aria-haspopup="true">
+            <a href="{{ path('admin_cleaning_item_option_index') }}" class="m-menu__link ">
+                <span class="m-menu__item-here"></span>
+                <i class="m-menu__link-icon flaticon-map"></i>
+                <span class="m-menu__link-title">
+                    <span class="m-menu__link-wrap">
+                        <span class="m-menu__link-text">{{ 'cleaningItemOption.title'|trans }}</span>
                     </span>
                 </span>
             </a>

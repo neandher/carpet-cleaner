@@ -3,48 +3,48 @@
 namespace App\Repository;
 
 use App\Entity\CleaningItem;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Util\Pagination;
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-/**
- * @method CleaningItem|null find($id, $lockMode = null, $lockVersion = null)
- * @method CleaningItem|null findOneBy(array $criteria, array $orderBy = null)
- * @method CleaningItem[]    findAll()
- * @method CleaningItem[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class CleaningItemRepository extends ServiceEntityRepository
+class CleaningItemRepository extends BaseRepository
 {
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, CleaningItem::class);
     }
 
-//    /**
-//     * @return CleaningItem[] Returns an array of CleaningItem objects
-//     */
-    /*
-    public function findByExampleField($value)
+    protected function queryLatest(Pagination $pagination)
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $routeParams = $pagination->getRouteParams();
 
-    /*
-    public function findOneBySomeField($value): ?CleaningItem
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $qb = $this->createQueryBuilder('cleaningItem')
+            ->innerJoin('cleaningItem.cleaningItemCategory', 'cleaningItemCategory')
+            ->addSelect('cleaningItemCategory');
+
+        if (isset($routeParams['search'])) {
+            $qb->andWhere('cleaningItem.title like :search')->setParameter('search', '%' . $routeParams['search'] . '%');
+        }
+
+        if (!empty($routeParams['category'])) {
+            $qb->andWhere('cleaningItemCategory.id = :category')->setParameter('category', $routeParams['category']);
+        }
+
+        $qb = $this->addOrderingQueryBuilder($qb, $routeParams);
+
+        return $qb->getQuery();
     }
-    */
+
+    public function findLatest(Pagination $pagination)
+    {
+        $routeParams = $pagination->getRouteParams();
+
+        $paginator = new Pagerfanta(new DoctrineORMAdapter($this->queryLatest($pagination), false));
+
+        $paginator->setMaxPerPage($routeParams['num_items']);
+        $paginator->setCurrentPage($routeParams['page']);
+
+        return $paginator;
+    }
 }

@@ -29,9 +29,9 @@ resource:
             confirm: Confirm
     tabs:
         details: Details
-    caption: '%resourceName% (%nbResults% records)'
+    caption: '%resourceName% (%nbResults% entries)'
     pagination:
-        list_info: 'Showing %currentPageOffsetStart% to %currentPageOffsetEnd% of %nbResults% records'
+        list_info: 'Showing %currentPageOffsetStart% to %currentPageOffsetEnd% of %nbResults% entries'
     actions:
         title: Actions
         items:
@@ -45,6 +45,14 @@ resource:
             delete: Delete
             cancel: Cancelar
             go_back: Back
+
+errors:
+    404:
+        title: Oops! Page not found.
+        description: We can not find the page you're looking for.
+    500:
+        title: Oops...
+        description: Looks like something went wrong.<br>We're working on it
 
 user:
     title: Users
@@ -76,6 +84,29 @@ user:
 cleaningItemCategory:
     title: Item Categories
     title_single: Item Category
+    fields:
+        displayOrder: Display Order
+    tabs:
+        site: Site
     actions:
         new: New Category
         edit: Edit Category
+
+cleaningItemOption:
+    title: Item Options
+    title_single: Item Option
+    actions:
+        new: New Option
+        edit: Edit Option
+
+cleaningItem:
+    title: Item
+    title_single: Item
+    fields:
+        maxQuantity: Maximum Quantity
+        displayOrder: Display Order
+    tabs:
+        site: Site
+    actions:
+        new: New Item
+        edit: Edit Item

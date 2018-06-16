@@ -30,12 +30,22 @@ class CleaningItem
     private $title;
 
     /**
+     * @ORM\Column(type="smallint")
+     * @Assert\NotBlank()
+     * @Assert\GreaterThan(value="0")
+     */
+    private $displayOrder;
+
+    /**
      * @ORM\Column(type="smallint", length=255)
+     * @Assert\NotBlank()
+     * @Assert\GreaterThan(value="0")
      */
     private $maxQuantity;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\CleaningItemCategory")
+     * @Assert\NotNull()
      */
     private $cleaningItemCategory;
 
@@ -117,6 +127,18 @@ class CleaningItem
     public function setMaxQuantity(int $maxQuantity): self
     {
         $this->maxQuantity = $maxQuantity;
+
+        return $this;
+    }
+
+    public function getDisplayOrder(): ?int
+    {
+        return $this->displayOrder;
+    }
+
+    public function setDisplayOrder(int $displayOrder): self
+    {
+        $this->displayOrder = $displayOrder;
 
         return $this;
     }

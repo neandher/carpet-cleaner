@@ -1,23 +1,23 @@
 {% extends 'admin/base.html.twig' %}
-{% block title %}{{ 'user.title'|trans }}{% endblock %}
+{% block title %}{{ 'cleaningItemOption.title'|trans }}{% endblock %}
 
 {% block page_content %}
 
     {% embed 'admin/_partials/_default_table_list.html.twig' %}
 
         {% block icon_list %}
-            <i class="flaticon-users"></i>
+            <i class="flaticon-map"></i>
         {% endblock %}
 
         {% block caption_subject %}
-            {{ 'resource.caption'|trans({'%resourceName%': 'user.title'|trans, '%nbResults%' : users.nbResults}) }}
+            {{ 'resource.caption'|trans({'%resourceName%': 'cleaningItemOption.title'|trans, '%nbResults%' : cleaningItemOptions.nbResults}) }}
         {% endblock %}
 
         {% block head_tools_actions %}
             <li class="m-portlet__nav-item">
-                <a href="{{ path('admin_user_new') ~ pagination.buildQuery }}"
+                <a href="{{ path('admin_cleaning_item_option_new') ~ pagination.buildQuery }}"
                    class="btn btn-accent m-btn m-btn--custom m-btn--icon">
-                    <span><i class="la la-plus"></i><span> {{ 'user.actions.new'|trans }}</span></span>
+                    <span><i class="la la-plus"></i><span> {{ 'cleaningItemOption.actions.new'|trans }}</span></span>
                 </a>
             </li>
         {% endblock %}
@@ -41,7 +41,7 @@
                         <span><i class="la la-search"></i><span>{{ 'resource.filters.search'|trans }}</span></span>
                     </button>
                     &nbsp;&nbsp;
-                    <a href="{{ path('admin_user_index') }}"
+                    <a href="{{ path('admin_cleaning_item_option_index') }}"
                        class="btn btn-secondary m-btn m-btn--icon">
                         <span><i class="la la-close"></i><span>{{ 'resource.actions.items.reset'|trans }}</span></span>
                     </a>
@@ -50,14 +50,20 @@
         {% endblock %}
 
         {% block table_tr_th %}
-            <tr class="m-datatable__row">
+            <tr>
                 <th>ID</th>
-                <th>{{ 'user.fields.email'|trans }}</th>
-                <th>{{ 'user.fields.username'|trans }}</th>
-                <th>{{ 'resource.toglleable.is_enabled_title'|trans }}</th>
-                <th>{{ 'user.fields.lastLogin'|trans }}</th>
                 <th>
-                    <a href="{{ path('admin_user_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
+                    <a href="{{ path('admin_cleaning_item_option_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('title') }}">
+                        {{ 'resource.fields.title'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_cleaning_item_option_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('isEnabled') }}">
+                        {{ 'resource.toglleable.is_enabled_title'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_cleaning_item_option_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
                         {{ 'resource.timestampable.createdAt'|trans }}
                     </a>
                 </th>
@@ -66,13 +72,12 @@
         {% endblock %}
 
         {% block table_tr_td %}
-            {% for user in users %}
+            {% for cleaningItemOption in cleaningItemOptions %}
                 <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.username }}</td>
+                    <td>{{ cleaningItemOption.id }}</td>
+                    <td>{{ cleaningItemOption.title }}</td>
                     <td>
-                        {% if user.isEnabled == '1' %}
+                        {% if cleaningItemOption.isEnabled == '1' %}
                             <span class="m-badge  m-badge--success m-badge--wide">
                                 <i class="fa fa-check"></i>
                             </span>
@@ -82,27 +87,20 @@
                             </span>
                         {% endif %}
                     </td>
-                    <td>
-                        {% if user.lastLogin is not null %}
-                            {{ user.lastLogin|date('d/m/Y H:i') }}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>{{ user.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>{{ cleaningItemOption.createdAt|date('d/m/Y H:i') }}</td>
                     <td>
                         {% embed 'admin/_partials/_actions_btn_group.html.twig' %}
                             {% block li_actions %}
                                 <a class="dropdown-item" href="javascript:;" data-toggle="modal"
                                    data-target="#modalConfirmation"
-                                   data-path="{{ path('admin_user_delete', {id: user.id})|escape }}"
-                                   data-crf="{{ form_widget(delete_forms[user.id]._token)|escape }}"
+                                   data-path="{{ path('admin_cleaning_item_option_delete', {id: cleaningItemOption.id})|escape }}"
+                                   data-crf="{{ form_widget(delete_forms[cleaningItemOption.id]._token)|escape }}"
                                 >
                                     <i class="fa fa-trash"></i> {{ 'resource.actions.items.delete'|trans }}
                                 </a>
                             {% endblock %}
                         {% endembed %}
-                        <a href="{{ path('admin_user_edit', { id: user.id }) ~ pagination.buildQuery }}"
+                        <a href="{{ path('admin_cleaning_item_option_edit', { id: cleaningItemOption.id }) ~ pagination.buildQuery }}"
                            class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
                            title="{{ 'resource.actions.items.edit'|trans }}"> <i class="la la-edit"></i>
                         </a>
@@ -113,15 +111,15 @@
 
         {% block list_info %}
             {{ 'resource.pagination.list_info'|trans({
-                '%currentPageOffsetStart%': users.currentPageOffsetStart,
-                '%currentPageOffsetEnd%': users.currentPageOffsetEnd,
-                '%nbResults%': users.nbResults
+                '%currentPageOffsetStart%': cleaningItemOptions.currentPageOffsetStart,
+                '%currentPageOffsetEnd%': cleaningItemOptions.currentPageOffsetEnd,
+                '%nbResults%': cleaningItemOptions.nbResults
             }) }}
         {% endblock %}
 
         {% block list_pagination %}
-            {{ pagerfanta(users, 'twitter_bootstrap4',{
-                routeName: 'admin_user_index',
+            {{ pagerfanta(cleaningItemOptions, 'twitter_bootstrap4',{
+                routeName: 'admin_cleaning_item_option_index',
                 routeParams: app.request.query.all
             }) }}
         {% endblock %}

@@ -1,5 +1,5 @@
 {% extends 'admin/base.html.twig' %}
-{% block title %}{{ 'cleaningItemCategory.title'|trans }}{% endblock %}
+{% block title %}{{ 'cleaningItem.title'|trans }}{% endblock %}
 
 {% block page_content %}
 
@@ -10,14 +10,14 @@
         {% endblock %}
 
         {% block caption_subject %}
-            {{ 'resource.caption'|trans({'%resourceName%': 'cleaningItemCategory.title'|trans, '%nbResults%' : cleaningItemCategorys.nbResults}) }}
+            {{ 'resource.caption'|trans({'%resourceName%': 'cleaningItem.title'|trans, '%nbResults%' : cleaningItems.nbResults}) }}
         {% endblock %}
 
         {% block head_tools_actions %}
             <li class="m-portlet__nav-item">
-                <a href="{{ path('admin_cleaning_item_category_new') ~ pagination.buildQuery }}"
+                <a href="{{ path('admin_cleaning_item_new') ~ pagination.buildQuery }}"
                    class="btn btn-accent m-btn m-btn--custom m-btn--icon">
-                    <span><i class="la la-plus"></i><span> {{ 'cleaningItemCategory.actions.new'|trans }}</span></span>
+                    <span><i class="la la-plus"></i><span> {{ 'cleaningItem.actions.new'|trans }}</span></span>
                 </a>
             </li>
         {% endblock %}
@@ -30,8 +30,21 @@
                         {{ 'resource.filters.search'|trans }}:
                     </label>
                     <input type="text" class="form-control m-input m-input--solid" data-col-index="0"
-                           placeholder="{{ 'resource.fields.title'|trans }}" name="search" id="search"
+                           placeholder="{{ 'resource.filters.search'|trans }}" name="search" id="search"
                            value="{% if app.request.query.has('search') %}{{ app.request.query.get('search') }}{% endif %}">
+                </div>
+                <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                    <label for="category">
+                        {{ 'cleaningItemCategory.title_single'|trans }}:
+                    </label>
+                    <select class="form-control m-input" name="category" id="category" onchange="submit();">
+                        <option value=""></option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}"
+                                    {% if app.request.query.has('category') %}{% if app.request.query.get('category') == category.id %}selected{% endif %}{% endif %}>{{ category.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
             <div class="m-separator m-separator--md m-separator--dashed"></div>
@@ -41,7 +54,7 @@
                         <span><i class="la la-search"></i><span>{{ 'resource.filters.search'|trans }}</span></span>
                     </button>
                     &nbsp;&nbsp;
-                    <a href="{{ path('admin_cleaning_item_category_index') }}"
+                    <a href="{{ path('admin_cleaning_item_index') }}"
                        class="btn btn-secondary m-btn m-btn--icon">
                         <span><i class="la la-close"></i><span>{{ 'resource.actions.items.reset'|trans }}</span></span>
                     </a>
@@ -53,22 +66,30 @@
             <tr>
                 <th>ID</th>
                 <th>
-                    <a href="{{ path('admin_cleaning_item_category_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('title') }}">
+                    <a href="{{ path('admin_cleaning_item_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('title') }}">
                         {{ 'resource.fields.title'|trans }}
                     </a>
                 </th>
                 <th>
-                    <a href="{{ path('admin_cleaning_item_category_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('displayOrder') }}">
-                        {{ 'cleaningItemCategory.fields.displayOrder'|trans }}
+                    <a href="{{ path('admin_cleaning_item_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('cleaningItemCategory.title') }}">
+                        {{ 'cleaningItemCategory.title_single'|trans }}
                     </a>
                 </th>
                 <th>
-                    <a href="{{ path('admin_cleaning_item_category_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('isEnabled') }}">
+                    <a href="{{ path('admin_cleaning_item_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('displayOrder') }}">
+                        {{ 'cleaningItem.fields.displayOrder'|trans }}
+                    </a>
+                </th>
+                <th>
+                    {{ 'cleaningItem.fields.maxQuantity'|trans }}
+                </th>
+                <th>
+                    <a href="{{ path('admin_cleaning_item_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('isEnabled') }}">
                         {{ 'resource.toglleable.is_enabled_title'|trans }}
                     </a>
                 </th>
                 <th>
-                    <a href="{{ path('admin_cleaning_item_category_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
+                    <a href="{{ path('admin_cleaning_item_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
                         {{ 'resource.timestampable.createdAt'|trans }}
                     </a>
                 </th>
@@ -77,13 +98,15 @@
         {% endblock %}
 
         {% block table_tr_td %}
-            {% for cleaningItemCategory in cleaningItemCategorys %}
+            {% for cleaningItem in cleaningItems %}
                 <tr>
-                    <td>{{ cleaningItemCategory.id }}</td>
-                    <td>{{ cleaningItemCategory.title }}</td>
-                    <td>{{ cleaningItemCategory.displayOrder }}</td>
+                    <td>{{ cleaningItem.id }}</td>
+                    <td>{{ cleaningItem.title }}</td>
+                    <td>{{ cleaningItem.cleaningItemCategory.title }}</td>
+                    <td>{{ cleaningItem.displayOrder }}</td>
+                    <td>{{ cleaningItem.maxQuantity }}</td>
                     <td>
-                        {% if cleaningItemCategory.isEnabled == '1' %}
+                        {% if cleaningItem.isEnabled == '1' %}
                             <span class="m-badge  m-badge--success m-badge--wide">
                                 <i class="fa fa-check"></i>
                             </span>
@@ -93,20 +116,20 @@
                             </span>
                         {% endif %}
                     </td>
-                    <td>{{ cleaningItemCategory.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>{{ cleaningItem.createdAt|date('d/m/Y H:i') }}</td>
                     <td>
                         {% embed 'admin/_partials/_actions_btn_group.html.twig' %}
                             {% block li_actions %}
                                 <a class="dropdown-item" href="javascript:;" data-toggle="modal"
                                    data-target="#modalConfirmation"
-                                   data-path="{{ path('admin_cleaning_item_category_delete', {id: cleaningItemCategory.id})|escape }}"
-                                   data-crf="{{ form_widget(delete_forms[cleaningItemCategory.id]._token)|escape }}"
+                                   data-path="{{ path('admin_cleaning_item_delete', {id: cleaningItem.id})|escape }}"
+                                   data-crf="{{ form_widget(delete_forms[cleaningItem.id]._token)|escape }}"
                                 >
                                     <i class="fa fa-trash"></i> {{ 'resource.actions.items.delete'|trans }}
                                 </a>
                             {% endblock %}
                         {% endembed %}
-                        <a href="{{ path('admin_cleaning_item_category_edit', { id: cleaningItemCategory.id }) ~ pagination.buildQuery }}"
+                        <a href="{{ path('admin_cleaning_item_edit', { id: cleaningItem.id }) ~ pagination.buildQuery }}"
                            class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
                            title="{{ 'resource.actions.items.edit'|trans }}"> <i class="la la-edit"></i>
                         </a>
@@ -117,15 +140,15 @@
 
         {% block list_info %}
             {{ 'resource.pagination.list_info'|trans({
-                '%currentPageOffsetStart%': cleaningItemCategorys.currentPageOffsetStart,
-                '%currentPageOffsetEnd%': cleaningItemCategorys.currentPageOffsetEnd,
-                '%nbResults%': cleaningItemCategorys.nbResults
+                '%currentPageOffsetStart%': cleaningItems.currentPageOffsetStart,
+                '%currentPageOffsetEnd%': cleaningItems.currentPageOffsetEnd,
+                '%nbResults%': cleaningItems.nbResults
             }) }}
         {% endblock %}
 
         {% block list_pagination %}
-            {{ pagerfanta(cleaningItemCategorys, 'twitter_bootstrap4',{
-                routeName: 'admin_cleaning_item_category_index',
+            {{ pagerfanta(cleaningItems, 'twitter_bootstrap4',{
+                routeName: 'admin_cleaning_item_index',
                 routeParams: app.request.query.all
             }) }}
         {% endblock %}
