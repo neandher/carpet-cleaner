@@ -1,0 +1,133 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ 'cleaningItemCategory.title'|trans }}{% endblock %}
+
+{% block page_content %}
+
+    {% embed 'admin/_partials/_default_table_list.html.twig' %}
+
+        {% block icon_list %}
+            <i class="flaticon-map"></i>
+        {% endblock %}
+
+        {% block caption_subject %}
+            {{ 'resource.caption'|trans({'%resourceName%': 'cleaningItemCategory.title'|trans, '%nbResults%' : cleaningItemCategorys.nbResults}) }}
+        {% endblock %}
+
+        {% block head_tools %}{% endblock %}
+
+        {% block filters_actions %}
+            <div class="row align-items-center">
+                <div class="col-xl-8 order-2 order-xl-1">
+                    <div class="form-group m-form__group row align-items-center">
+                        <div class="col-md-4">
+                            <div class="m-input-icon m-input-icon--left">
+                                <input type="text" class="form-control m-input m-input--solid"
+                                       placeholder="{{ 'resource.filters.search'|trans }}..."
+                                       name="search" id="search"
+                                       value="{% if app.request.query.has('search') %}{{ app.request.query.get('search') }}{% endif %}"
+                                >
+                                <span class="m-input-icon__icon m-input-icon__icon--left">
+                                    <span><i class="la la-search"></i></span>
+                                </span>
+                            </div>
+                            <div class="d-md-none m--margin-bottom-10"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ path('admin_cleaning_item_category_index') }}"
+                               class="btn btn-secondary m-btn m-btn--custom btn-sm">
+                                <span>
+                                    <i class="fa fa-times"></i>
+                                    <span> {{ 'resource.actions.items.reset'|trans }}</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 order-1 order-xl-2 m--align-right">
+                    <a href="{{ path('admin_cleaning_item_category_new') ~ pagination.buildQuery }}"
+                       class="btn btn-accent m-btn m-btn--custom m-btn--icon">
+                        <span><i class="la la-plus"></i><span> {{ 'cleaningItemCategory.actions.new'|trans }}</span></span>
+                    </a>
+                    <div class="m-separator m-separator--dashed d-xl-none"></div>
+                </div>
+            </div>
+        {% endblock %}
+
+        {% block table_tr_th %}
+            <tr>
+                <th>ID</th>
+                <th>
+                    <a href="{{ path('admin_cleaning_item_category_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('title') }}">
+                        {{ 'resource.fields.title'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_cleaning_item_category_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('isEnabled') }}">
+                        {{ 'resource.toglleable.is_enabled_title'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_cleaning_item_category_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
+                        {{ 'resource.timestampable.createdAt'|trans }}
+                    </a>
+                </th>
+                <th>{{ 'resource.actions.title'|trans }}</th>
+            </tr>
+        {% endblock %}
+
+        {% block table_tr_td %}
+            {% for cleaningItemCategory in cleaningItemCategorys %}
+                <tr>
+                    <td>{{ cleaningItemCategory.id }}</td>
+                    <td>{{ cleaningItemCategory.title }}</td>
+                    <td>
+                        {% if cleaningItemCategory.isEnabled == '1' %}
+                            <span class="m-badge  m-badge--success m-badge--wide">
+                                <i class="fa fa-check"></i>
+                            </span>
+                        {% else %}
+                            <span class="m-badge  m-badge--danger m-badge--wide">
+                                <i class="fa fa-remove"></i>
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>{{ cleaningItemCategory.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% embed 'admin/_partials/_actions_btn_group.html.twig' %}
+                            {% block li_actions %}
+                                <a class="dropdown-item" href="javascript:;" data-toggle="modal"
+                                   data-target="#modalConfirmation"
+                                   data-path="{{ path('admin_cleaning_item_category_delete', {id: cleaningItemCategory.id})|escape }}"
+                                   data-crf="{{ form_widget(delete_forms[cleaningItemCategory.id]._token)|escape }}"
+                                >
+                                    <i class="fa fa-trash"></i> {{ 'resource.actions.items.delete'|trans }}
+                                </a>
+                            {% endblock %}
+                        {% endembed %}
+                        <a href="{{ path('admin_cleaning_item_category_edit', { id: cleaningItemCategory.id }) ~ pagination.buildQuery }}"
+                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                           title="{{ 'resource.actions.items.edit'|trans }}"> <i class="la la-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block list_info %}
+            {{ 'resource.pagination.list_info'|trans({
+                '%currentPageOffsetStart%': cleaningItemCategorys.currentPageOffsetStart,
+                '%currentPageOffsetEnd%': cleaningItemCategorys.currentPageOffsetEnd,
+                '%nbResults%': cleaningItemCategorys.nbResults
+            }) }}
+        {% endblock %}
+
+        {% block list_pagination %}
+            {{ pagerfanta(cleaningItemCategorys, 'twitter_bootstrap4',{
+                routeName: 'admin_cleaning_item_category_index',
+                routeParams: app.request.query.all
+            }) }}
+        {% endblock %}
+
+    {% endembed %}
+
+{% endblock %}

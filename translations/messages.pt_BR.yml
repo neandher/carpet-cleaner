@@ -8,7 +8,8 @@ resource:
             inserted: Houve um erro ao inserir o registro
             updated: Houve um erro ao alterar o registro
             deleted: Houve um erro ao deletar o registro
-
+    fields:
+        title: Título
     filters:
         search: Busca
         num_items: Items por página

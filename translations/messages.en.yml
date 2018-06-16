@@ -8,6 +8,8 @@ resource:
             inserted: An error has occurred
             updated: An error has occurred
             deleted: An error has occurred
+    fields:
+        title: Title
     filters:
         search: Search
         num_items: Per Page
@@ -70,3 +72,10 @@ user:
     login:
         title: Admin Login
         title_small: Login
+
+cleaningItemCategory:
+    title: Item Categories
+    title_single: Item Category
+    actions:
+        new: New Category
+        edit: Edit Category

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Resource\Model\TimestampableTrait;
+use App\Resource\Model\ToggleableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,6 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class CleaningItem
 {
+    use TimestampableTrait, ToggleableTrait;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

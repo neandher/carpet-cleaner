@@ -2,12 +2,12 @@
 
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 /**
  * BaseRepository
  */
-class BaseRepository extends EntityRepository
+abstract class BaseRepository extends ServiceEntityRepository
 {
     protected function addOrderingQueryBuilder(QueryBuilder $qb, $params = [])
     {
