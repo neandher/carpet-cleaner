@@ -50,7 +50,7 @@ class CleaningItem
     private $cleaningItemCategory;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CleaningItemOption", mappedBy="cleaningItem", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="App\Entity\CleaningItemOptions", mappedBy="cleaningItem", orphanRemoval=true)
      */
     private $cleaningItemOptions;
 
@@ -96,29 +96,6 @@ class CleaningItem
         return $this->cleaningItemOptions;
     }
 
-    public function addCleaningItemOption(CleaningItemOption $cleaningItemOption): self
-    {
-        if (!$this->cleaningItemOptions->contains($cleaningItemOption)) {
-            $this->cleaningItemOptions[] = $cleaningItemOption;
-            $cleaningItemOption->setCleaningItem($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCleaningItemOption(CleaningItemOption $cleaningItemOption): self
-    {
-        if ($this->cleaningItemOptions->contains($cleaningItemOption)) {
-            $this->cleaningItemOptions->removeElement($cleaningItemOption);
-            // set the owning side to null (unless already changed)
-            if ($cleaningItemOption->getCleaningItem() === $this) {
-                $cleaningItemOption->setCleaningItem(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getMaxQuantity(): ?int
     {
         return $this->maxQuantity;
@@ -139,6 +116,29 @@ class CleaningItem
     public function setDisplayOrder(int $displayOrder): self
     {
         $this->displayOrder = $displayOrder;
+
+        return $this;
+    }
+
+    public function addCleaningItemOption(CleaningItemOptions $cleaningItemOption): self
+    {
+        if (!$this->cleaningItemOptions->contains($cleaningItemOption)) {
+            $this->cleaningItemOptions[] = $cleaningItemOption;
+            $cleaningItemOption->setCleaningItem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCleaningItemOption(CleaningItemOptions $cleaningItemOption): self
+    {
+        if ($this->cleaningItemOptions->contains($cleaningItemOption)) {
+            $this->cleaningItemOptions->removeElement($cleaningItemOption);
+            // set the owning side to null (unless already changed)
+            if ($cleaningItemOption->getCleaningItem() === $this) {
+                $cleaningItemOption->setCleaningItem(null);
+            }
+        }
 
         return $this;
     }

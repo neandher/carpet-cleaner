@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Controller\BaseController;
 use App\Entity\CleaningItem;
 use App\Entity\CleaningItemCategory;
+use App\Entity\CleaningItemOption;
 use App\Event\FlashBagEvents;
 use App\Form\CleaningItemType;
 use App\Util\FlashBag;

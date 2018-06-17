@@ -30,11 +30,6 @@ class CleaningItemOption
     private $title;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\CleaningItem", inversedBy="cleaningItemOptions")
-     */
-    private $cleaningItem;
-
-    /**
      * @return mixed
      */
     public function getId()
@@ -57,18 +52,6 @@ class CleaningItemOption
     public function setTitle(string $title): CleaningItemOption
     {
         $this->title = $title;
-        return $this;
-    }
-
-    public function getCleaningItem(): ?CleaningItem
-    {
-        return $this->cleaningItem;
-    }
-
-    public function setCleaningItem(?CleaningItem $cleaningItem): self
-    {
-        $this->cleaningItem = $cleaningItem;
-
         return $this;
     }
 

@@ -31,10 +31,14 @@ trait ToggleableTrait
 
     /**
      * @param bool $isEnabled
+     *
+     * @return $this
      */
     public function setIsEnabled($isEnabled)
     {
         $this->isEnabled = (bool) $isEnabled;
+
+        return $this;
     }
 
     public function enable()
