@@ -26,6 +26,9 @@
                 <a href="#geral" class="nav-link active" data-toggle="tab">{{ 'resource.tabs.details'|trans }}</a>
             </li>
             <li class="nav-item">
+                <a href="#options" class="nav-link" data-toggle="tab">{{ 'cleaningItem.tabs.options'|trans }}</a>
+            </li>
+            <li class="nav-item">
                 <a href="#site" class="nav-link" data-toggle="tab">{{ 'cleaningItem.tabs.site'|trans }}</a>
             </li>
         {% endblock %}
@@ -42,6 +45,7 @@
     {% embed 'admin/_partials/_block_javascripts.html.twig' %}
         {% block javascripts_page_snippets %}
             <script src="{{ asset('assets/widgets/bootstrap-switch.js') }}"></script>
+            <script src="{{ asset('assets/custom/cleaningItemOptions.js') }}"></script>
         {% endblock %}
     {% endembed %}
 {% endblock %}

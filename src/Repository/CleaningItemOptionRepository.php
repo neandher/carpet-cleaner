@@ -15,7 +15,7 @@ class CleaningItemOptionRepository extends BaseRepository
         parent::__construct($registry, CleaningItemOption::class);
     }
 
-    protected function queryLatest(Pagination $pagination)
+    public function queryLatest(Pagination $pagination)
     {
         $routeParams = $pagination->getRouteParams();
 
@@ -40,5 +40,11 @@ class CleaningItemOptionRepository extends BaseRepository
         $paginator->setCurrentPage($routeParams['page']);
 
         return $paginator;
+    }
+
+    public function queryLatestForm()
+    {
+        return $this->createQueryBuilder('cleaningItemOption')
+            ->orderBy('cleaningItemOption.title', 'ASC');
     }
 }

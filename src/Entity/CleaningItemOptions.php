@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Resource\Model\ToggleableTrait;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CleaningItemOptionsRepository")
@@ -22,17 +23,21 @@ class CleaningItemOptions
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\CleaningItem", inversedBy="cleaningItemOptions")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotNull()
      */
     private $cleaningItem;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\CleaningItemOption")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotNull()
      */
     private $cleaningItemOption;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=0)
+     * @Assert\NotBlank()
+     * @Assert\LessThan(value="99999999.99")
      */
     private $amount;
 

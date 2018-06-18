@@ -8,6 +8,24 @@
     </div>
 </div>
 
+<div role="tabpanel" class="tab-pane" id="options">
+    <div id="cleaningItemOption" data-prototype="{% include 'admin/cleaningItem/collection/_cleaningItemOptions.html.twig'
+        with {'item': form.cleaningItemOptions, 'prototype': true} %}">
+
+        {% for option in form.cleaningItemOptions %}
+            {% include 'admin/cleaningItem/collection/_cleaningItemOptions.html.twig'
+                with {'item' : option, 'collection': true } %}
+        {% endfor %}
+
+        <div id="panel_add_cleaningItemOption">
+            <a href="#" class="btn btn-brand m-btn m-btn--icon m-btn--air" id="btn_add_cleaningItemOption">
+                <span><i class="la la-plus"></i><span>{{ 'resource.actions.items.add'|trans }}</span></span>
+            </a>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+
 <div role="tabpanel" class="tab-pane" id="site">
     <div class="row">
         <div class="col-md-6">{{ form_row(form.maxQuantity) }}</div>

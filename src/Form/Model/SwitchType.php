@@ -20,6 +20,7 @@ class SwitchType extends AbstractType
                 'data-on-text' => 'Yes',
                 'data-off-text' => 'No',
                 'data-switch' => 'true',
+                'class' => 'make-switch'
             ]
         ]);
     }

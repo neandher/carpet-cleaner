@@ -50,7 +50,9 @@ class CleaningItem
     private $cleaningItemCategory;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CleaningItemOptions", mappedBy="cleaningItem", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\CleaningItemOptions", mappedBy="cleaningItem", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Assert\Valid()
      */
     private $cleaningItemOptions;
 

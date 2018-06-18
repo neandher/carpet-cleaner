@@ -45,6 +45,7 @@ resource:
             delete: Delete
             cancel: Cancelar
             go_back: Back
+            add: Add
 
 errors:
     404:
@@ -107,6 +108,11 @@ cleaningItem:
         displayOrder: Display Order
     tabs:
         site: Site
+        options: Options
     actions:
         new: New Item
         edit: Edit Item
+
+cleaningItemOptions:
+    fields:
+        amount: Amount
