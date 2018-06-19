@@ -9,6 +9,7 @@ use App\Repository\CleaningItemOptionRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\PercentType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -17,7 +18,7 @@ class CleaningItemOptionsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('amount', MoneyType::class, ['label' => 'cleaningItemOptions.fields.amount'])
+            ->add('percentage', PercentType::class, ['label' => 'cleaningItemOptions.fields.percentage'])
             ->add('isEnabled', SwitchType::class, ['label' => 'resource.toglleable.is_enabled_title'])
             ->add('cleaningItemOption', EntityType::class, [
                 'class' => CleaningItemOption::class,

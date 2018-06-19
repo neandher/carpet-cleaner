@@ -10,6 +10,7 @@ resource:
             deleted: An error has occurred
     fields:
         title: Title
+        description: Description
     filters:
         search: Search
         num_items: Per Page
@@ -106,6 +107,7 @@ cleaningItem:
     fields:
         maxQuantity: Maximum Quantity
         displayOrder: Display Order
+        amount: Amount
     tabs:
         site: Site
         options: Options
@@ -115,4 +117,4 @@ cleaningItem:
 
 cleaningItemOptions:
     fields:
-        amount: Amount
+        percentage: Percentage

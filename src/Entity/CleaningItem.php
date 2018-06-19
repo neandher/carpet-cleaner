@@ -30,6 +30,11 @@ class CleaningItem
     private $title;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $description;
+
+    /**
      * @ORM\Column(type="smallint")
      * @Assert\NotBlank()
      * @Assert\GreaterThan(value="0")
@@ -42,6 +47,13 @@ class CleaningItem
      * @Assert\GreaterThan(value="0")
      */
     private $maxQuantity;
+
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @Assert\NotBlank()
+     * @Assert\LessThan(value="99999999.99")
+     */
+    private $amount;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\CleaningItemCategory")
@@ -115,6 +127,18 @@ class CleaningItem
         return $this->displayOrder;
     }
 
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    public function setAmount($amount): self
+    {
+        $this->amount = $amount;
+
+        return $this;
+    }
+
     public function setDisplayOrder(int $displayOrder): self
     {
         $this->displayOrder = $displayOrder;
@@ -141,6 +165,18 @@ class CleaningItem
                 $cleaningItemOption->setCleaningItem(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

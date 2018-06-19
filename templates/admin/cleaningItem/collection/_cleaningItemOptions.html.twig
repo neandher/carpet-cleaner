@@ -1,13 +1,13 @@
 {% if prototype is defined %}
     <div class='row'>
         <div class='col-md-4'>{{ form_row(item.vars.prototype.cleaningItemOption)|e('html_attr') }}</div>
-        <div class='col-md-4'>{{ form_row(item.vars.prototype.amount)|e('html_attr') }}</div>
+        <div class='col-md-4'>{{ form_row(item.vars.prototype.percentage)|e('html_attr') }}</div>
         <div class='col-md-4'>{{ form_widget(item.vars.prototype.isEnabled, {'attr': {
                 'data-on-color': 'success',
                 'data-off-color': 'danger',
                 'data-on-text': 'resource.toglleable.is_enabled'|trans,
                 'data-off-text': 'resource.toglleable.is_not_enabled'|trans,
-                'checked': false
+                'checked': true
             }})|e('html_attr') }}</div>
     </div>
 {% endif %}
@@ -17,7 +17,7 @@
         <div class='m-portlet__body'>
             <div class='row'>
                 <div class='col-md-4'>{{ form_row(item.cleaningItemOption) }}</div>
-                <div class='col-md-4'>{{ form_row(item.amount) }}</div>
+                <div class='col-md-4'>{{ form_row(item.percentage) }}</div>
                 <div class='col-md-4'>{{ form_widget(item.isEnabled) }}</div>
             </div>
         </div>

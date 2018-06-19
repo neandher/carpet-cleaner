@@ -19,9 +19,9 @@ function cleaningItemOptionInit() {
 
     $collectionHolder.data('index', index);
 
-    if (index == 0) {
+    /*if (index == 0) {
         addCleaningItemOptionForm($collectionHolder, $newLinkPanel);
-    }
+    }*/
 
     $addCleaningItemOptionLink.on('click', function (e) {
         e.preventDefault();

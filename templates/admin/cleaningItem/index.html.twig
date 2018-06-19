@@ -71,6 +71,9 @@
                     </a>
                 </th>
                 <th>
+                    {{ 'cleaningItem.fields.amount'|trans }}
+                </th>
+                <th>
                     <a href="{{ path('admin_cleaning_item_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('cleaningItemCategory.title') }}">
                         {{ 'cleaningItemCategory.title_single'|trans }}
                     </a>
@@ -102,6 +105,7 @@
                 <tr>
                     <td>{{ cleaningItem.id }}</td>
                     <td>{{ cleaningItem.title }}</td>
+                    <td>{{ cleaningItem.amount|number_format }}</td>
                     <td>{{ cleaningItem.cleaningItemCategory.title }}</td>
                     <td>{{ cleaningItem.displayOrder }}</td>
                     <td>{{ cleaningItem.maxQuantity }}</td>

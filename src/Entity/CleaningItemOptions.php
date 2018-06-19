@@ -35,11 +35,10 @@ class CleaningItemOptions
     private $cleaningItemOption;
 
     /**
-     * @ORM\Column(type="decimal", precision=10, scale=0)
-     * @Assert\NotBlank()
+     * @ORM\Column(type="decimal", precision=10, scale=2)
      * @Assert\LessThan(value="99999999.99")
      */
-    private $amount;
+    private $percentage;
 
     public function getId()
     {
@@ -70,14 +69,14 @@ class CleaningItemOptions
         return $this;
     }
 
-    public function getAmount()
+    public function getPercentage()
     {
-        return $this->amount;
+        return $this->percentage;
     }
 
-    public function setAmount($amount): self
+    public function setPercentage($percentage): self
     {
-        $this->amount = $amount;
+        $this->percentage = $percentage;
 
         return $this;
     }

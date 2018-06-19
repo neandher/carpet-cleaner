@@ -4,11 +4,9 @@ namespace App\Form;
 
 use App\Entity\CleaningItem;
 use App\Entity\CleaningItemCategory;
-use App\Entity\CleaningItemOption;
-use App\Entity\CleaningItemOptions;
+use App\Form\Model\MoneyCustomType;
 use App\Form\Model\ToggleableType;
 use App\Repository\CleaningItemCategoryRepository;
-use App\Repository\CleaningItemOptionRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -23,6 +21,7 @@ class CleaningItemType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, ['label' => 'resource.fields.title'])
+            ->add('description', TextType::class, ['label' => 'resource.fields.description'])
             ->add('cleaningItemCategory', EntityType::class, [
                 'class' => CleaningItemCategory::class,
                 'query_builder' => function (CleaningItemCategoryRepository $er) {
@@ -31,6 +30,7 @@ class CleaningItemType extends AbstractType
                 'choice_label' => 'title',
                 'label' => 'cleaningItemCategory.title_single',
             ])
+            ->add('amount', MoneyCustomType::class, ['label' => 'cleaningItem.fields.amount'])
             ->add('maxQuantity', NumberType::class, ['label' => 'cleaningItem.fields.maxQuantity'])
             ->add('displayOrder', NumberType::class, ['label' => 'cleaningItem.fields.displayOrder'])
             ->add('toggleable', ToggleableType::class)

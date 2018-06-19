@@ -47,4 +47,17 @@ class CleaningItemRepository extends BaseRepository
 
         return $paginator;
     }
+
+    public function findAllCustom()
+    {
+        return $this->createQueryBuilder('cleaningItem')
+            ->innerJoin('cleaningItem.cleaningItemCategory', 'cleaningItemCategory')
+            ->addSelect('cleaningItemCategory')
+            ->leftJoin('cleaningItem.cleaningItemOptions', 'cleaningItemOptions')
+            ->addSelect('cleaningItemOptions')
+            ->orderBy('cleaningItemCategory.displayOrder', 'DESC')
+            ->addOrderBy('cleaningItem.displayOrder', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

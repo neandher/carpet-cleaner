@@ -18,14 +18,6 @@ class DefaultController extends AbstractController
      */
     public function index()
     {
-        return $this->render('site/home/step-1.html.twig');
-    }
-
-    /**
-     * @Route("/step-2", name="step2")
-     */
-    public function step2()
-    {
-        return $this->render('site/home/step-2.html.twig');
+        return $this->redirectToRoute('site_schedule_step_1');
     }
 }
