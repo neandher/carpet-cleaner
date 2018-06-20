@@ -85,6 +85,7 @@
                             <input type="hidden" name="token" value="{{ csrf_token('schedule-items') }}"/>
                             <!--begin: Form Body -->
                             <div class="m-portlet__body">
+
                                 <!--begin: Form Wizard Step 1-->
                                 <div class="m-wizard__form-step m-wizard__form-step--current" id="m_wizard_form_step_1">
                                     <div class="row">
@@ -99,7 +100,12 @@
                                                     <div class="col-lg-6">
                                                         <label class="col-form-label">* Date:</label>
                                                         <input type="text" name="name" class="form-control m-input"
-                                                               placeholder="" value="" id="m_datepicker_1">
+                                                               placeholder="" value="{{ ''|date('m/d/Y') }}" id="m_datepicker_3" readonly >
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <label class="col-form-label">* Time:</label>
+                                                        <input type="text" name="name" class="form-control m-input"
+                                                               placeholder="" value="" id="m_timepicker_1" readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -184,7 +190,7 @@
                             <div class="m-portlet__foot m-portlet__foot--fit m--margin-top-40">
                                 <div class="m-form__actions m-form__actions">
                                     <div class="row">
-                                        <div class="col-lg-1"></div>
+                                        {#<div class="col-lg-1"></div>
                                         <div class="col-lg-4 m--align-left">
                                             <a href="{{ path('site_index') }}"
                                                class="btn btn-secondary m-btn m-btn--custom m-btn--icon">
@@ -196,8 +202,8 @@
                                                     </span>
                                                 </span>
                                             </a>
-                                        </div>
-                                        <div class="col-lg-6 m--align-right">
+                                        </div>#}
+                                        <div class="col-lg-11 m--align-right">
                                             <a href="#" class="btn btn-warning m-btn m-btn--custom m-btn--icon">
                                                 <span>
                                                     <span>
@@ -269,7 +275,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="m-widget1__item">
                             <div class="row m-row--no-padding align-items-center">
                                 <div class="col">
@@ -310,7 +315,8 @@
 {% block javascripts %}
     {% embed 'site/_partials/_block_javascripts.html.twig' %}
         {% block javascripts_page_snippets %}
-            <script src="{{ asset('site/widgets/bootstrap-datepicker.js') }}"></script>
+            <script src="{{ asset('assets/widgets/bootstrap-datepicker.js') }}"></script>
+            <script src="{{ asset('assets/widgets/bootstrap-timepicker.js') }}"></script>
         {% endblock %}
     {% endembed %}
 {% endblock %}

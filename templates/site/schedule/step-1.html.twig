@@ -90,6 +90,9 @@
                                      id="m_wizard_form_step_1">
                                     <div class="row">
                                         <div class="col-xl-10 offset-xl-1">
+
+                                            {{ include('_partials/_flash_messages.html.twig') }}
+
                                             {% for category in categories %}
                                                 <div class="m-form__section {% if loop.index == 1 %}m-form__section--first{% endif %}">
                                                     <div class="m-form__heading">

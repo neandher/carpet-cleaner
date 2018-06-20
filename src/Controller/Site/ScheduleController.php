@@ -82,52 +82,67 @@ class ScheduleController extends AbstractController
 
             $checkout = [];
             $total = 0;
-            foreach ($request->request->all()['items'] as $item) {
-                if ($item['quantity'] > 0) {
+            $checkSubmit = false;
 
-                    /** @var CleaningItem $cleaningItem */
-                    $cleaningItem = $this->getDoctrine()->getRepository(CleaningItem::class)->findOneBy(['id' => $item['id']]);
+            if ($request->request->has('items')) {
+                foreach ($request->request->all()['items'] as $item) {
+                    if ($item['quantity'] > 0) {
 
-                    $itemTotal = $cleaningItem->getAmount() * $item['quantity'];
+                        $checkSubmit = true;
 
-                    /** @var CleaningItemOptions $cleaningItemOption |null */
-                    $cleaningItemOption = null;
+                        /** @var CleaningItem $cleaningItem */
+                        $cleaningItem = $this->getDoctrine()->getRepository(CleaningItem::class)->findOneBy(['id' => $item['id']]);
 
-                    if (!empty($item['item_option'])) {
-                        $cleaningItemOption = $this->getDoctrine()->getRepository(CleaningItemOptions::class)->findOneBy(['id' => $item['item_option']]);
-                        if ($cleaningItemOption->getPercentage() > 0) {
-                            $itemTotal = (($cleaningItemOption->getPercentage()  * $cleaningItem->getAmount()) + $cleaningItem->getAmount()) * $item['quantity'];
+                        $itemTotal = $cleaningItem->getAmount() * $item['quantity'];
+
+                        /** @var CleaningItemOptions $cleaningItemOption |null */
+                        $cleaningItemOption = null;
+
+                        if (!empty($item['item_option'])) {
+                            $cleaningItemOption = $this->getDoctrine()->getRepository(CleaningItemOptions::class)->findOneBy(['id' => $item['item_option']]);
+                            if ($cleaningItemOption->getPercentage() > 0) {
+                                $itemTotal = (($cleaningItemOption->getPercentage() * $cleaningItem->getAmount()) + $cleaningItem->getAmount()) * $item['quantity'];
+                            }
                         }
+
+                        $total += $itemTotal;
+
+                        $checkout['items'][$item['id']]['item'] = [
+                            'title' => $cleaningItem->getTitle(),
+                            'categoryTitle' => $cleaningItem->getCleaningItemCategory()->getTitle(),
+                            'quantity' => $item['quantity'],
+                            'total' => round($itemTotal, 2)
+                        ];
+                        $checkout['items'][$item['id']]['item_option'] = !empty($item['item_option']) ? [
+                            'title' => $cleaningItemOption->getCleaningItemOption()->getTitle(),
+                        ] : null;
+                        $checkout['items'][$item['id']]['item_total'] = $itemTotal;
                     }
-
-                    $total += $itemTotal;
-
-                    $checkout['items'][$item['id']]['item'] = [
-                        'title' => $cleaningItem->getTitle(),
-                        'categoryTitle' => $cleaningItem->getCleaningItemCategory()->getTitle(),
-                        'quantity' => $item['quantity'],
-                        'total' => round($itemTotal, 2)
-                    ];
-                    $checkout['items'][$item['id']]['item_option'] = !empty($item['item_option']) ? [
-                        'title' => $cleaningItemOption->getCleaningItemOption()->getTitle(),
-                    ] : null;
-                    $checkout['items'][$item['id']]['item_total'] = $itemTotal;
                 }
+
+                if ($checkSubmit) {
+                    
+                    $checkout['subtotal'] = round($total, 2);
+                    $checkout['discount'] = 0.00;
+                    $checkout['total'] = round($total, 2);
+
+                    $request->getSession()->set('checkout', $checkout);
+
+                    return $this->redirectToRoute('site_schedule_step_2');
+                }
+
+                $this->flashBag->newMessage(
+                    FlashBagEvents::MESSAGE_TYPE_ERROR,
+                    'Add at least one service!'
+                );
             }
 
-            $checkout['subtotal'] = round($total, 2);
-            $checkout['discount'] = 0.00;
-            $checkout['total'] = round($total, 2);
-
-            $request->getSession()->set('checkout', $checkout);
-
-            return $this->redirectToRoute('site_schedule_step_2');
+        } else {
+            $this->flashBag->newMessage(
+                FlashBagEvents::MESSAGE_TYPE_ERROR,
+                'Invalid token!'
+            );
         }
-
-        $this->flashBag->newMessage(
-            FlashBagEvents::MESSAGE_TYPE_ERROR,
-            'Invalid token!'
-        );
 
         return $this->redirectToRoute('site_schedule_step_1');
     }
