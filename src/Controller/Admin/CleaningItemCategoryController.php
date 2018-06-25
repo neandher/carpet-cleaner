@@ -146,7 +146,7 @@ class CleaningItemCategoryController extends BaseController
                 $pagination->getRouteParams()
             );
 
-            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_cleaning_item_category_index');
+            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_cleaning_item_category_index', $pagination->getRouteParams());
         }
 
         return $this->render('admin/cleaningItemCategory/edit.html.twig', [

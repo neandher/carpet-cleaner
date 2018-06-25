@@ -118,3 +118,12 @@ cleaningItem:
 cleaningItemOptions:
     fields:
         percentage: Percentage
+
+zipCode:
+    title: Zip codes
+    title_single: Zip code
+    fields:
+        percentage: Percentage
+    actions:
+        new: New Zip code
+        edit: Edit Zip code

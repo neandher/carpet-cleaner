@@ -1,0 +1,129 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ 'resource.fields.description'|trans }}{% endblock %}
+
+{% block page_content %}
+
+    {% embed 'admin/_partials/_default_table_list.html.twig' %}
+
+        {% block icon_list %}
+            <i class="flaticon-map-location"></i>
+        {% endblock %}
+
+        {% block caption_subject %}
+            {{ 'resource.caption'|trans({'%resourceName%': 'zipCode.title'|trans, '%nbResults%' : zipCodes.nbResults}) }}
+        {% endblock %}
+
+        {% block head_tools_actions %}
+            <li class="m-portlet__nav-item">
+                <a href="{{ path('admin_zip_code_new') ~ pagination.buildQuery }}"
+                   class="btn btn-accent m-btn m-btn--custom m-btn--icon">
+                    <span><i class="la la-plus"></i><span> {{ 'zipCode.actions.new'|trans }}</span></span>
+                </a>
+            </li>
+        {% endblock %}
+        {% block head_tools_dropdown %}{% endblock %}
+
+        {% block filters_actions %}
+            <div class="row m--margin-bottom-20">
+                <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                    <label for="search">
+                        {{ 'resource.filters.search'|trans }}:
+                    </label>
+                    <input type="text" class="form-control m-input m-input--solid" data-col-index="0"
+                           placeholder="{{ 'resource.fields.description'|trans }}" name="search" id="search"
+                           value="{% if app.request.query.has('search') %}{{ app.request.query.get('search') }}{% endif %}">
+                </div>
+            </div>
+            <div class="m-separator m-separator--md m-separator--dashed"></div>
+            <div class="row m--margin-bottom-20">
+                <div class="col-lg-12">
+                    <button type="submit" class="btn btn-brand m-btn m-btn--icon">
+                        <span><i class="la la-search"></i><span>{{ 'resource.filters.search'|trans }}</span></span>
+                    </button>
+                    &nbsp;&nbsp;
+                    <a href="{{ path('admin_zip_code_index') }}"
+                       class="btn btn-secondary m-btn m-btn--icon">
+                        <span><i class="la la-close"></i><span>{{ 'resource.actions.items.reset'|trans }}</span></span>
+                    </a>
+                </div>
+            </div>
+        {% endblock %}
+
+        {% block table_tr_th %}
+            <tr>
+                <th>ID</th>
+                <th>
+                    <a href="{{ path('admin_zip_code_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('description') }}">
+                        {{ 'resource.fields.description'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_zip_code_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('isEnabled') }}">
+                        {{ 'resource.toglleable.is_enabled_title'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_zip_code_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
+                        {{ 'resource.timestampable.createdAt'|trans }}
+                    </a>
+                </th>
+                <th>{{ 'resource.actions.title'|trans }}</th>
+            </tr>
+        {% endblock %}
+
+        {% block table_tr_td %}
+            {% for zipCode in zipCodes %}
+                <tr>
+                    <td>{{ zipCode.id }}</td>
+                    <td>{{ zipCode.description }}</td>
+                    <td>
+                        {% if zipCode.isEnabled == '1' %}
+                            <span class="m-badge  m-badge--success m-badge--wide">
+                                <i class="fa fa-check"></i>
+                            </span>
+                        {% else %}
+                            <span class="m-badge  m-badge--danger m-badge--wide">
+                                <i class="fa fa-remove"></i>
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>{{ zipCode.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% embed 'admin/_partials/_actions_btn_group.html.twig' %}
+                            {% block li_actions %}
+                                <a class="dropdown-item" href="javascript:;" data-toggle="modal"
+                                   data-target="#modalConfirmation"
+                                   data-path="{{ path('admin_zip_code_delete', {id: zipCode.id})|escape }}"
+                                   data-crf="{{ form_widget(delete_forms[zipCode.id]._token)|escape }}"
+                                >
+                                    <i class="fa fa-trash"></i> {{ 'resource.actions.items.delete'|trans }}
+                                </a>
+                            {% endblock %}
+                        {% endembed %}
+                        <a href="{{ path('admin_zip_code_edit', { id: zipCode.id }) ~ pagination.buildQuery }}"
+                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                           description="{{ 'resource.actions.items.edit'|trans }}"> <i class="la la-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block list_info %}
+            {{ 'resource.pagination.list_info'|trans({
+                '%currentPageOffsetStart%': zipCodes.currentPageOffsetStart,
+                '%currentPageOffsetEnd%': zipCodes.currentPageOffsetEnd,
+                '%nbResults%': zipCodes.nbResults
+            }) }}
+        {% endblock %}
+
+        {% block list_pagination %}
+            {{ pagerfanta(zipCodes, 'twitter_bootstrap4',{
+                routeName: 'admin_zip_code_index',
+                routeParams: app.request.query.all
+            }) }}
+        {% endblock %}
+
+    {% endembed %}
+
+{% endblock %}

@@ -3,11 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Controller\BaseController;
-use App\Entity\CleaningItem;
-use App\Entity\CleaningItemCategory;
-use App\Entity\CleaningItemOption;
+use App\Entity\ZipCode;
 use App\Event\FlashBagEvents;
-use App\Form\CleaningItemType;
+use App\Form\ZipCodeType;
 use App\Util\FlashBag;
 use App\Util\Pagination;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -17,12 +15,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class CleaningItemController
+ * Class ZipCodeController
  * @package App\Controller\Admin
  *
- * @Route("/cleaning-item", name="admin_cleaning_item_")
+ * @Route("/zip-code", name="admin_zip_code_")
  */
-class CleaningItemController extends BaseController
+class ZipCodeController extends BaseController
 {
     /**
      * @var Pagination
@@ -34,7 +32,7 @@ class CleaningItemController extends BaseController
     private $flashBag;
 
     /**
-     * CleaningItemController constructor.
+     * ZipCodeController constructor.
      * @param Pagination $pagination
      * @param FlashBag $flashBag
      */
@@ -51,22 +49,19 @@ class CleaningItemController extends BaseController
      */
     public function index(Request $request)
     {
-        $pagination = $this->pagination->handle($request, CleaningItem::class);
+        $pagination = $this->pagination->handle($request, ZipCode::class);
 
-        $cleaningItems = $this->getDoctrine()->getRepository(CleaningItem::class)->findLatest($pagination);
+        $zipCodes = $this->getDoctrine()->getRepository(ZipCode::class)->findLatest($pagination);
 
         $deleteForms = [];
-        foreach ($cleaningItems as $cleaningItem) {
-            $deleteForms[$cleaningItem->getId()] = $this->createDeleteForm($cleaningItem)->createView();
+        foreach ($zipCodes as $zipCode) {
+            $deleteForms[$zipCode->getId()] = $this->createDeleteForm($zipCode)->createView();
         }
 
-        $cleaningItemCategories = $this->getDoctrine()->getRepository(CleaningItemCategory::class)->findAll();
-
-        return $this->render('admin/cleaningItem/index.html.twig', [
-            'cleaningItems' => $cleaningItems,
+        return $this->render('admin/zipCode/index.html.twig', [
+            'zipCodes' => $zipCodes,
             'pagination' => $pagination,
-            'delete_forms' => $deleteForms,
-            'categories' => $cleaningItemCategories
+            'delete_forms' => $deleteForms
         ]);
     }
 
@@ -78,18 +73,18 @@ class CleaningItemController extends BaseController
      */
     public function newAction(Request $request)
     {
-        $pagination = $this->pagination->handle($request, CleaningItem::class);
+        $pagination = $this->pagination->handle($request, ZipCode::class);
 
-        $cleaningItem = new CleaningItem();
+        $zipCode = new ZipCode();
 
-        $form = $this->createForm(CleaningItemType::class, $cleaningItem);
+        $form = $this->createForm(ZipCodeType::class, $zipCode);
         $this->addDefaultSubmitButtons($form);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($cleaningItem);
+            $em->persist($zipCode);
             $em->flush();
 
             $this->flashBag->newMessage(
@@ -99,17 +94,17 @@ class CleaningItemController extends BaseController
 
             $handleSubmitButtons = $this->handleSubmitButtons(
                 $form,
-                'admin_cleaning_item_new',
-                'admin_cleaning_item_edit',
-                ['id' => $cleaningItem->getId()],
+                'admin_zip_code_new',
+                'admin_zip_code_edit',
+                ['id' => $zipCode->getId()],
                 $pagination->getRouteParams()
             );
 
-            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_cleaning_item_index', $pagination->getRouteParams());
+            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_zip_code_index');
         }
 
-        return $this->render('admin/cleaningItem/new.html.twig', [
-            'cleaningItem' => $cleaningItem,
+        return $this->render('admin/zipCode/new.html.twig', [
+            'zipCode' => $zipCode,
             'form' => $form->createView(),
             'pagination' => $pagination
         ]);
@@ -119,14 +114,14 @@ class CleaningItemController extends BaseController
      * @Route("/{id}/edit", requirements={"id" : "\d+"}, name="edit")
      * @Method({"GET", "POST"})
      * @param Request $request
-     * @param CleaningItem $cleaningItem
+     * @param ZipCode $zipCode
      * @return Response
      */
-    public function editAction(CleaningItem $cleaningItem, Request $request)
+    public function editAction(ZipCode $zipCode, Request $request)
     {
-        $pagination = $this->pagination->handle($request, CleaningItem::class);
+        $pagination = $this->pagination->handle($request, ZipCode::class);
 
-        $form = $this->createForm(CleaningItemType::class, $cleaningItem);
+        $form = $this->createForm(ZipCodeType::class, $zipCode);
 
         $this->addDefaultSubmitButtons($form);
 
@@ -135,7 +130,7 @@ class CleaningItemController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $em = $this->getDoctrine()->getManager();
-            $em->persist($cleaningItem);
+            $em->persist($zipCode);
             $em->flush();
 
             $this->flashBag->newMessage(
@@ -145,17 +140,17 @@ class CleaningItemController extends BaseController
 
             $handleSubmitButtons = $this->handleSubmitButtons(
                 $form,
-                'admin_cleaning_item_new',
-                'admin_cleaning_item_edit',
-                ['id' => $cleaningItem->getId()],
+                'admin_zip_code_new',
+                'admin_zip_code_edit',
+                ['id' => $zipCode->getId()],
                 $pagination->getRouteParams()
             );
 
-            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_cleaning_item_index');
+            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_zip_code_index', $pagination->getRouteParams());
         }
 
-        return $this->render('admin/cleaningItem/edit.html.twig', [
-            'cleaningItem' => $cleaningItem,
+        return $this->render('admin/zipCode/edit.html.twig', [
+            'zipCode' => $zipCode,
             'form' => $form->createView(),
             'pagination' => $pagination
         ]);
@@ -165,21 +160,21 @@ class CleaningItemController extends BaseController
      * @Route("/{id}/delete", requirements={"id" : "\d+"}, name="delete")
      * @Method("DELETE")
      * @param Request $request
-     * @param CleaningItem $cleaningItem
+     * @param ZipCode $zipCode
      * @return Response
      */
-    public function deletAction(Request $request, CleaningItem $cleaningItem)
+    public function deletAction(Request $request, ZipCode $zipCode)
     {
-        $pagination = $this->pagination->handle($request, CleaningItem::class);
+        $pagination = $this->pagination->handle($request, ZipCode::class);
 
-        $form = $this->createDeleteForm($cleaningItem);
+        $form = $this->createDeleteForm($zipCode);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             $em = $this->getDoctrine()->getManager();
-            $em->remove($cleaningItem);
+            $em->remove($zipCode);
             $em->flush();
 
             $this->flashBag->newMessage(
@@ -193,19 +188,19 @@ class CleaningItemController extends BaseController
             );
         }
 
-        return $this->redirectToRoute('admin_cleaning_item_index', $pagination->getRouteParams());
+        return $this->redirectToRoute('admin_zip_code_index', $pagination->getRouteParams());
     }
 
     /**
-     * @param CleaningItem $cleaningItem
+     * @param ZipCode $zipCode
      * @return FormInterface
      */
-    private function createDeleteForm(CleaningItem $cleaningItem)
+    private function createDeleteForm(ZipCode $zipCode)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('admin_cleaning_item_delete', ['id' => $cleaningItem->getId()]))
+            ->setAction($this->generateUrl('admin_zip_code_delete', ['id' => $zipCode->getId()]))
             ->setMethod('DELETE')
-            ->setData($cleaningItem)
+            ->setData($zipCode)
             ->getForm();
     }
 }

@@ -146,7 +146,7 @@ class CleaningItemOptionController extends BaseController
                 $pagination->getRouteParams()
             );
 
-            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_cleaning_item_option_index');
+            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_cleaning_item_option_index', $pagination->getRouteParams());
         }
 
         return $this->render('admin/cleaningItemOption/edit.html.twig', [

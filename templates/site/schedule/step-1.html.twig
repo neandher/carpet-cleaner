@@ -116,7 +116,6 @@
                                                                             {% for option in  item.cleaningItemOptions %}
                                                                                 <option value="{{ option.id }}">
                                                                                     {{ option.cleaningItemOption.title }}
-                                                                                    - ${{ ((item.amount * option.percentage) + item.amount)|number_format }}
                                                                                 </option>
                                                                             {% endfor %}
                                                                         </select>
@@ -201,7 +200,18 @@
                                 <div class="col">
                                     <div class="form-group m-form__group">
                                         <label for="example_input_full_name">
-                                            Coupon Code:
+                                            <strong>Zip Code:</strong> <span id="zip-code-success">
+                                                {% if app.request.session.has('zipCode') %}{{ app.request.session.get('zipCode') }}{% endif %}
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row m-row--no-padding align-items-center">
+                                <div class="col">
+                                    <div class="form-group m-form__group">
+                                        <label for="example_input_full_name">
+                                            <strong>Coupon Code:</strong>
                                         </label>
                                         <input type="email" class="form-control m-input"
                                                placeholder="Enter coupon code">
@@ -216,4 +226,80 @@
             </div>
         </div>
     </div>
+
+    <!-- modal zip code -->
+    <form action="" method="post" class="m-form m-form--fit" id="form_zip_code" novalidate="novalidate">
+        <div class="modal fade" id="modalZipCode" tabindex="-1" role="basic"
+             aria-labelledby="modalZipCodeLabel">
+
+            <div class="modal-dialog modal-dialog-centered" role="document">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Check Zip Code</h5>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="m-alert m-alert--icon alert alert-danger m--hide" role="alert" id="m_form_1_msg">
+                            <div class="m-alert__icon">
+                                <i class="la la-warning"></i>
+                            </div>
+                            <div class="m-alert__text">
+                                We do not currently serve this area, please contact us in: operation@azapservices.com
+                                <br>
+                                (888) 382-AZAP / (888) 382-2927
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group" style="padding-left:0; padding-right: 0;">
+                            <input type="number" class="form-control m-input" name="zip_code" id="zip_code"
+                                   required="required" aria-describedby="zipcode" placeholder="Enter zip code"
+                                   minlength="2" maxlength="50">
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-accent m-btn m-btn--custom m-btn--icon m-btn--air"
+                                id="btn-check-zip-code">
+                            <span><i class="fa fa-check"></i><span>Check</span></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- end modal zip code -->
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        /*$('#modalZipCode').modal({
+            backdrop: 'static',
+            keyboard: false
+        }).on('shown.bs.modal', function (e) {
+            $('#zip_code').focus();
+        });*/
+
+        $('#form_zip_code').validate({
+            rules: {
+                zip_code: {required: true, number: true, minlength: 2, maxlength: 50},
+            }, invalidHandler: function (e, t) {
+                //...
+            }, submitHandler: function (e) {
+                $('#btn-check-zip-code').addClass('m-loader m-loader--light m-loader--right');
+                $.post("{{ path('site_schedule_find_zip_code')|escape('js') }}", $('#form_zip_code').serialize(), function (data) {
+                    if (data.success != null) {
+                        $('#m_form_1_msg').addClass('m--hide').show();
+                        $('#modalZipCode').modal('hide');
+                        $('#zip-code-success').html($('#zip_code').val());
+                    }
+                }).fail(function () {
+                    $('#m_form_1_msg').removeClass('m--hide').show();
+                }).always(function () {
+                    $('#btn-check-zip-code').removeClass('m-loader m-loader--light m-loader--right');
+                });
+            }
+        })
+    </script>
 {% endblock %}

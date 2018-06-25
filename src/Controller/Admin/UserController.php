@@ -150,7 +150,7 @@ class UserController extends BaseController
                 $pagination->getRouteParams()
             );
 
-            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_user_index');
+            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_user_index', $pagination->getRouteParams());
         }
 
         return $this->render('admin/user/edit.html.twig', [
