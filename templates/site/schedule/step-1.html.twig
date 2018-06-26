@@ -198,30 +198,22 @@
                         <div class="m-widget1__item">
                             <div class="row m-row--no-padding align-items-center">
                                 <div class="col">
-                                    <div class="form-group m-form__group">
+                                    <div class="form-group m-form__group" style="margin-bottom: 0">
                                         <label for="example_input_full_name">
-                                            <strong>Zip Code:</strong> <span id="zip-code-success">
+                                            Zip Code: <span id="zip-code-success">
                                                 {% if app.request.session.has('zipCode') %}{{ app.request.session.get('zipCode') }}{% endif %}
                                             </span>
                                         </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row m-row--no-padding align-items-center">
-                                <div class="col">
-                                    <div class="form-group m-form__group">
-                                        <label for="example_input_full_name">
-                                            <strong>Coupon Code:</strong>
-                                        </label>
-                                        <input type="email" class="form-control m-input"
-                                               placeholder="Enter coupon code">
+                                        <br>
+                                        <button type="submit" class="btn btn-sm btn-accent m-btn--icon m-btn--air"
+                                                id="btn-update-zip-code" style="margin-top: 10px">
+                                            <span><i class="fa fa-map-marker"></i><span>Update</span></span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!--end: Form Wizard Step 4-->
                     </div>
-                    <!--end: Form Body -->
                 </div>
             </div>
         </div>
@@ -274,12 +266,18 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">
-        /*$('#modalZipCode').modal({
+        $('#modalZipCode').modal({
             backdrop: 'static',
-            keyboard: false
+            keyboard: false,
+            show: {% if app.request.session.has('zipCode') %}false{% else %}true{% endif %}
         }).on('shown.bs.modal', function (e) {
             $('#zip_code').focus();
-        });*/
+        });
+
+        $('#btn-update-zip-code').click(function () {
+            $('#modalZipCode').modal('show');
+            $('#zip_code').val('{{ app.request.session.get('zipCode') }}');
+        });
 
         $('#form_zip_code').validate({
             rules: {

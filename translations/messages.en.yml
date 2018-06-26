@@ -127,3 +127,21 @@ zipCode:
     actions:
         new: New Zip code
         edit: Edit Zip code
+
+customer:
+    title: Customers
+    title_single: Customer
+    fields:
+        firstName: First Name
+        lastName: Last Name
+        phoneNumber: Phone Number
+    actions:
+
+address:
+    title: Address
+    title_single: Addresses
+    fields:
+        address: Address
+        city: City
+        zipCode: Zip Code
+        state: State

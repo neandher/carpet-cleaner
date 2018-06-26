@@ -81,7 +81,7 @@
                         -->
                         <form action="{{ path('site_schedule_step_2_post') }}" method="post"
                               class="m-form m-form--label-align-left- m-form--state-" id="m_form">
-                            <input type="hidden" name="token" value="{{ csrf_token('schedule-items') }}"/>
+
                             <!--begin: Form Body -->
                             <div class="m-portlet__body">
                                 <!--begin: Form Wizard Step 1-->
@@ -303,6 +303,28 @@
                             </div>
                         </div>
                     </div>
+                    <div class="m-separator m-separator--fit"></div>
+                    <form action="" method="post">
+                        <div class="m-widget1 m-widget1--paddingless">
+                            <div class="m-widget1__item">
+                                <div class="row m-row--no-padding align-items-center">
+                                    <div class="col">
+                                        <div class="form-group m-form__group" style="margin-bottom: 0">
+                                            <label for="example_input_full_name">
+                                                Coupon Code
+                                            </label>
+                                            <input type="text" class="form-control m-input" name="coupon_code"
+                                                   id="coupon_code" placeholder="Enter coupon code">
+                                            <button type="submit" class="btn btn-sm btn-accent m-btn--icon m-btn--air"
+                                                    id="btn-check-coupon-code" style="margin-top: 12px">
+                                                <span><i class="fa fa-tags"></i><span>Send</span></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                     <!--end: Form Wizard Step 4-->
                 </div>
                 <!--end: Form Body -->

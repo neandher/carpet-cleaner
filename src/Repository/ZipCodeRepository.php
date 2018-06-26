@@ -57,7 +57,7 @@ class ZipCodeRepository extends BaseRepository
     {
         return $this->createQueryBuilder('zip_code')
             ->where('zip_code.description = :zipcode')->setParameter('zipcode', $zipCode)
-            ->andWhere('isEnabled = 1')
+            ->andWhere('zip_code.isEnabled = 1')
             ->getQuery()->getOneOrNullResult();
     }
 }

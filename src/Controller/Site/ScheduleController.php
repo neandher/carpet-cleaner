@@ -5,13 +5,16 @@ namespace App\Controller\Site;
 use App\Entity\CleaningItem;
 use App\Entity\CleaningItemCategory;
 use App\Entity\CleaningItemOptions;
+use App\Entity\Customer;
 use App\Entity\ZipCode;
 use App\Event\FlashBagEvents;
+use App\Form\CustomerType;
 use App\Repository\CleaningItemOptionsRepository;
 use App\Util\FlashBag;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -168,34 +171,29 @@ class ScheduleController extends AbstractController
 
     /**
      * @Route("/step-2", name="step_2")
-     */
-    public function step2()
-    {
-        return $this->render('site/schedule/step-2.html.twig');
-    }
-
-    /**
-     * @Route("/step-2-post", name="step_2_post")
-     * @Method("POST")
      * @param Request $request
-     * @return Response
+     * @return RedirectResponse|Response
      */
-    public function step2Post(Request $request)
+    public function step2(Request $request)
     {
-        $submittedToken = $request->request->get('token');
+        $customer = new Customer();
+        $customerForm = $this->createForm(CustomerType::class, $customer);
+        $customerForm->handleRequest($request);
 
-        if ($this->isCsrfTokenValid('schedule-items', $submittedToken)) {
-            //...
+        if ($customerForm->isSubmitted() && $customerForm->isValid()) {
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($customer);
+            //$em->flush();
+
+            $this->flashBag->newMessage(
+                FlashBagEvents::MESSAGE_TYPE_SUCCESS,
+                FlashBagEvents::MESSAGE_SUCCESS_INSERTED
+            );
 
             return $this->redirectToRoute('site_schedule_success');
         }
-
-        $this->flashBag->newMessage(
-            FlashBagEvents::MESSAGE_TYPE_ERROR,
-            'Invalid token!'
-        );
-
-        return $this->redirectToRoute('site_schedule_step_2');
+        return $this->render('site/schedule/step-2.html.twig');
     }
 
     /**
@@ -204,7 +202,7 @@ class ScheduleController extends AbstractController
      */
     public function scheduleSuccess()
     {
-
+        return $this->render('site/schedule/success.html.twig');
     }
 
     /**
