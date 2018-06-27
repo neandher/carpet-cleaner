@@ -3,48 +3,50 @@
 namespace App\Repository;
 
 use App\Entity\Customer;
+use App\Util\Pagination;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-/**
- * @method Customer|null find($id, $lockMode = null, $lockVersion = null)
- * @method Customer|null findOneBy(array $criteria, array $orderBy = null)
- * @method Customer[]    findAll()
- * @method Customer[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class CustomerRepository extends ServiceEntityRepository
+class CustomerRepository extends BaseRepository
 {
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Customer::class);
     }
 
-//    /**
-//     * @return Customer[] Returns an array of Customer objects
-//     */
-    /*
-    public function findByExampleField($value)
+    public function queryLatest(Pagination $pagination)
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $routeParams = $pagination->getRouteParams();
 
-    /*
-    public function findOneBySomeField($value): ?Customer
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $qb = $this->createQueryBuilder('customer');
+
+        if (isset($routeParams['search'])) {
+            $qb->andWhere('customer.firstName like :search')->setParameter('search', '%' . $routeParams['search'] . '%');
+        }
+
+        $qb = $this->addOrderingQueryBuilder($qb, $routeParams);
+
+        return $qb->getQuery();
     }
-    */
+
+    public function findLatest(Pagination $pagination)
+    {
+        $routeParams = $pagination->getRouteParams();
+
+        $paginator = new Pagerfanta(new DoctrineORMAdapter($this->queryLatest($pagination), false));
+
+        $paginator->setMaxPerPage($routeParams['num_items']);
+        $paginator->setCurrentPage($routeParams['page']);
+
+        return $paginator;
+    }
+
+    public function queryLatestForm()
+    {
+        return $this->createQueryBuilder('customer')
+            ->orderBy('customer.firstName', 'ASC')
+            ->addOrderBy('customer.lastName', 'ASC');
+    }
 }

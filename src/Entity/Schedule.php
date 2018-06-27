@@ -6,6 +6,7 @@ use App\Resource\Model\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ScheduleRepository")
@@ -13,6 +14,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Schedule
 {
     use TimestampableTrait;
+
+    const STATE_NEW = 'new';
+    const STATE_CONFIRMED = 'confirmed';
 
     /**
      * @ORM\Id()
@@ -23,8 +27,9 @@ class Schedule
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank()
      */
-    private $state;
+    private $state = self::STATE_NEW;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
@@ -32,10 +37,30 @@ class Schedule
     private $itemsTotal;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="schedules")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="schedules", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotNull()
      */
     private $customer;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @Assert\NotBlank()
+     * @Assert\DateTime()
+     */
+    private $startDateAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @Assert\NotBlank()
+     * @Assert\DateTime()
+     */
+    private $endDateAt;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $instructions;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\ScheduleItems", mappedBy="schedule", cascade={"persist"})
@@ -115,6 +140,42 @@ class Schedule
                 $scheduleItem->setSchedule(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getInstructions(): ?string
+    {
+        return $this->instructions;
+    }
+
+    public function setInstructions(?string $instructions): self
+    {
+        $this->instructions = $instructions;
+
+        return $this;
+    }
+
+    public function getStartDateAt(): ?\DateTimeInterface
+    {
+        return $this->startDateAt;
+    }
+
+    public function setStartDateAt(?\DateTimeInterface $startDateAt): self
+    {
+        $this->startDateAt = $startDateAt;
+
+        return $this;
+    }
+
+    public function getEndDateAt(): ?\DateTimeInterface
+    {
+        return $this->endDateAt;
+    }
+
+    public function setEndDateAt(?\DateTimeInterface $endDateAt): self
+    {
+        $this->endDateAt = $endDateAt;
 
         return $this;
     }

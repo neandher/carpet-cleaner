@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Customer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,7 +16,8 @@ class CustomerType extends AbstractType
     {
         $builder
             ->add('firstName', TextType::class, ['label' => 'customer.fields.firstName'])
-            ->add('LastName', TextType::class, ['label' => 'customer.fields.lastName'])
+            ->add('lastName', TextType::class, ['label' => 'customer.fields.lastName'])
+            ->add('email', EmailType::class, ['label' => 'customer.fields.email'])
             ->add('phoneNumber', TextType::class, ['label' => 'customer.fields.phoneNumber'])
             ->add('customerAddresses', CollectionType::class, [
                 'entry_type' => CustomerAddressesType::class,

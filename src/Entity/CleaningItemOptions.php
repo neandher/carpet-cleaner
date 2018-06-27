@@ -22,7 +22,7 @@ class CleaningItemOptions
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\CleaningItem", inversedBy="cleaningItemOptions")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      * @Assert\NotNull()
      */
     private $cleaningItem;

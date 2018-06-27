@@ -33,7 +33,14 @@ class Customer
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      */
-    private $LastName;
+    private $lastName;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Email()
+     */
+    private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -43,6 +50,8 @@ class Customer
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\CustomerAddresses", mappedBy="customer", cascade={"persist"})
+     * @Assert\Valid()
+     * @Assert\Count(min="1")
      */
     private $customerAddresses;
 
@@ -76,12 +85,12 @@ class Customer
 
     public function getLastName(): ?string
     {
-        return $this->LastName;
+        return $this->lastName;
     }
 
-    public function setLastName(string $LastName): self
+    public function setLastName(string $lastName): self
     {
-        $this->LastName = $LastName;
+        $this->lastName = $lastName;
 
         return $this;
     }
@@ -158,5 +167,22 @@ class Customer
         }
 
         return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getFullName()
+    {
+        return $this->firstName . ' ' . $this->lastName;
     }
 }

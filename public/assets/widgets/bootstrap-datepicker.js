@@ -1,55 +1,24 @@
 var BootstrapDatepicker = {
     init: function () {
-        $("#m_datepicker_1, #m_datepicker_1_validate").datepicker({
+        $(".input_datepicker").datepicker({
             todayHighlight: !0,
             orientation: "bottom left",
             autoclose: true,
+            daysOfWeekDisabled: '0',
+            maxViewMode: 1,
+            startDate: new Date(),
             templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        }), $("#m_datepicker_1_modal").datepicker({
-            todayHighlight: !0,
-            orientation: "bottom left",
-            templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        }), $("#m_datepicker_2, #m_datepicker_2_validate").datepicker({
-            todayHighlight: !0,
-            orientation: "bottom left",
-            templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        }), $("#m_datepicker_2_modal").datepicker({
-            todayHighlight: !0,
-            orientation: "bottom left",
-            templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        }), $("#m_datepicker_3, #m_datepicker_3_validate").datepicker({
-            todayBtn: "linked",
-            clearBtn: !0,
-            todayHighlight: !0,
-            templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        }), $("#m_datepicker_3_modal").datepicker({
-            todayBtn: "linked",
-            clearBtn: !0,
-            todayHighlight: !0,
-            templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        }), $("#m_datepicker_4_1").datepicker({
-            orientation: "top left",
-            todayHighlight: !0,
-            templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        }), $("#m_datepicker_4_2").datepicker({
-            orientation: "top right",
-            todayHighlight: !0,
-            templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        }), $("#m_datepicker_4_3").datepicker({
-            orientation: "bottom left",
-            todayHighlight: !0,
-            templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        }), $("#m_datepicker_4_4").datepicker({
-            orientation: "bottom right",
-            todayHighlight: !0,
-            templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        }), $("#m_datepicker_5").datepicker({
-            todayHighlight: !0,
-            templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        }), $("#m_datepicker_6").datepicker({
-            todayHighlight: !0,
-            templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
-        })
+        }).on('changeDate', function (e) {
+            var timerpick = $(".input_timepicker");
+            if (e.date.getDay() === 6) {
+                timerpick.datetimepicker('setHoursDisabled', [0, 1, 2, 3, 4, 5, 6, 7, 8, 19, 20, 21, 22, 23]);
+            }
+            else {
+                timerpick.datetimepicker('setHoursDisabled', [0,1,2,3,4,5,6,7,21,22,23]);
+            }
+            timerpick.val("");
+            timerpick.datetimepicker('update');
+        });
     }
 };
 jQuery(document).ready(function () {

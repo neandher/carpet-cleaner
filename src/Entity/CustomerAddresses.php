@@ -19,12 +19,12 @@ class CustomerAddresses
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="customerAddresses")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      */
     private $customer;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Address")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid()
      */

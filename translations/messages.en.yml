@@ -134,6 +134,7 @@ customer:
     fields:
         firstName: First Name
         lastName: Last Name
+        email: E-mail
         phoneNumber: Phone Number
     actions:
 
@@ -145,3 +146,16 @@ address:
         city: City
         zipCode: Zip Code
         state: State
+        
+schedule:
+    title: Schedules
+    title_single: Schedule
+    fields:
+        state: Status
+        itemsTotal: Total
+        startDateAt: Data/Hora Inicial
+        endDateAt: Data/Hora Final
+        date: Data
+        startTime: Start Time
+        endTime: End Time
+        instructions: Special Instructions

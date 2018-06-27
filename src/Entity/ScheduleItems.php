@@ -39,7 +39,7 @@ class ScheduleItems
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Schedule", inversedBy="scheduleItems")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      */
     private $schedule;
 

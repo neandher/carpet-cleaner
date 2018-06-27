@@ -5,11 +5,11 @@ namespace App\Controller\Site;
 use App\Entity\CleaningItem;
 use App\Entity\CleaningItemCategory;
 use App\Entity\CleaningItemOptions;
-use App\Entity\Customer;
+use App\Entity\Schedule;
+use App\Entity\ScheduleItems;
 use App\Entity\ZipCode;
 use App\Event\FlashBagEvents;
-use App\Form\CustomerType;
-use App\Repository\CleaningItemOptionsRepository;
+use App\Form\ScheduleSiteType;
 use App\Util\FlashBag;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -176,24 +176,54 @@ class ScheduleController extends AbstractController
      */
     public function step2(Request $request)
     {
-        $customer = new Customer();
-        $customerForm = $this->createForm(CustomerType::class, $customer);
-        $customerForm->handleRequest($request);
+        if ($request->getSession()->has('checkout')) {
 
-        if ($customerForm->isSubmitted() && $customerForm->isValid()) {
+            $checkout = $request->getSession()->get('checkout');
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($customer);
-            //$em->flush();
+            $schedule = new Schedule();
+            $scheduleForm = $this->createForm(ScheduleSiteType::class, $schedule);
+            $scheduleForm->handleRequest($request);
 
-            $this->flashBag->newMessage(
-                FlashBagEvents::MESSAGE_TYPE_SUCCESS,
-                FlashBagEvents::MESSAGE_SUCCESS_INSERTED
-            );
+            if ($scheduleForm->isSubmitted() && $scheduleForm->isValid()) {
 
-            return $this->redirectToRoute('site_schedule_success');
+                $schedule->setItemsTotal($checkout['total']);
+
+                foreach ($checkout['items'] as $itemId => $item) {
+
+                    $cleaningItem = $this->getDoctrine()->getRepository(CleaningItem::class)->findOneBy(['id' => $itemId]);
+
+                    $scheduleItems = new ScheduleItems();
+                    $scheduleItems
+                        ->setQuantity($item['item']['quantity'])
+                        ->setCleaningItem($cleaningItem)
+                        ->setSchedule($schedule)
+                        ->setTotal($item['item']['total'])
+                        ->setUnitPrice($item['item_total']);
+
+                    $schedule->addScheduleItem($scheduleItems);
+                }
+
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($schedule);
+                $em->flush();
+
+                $request->getSession()->remove('checkout');
+                $request->getSession()->remove('zipCode');
+
+                $this->flashBag->newMessage(
+                    FlashBagEvents::MESSAGE_TYPE_SUCCESS,
+                    FlashBagEvents::MESSAGE_SUCCESS_INSERTED
+                );
+
+                return $this->redirectToRoute('site_schedule_success');
+            }
+
+            return $this->render('site/schedule/step-2.html.twig', [
+                'form' => $scheduleForm->createView()
+            ]);
         }
-        return $this->render('site/schedule/step-2.html.twig');
+
+        return $this->redirectToRoute('site_schedule_step_1');
     }
 
     /**
