@@ -63,9 +63,13 @@ user:
         new: New User
         edit: Edit User
     fields:
+        firstName: First Name
+        lastName: Last Name
+        fullName: Name
         email: E-mail
         username: Username
         lastLogin: Last Login
+        receiveEmails: Receive E-mails
     menu:
         profile: My Profile
         profile_update: Update Profile

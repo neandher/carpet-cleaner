@@ -39,7 +39,6 @@ class Schedule
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="schedules", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
-     * @Assert\NotNull()
      */
     private $customer;
 

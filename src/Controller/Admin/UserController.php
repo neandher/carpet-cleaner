@@ -5,11 +5,9 @@ namespace App\Controller\Admin;
 use App\Controller\BaseController;
 use App\Entity\User;
 use App\Event\FlashBagEvents;
-use App\Form\UserEditType;
+use App\Form\RegistrationType;
 use App\Util\FlashBag;
 use App\Util\Pagination;
-use FOS\UserBundle\Form\Type\ProfileFormType;
-use FOS\UserBundle\Form\Type\RegistrationFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,13 +77,14 @@ class UserController extends BaseController
 
         $user = new User();
 
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(RegistrationType::class, $user);
         $this->addDefaultSubmitButtons($form);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setEnabled(true);
+            $user->setRoles(['ROLE_SUPER_ADMIN']);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
@@ -125,7 +124,10 @@ class UserController extends BaseController
     {
         $pagination = $this->pagination->handle($request, User::class);
 
-        $form = $this->createForm(UserEditType::class, $user);
+        $form = $this->createForm(RegistrationType::class, $user, [
+            'is_edit' => true,
+            'validation_groups' => 'Profile'
+        ]);
 
         $this->addDefaultSubmitButtons($form);
 

@@ -5,14 +5,18 @@ namespace App\Controller\Site;
 use App\Entity\CleaningItem;
 use App\Entity\CleaningItemCategory;
 use App\Entity\CleaningItemOptions;
+use App\Entity\Customer;
 use App\Entity\Schedule;
 use App\Entity\ScheduleItems;
 use App\Entity\ZipCode;
 use App\Event\FlashBagEvents;
+use App\Event\ScheduleEvents;
 use App\Form\ScheduleSiteType;
 use App\Util\FlashBag;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,14 +35,20 @@ class ScheduleController extends AbstractController
      * @var FlashBag
      */
     private $flashBag;
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
 
     /**
      * ScheduleController constructor.
      * @param FlashBag $flashBag
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(FlashBag $flashBag)
+    public function __construct(FlashBag $flashBag, EventDispatcherInterface $dispatcher)
     {
         $this->flashBag = $flashBag;
+        $this->dispatcher = $dispatcher;
     }
 
 
@@ -179,12 +189,23 @@ class ScheduleController extends AbstractController
         if ($request->getSession()->has('checkout')) {
 
             $checkout = $request->getSession()->get('checkout');
+            $hasPhoneNumber = $request->getSession()->has('phoneNumber');
 
             $schedule = new Schedule();
-            $scheduleForm = $this->createForm(ScheduleSiteType::class, $schedule);
+            $scheduleForm = $this->createForm(ScheduleSiteType::class, $schedule, [
+                'hasPhoneNumber' => $hasPhoneNumber
+            ]);
+
             $scheduleForm->handleRequest($request);
 
             if ($scheduleForm->isSubmitted() && $scheduleForm->isValid()) {
+
+                if ($hasPhoneNumber) {
+                    $customer = $this->getDoctrine()->getRepository(Customer::class)->findOneBy([
+                        'phoneNumber' => $request->getSession()->get('phoneNumber')
+                    ]);
+                    $schedule->setCustomer($customer);
+                }
 
                 $schedule->setItemsTotal($checkout['total']);
 
@@ -207,19 +228,23 @@ class ScheduleController extends AbstractController
                 $em->persist($schedule);
                 $em->flush();
 
+                $this->dispatcher->dispatch(ScheduleEvents::SCHEDULE_CREATE_COMPLETED, new GenericEvent($schedule));
+
                 $request->getSession()->remove('checkout');
                 $request->getSession()->remove('zipCode');
+                $request->getSession()->remove('phoneNumber');
 
-                $this->flashBag->newMessage(
+                /*$this->flashBag->newMessage(
                     FlashBagEvents::MESSAGE_TYPE_SUCCESS,
                     FlashBagEvents::MESSAGE_SUCCESS_INSERTED
-                );
+                );*/
 
                 return $this->redirectToRoute('site_schedule_success');
             }
 
             return $this->render('site/schedule/step-2.html.twig', [
-                'form' => $scheduleForm->createView()
+                'form' => $scheduleForm->createView(),
+                'hasPhoneNumber' => $hasPhoneNumber
             ]);
         }
 
@@ -242,7 +267,7 @@ class ScheduleController extends AbstractController
      * @return JsonResponse
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getZipCodes(Request $request)
+    public function findZipCode(Request $request)
     {
         $data = [];
 
@@ -255,6 +280,46 @@ class ScheduleController extends AbstractController
                         $request->getSession()->remove('zipCode');
                     }
                     $request->getSession()->set('zipCode', $zipCode);
+
+                    $data['success'] = 'Done';
+                    $status = 200;
+                } else {
+                    $data['error'] = 'Not found';
+                    $status = 404;
+                }
+            } else {
+                $data['error'] = 'Parameter not found';
+                $status = 404;
+            }
+        } else {
+            $data['error'] = 'Invalid request';
+            $status = 400;
+        }
+
+        return new JsonResponse($data, $status);
+    }
+
+    /**
+     * @Route("/find-customer", name="find_customer")
+     * @Method("POST")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function findCustomer(Request $request)
+    {
+        $data = [];
+
+        if ($request->isXmlHttpRequest()) {
+
+            $phoneNumber = $request->request->get('phone_number', null);
+
+            if ($phoneNumber) {
+                if ($findCustomer = $this->getDoctrine()->getRepository(Customer::class)->findOneBy(['phoneNumber' => $phoneNumber])) {
+
+                    if ($request->getSession()->has('phoneNumber')) {
+                        $request->getSession()->remove('phoneNumber');
+                    }
+                    $request->getSession()->set('phoneNumber', $phoneNumber);
 
                     $data['success'] = 'Done';
                     $status = 200;

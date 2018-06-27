@@ -129,52 +129,55 @@
                                         <div class="m-form__section">
                                             <div class="m-form__heading">
                                                 <h3 class="m-form__heading-title">
-                                                    Client Details
+                                                    {% if not hasPhoneNumber %}Client Details{% else %}Details{% endif %}
                                                 </h3>
                                             </div>
-                                            <div class="form-group m-form__group row">
-                                                <div class="col-lg-6">
-                                                    {{ form_label(form.customer.firstName, {}, {'label_attr': {'class': 'col-form-label'}}) }}
-                                                    {{ form_widget(form.customer.firstName, {
-                                                        'attr': {
-                                                            'class' : 'm-input',
-                                                        }
-                                                    }) }}
+                                            {% if not hasPhoneNumber %}
+                                                <div class="form-group m-form__group row">
+                                                    <div class="col-lg-6">
+                                                        {{ form_label(form.customer.firstName, {}, {'label_attr': {'class': 'col-form-label'}}) }}
+                                                        {{ form_widget(form.customer.firstName, {
+                                                            'attr': {
+                                                                'class' : 'm-input',
+                                                            }
+                                                        }) }}
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        {{ form_label(form.customer.lastName, {}, {'label_attr': {'class': 'col-form-label'}}) }}
+                                                        {{ form_widget(form.customer.lastName, {
+                                                            'attr': {
+                                                                'class' : 'm-input',
+                                                            }
+                                                        }) }}
+                                                    </div>
                                                 </div>
-                                                <div class="col-lg-6">
-                                                    {{ form_label(form.customer.lastName, {}, {'label_attr': {'class': 'col-form-label'}}) }}
-                                                    {{ form_widget(form.customer.lastName, {
-                                                        'attr': {
-                                                            'class' : 'm-input',
-                                                        }
-                                                    }) }}
+                                                <div class="form-group m-form__group row">
+                                                    <div class="col-lg-6">
+                                                        {{ form_label(form.customer.email, {}, {'label_attr': {'class': 'col-form-label'}}) }}
+                                                        {{ form_widget(form.customer.email, {
+                                                            'attr': {
+                                                                'class' : 'm-input',
+                                                            }
+                                                        }) }}
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        {{ form_label(form.customer.phoneNumber, {}, {'label_attr': {'class': 'col-form-label'}}) }}
+                                                        {{ form_widget(form.customer.phoneNumber, {
+                                                            'attr': {
+                                                                'class' : 'm-input maskPhoneNumber',
+                                                            }
+                                                        }) }}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="form-group m-form__group row">
-                                                <div class="col-lg-6">
-                                                    {{ form_label(form.customer.email, {}, {'label_attr': {'class': 'col-form-label'}}) }}
-                                                    {{ form_widget(form.customer.email, {
-                                                        'attr': {
-                                                            'class' : 'm-input',
-                                                        }
-                                                    }) }}
+                                                <div id="customerAddresses"
+                                                     data-prototype="{% include 'site/schedule/_customer_address_collection.html.twig'
+                                                         with {'item': form.customer.customerAddresses.vars.prototype.address, 'prototype': true} %}">
+                                                    {% for customerAddress in form.customer.customerAddresses %}
+                                                        {% include 'site/schedule/_customer_address_collection.html.twig'
+                                                            with {'item' : customerAddress.address, 'collection': true } %}
+                                                    {% endfor %}
                                                 </div>
-                                                <div class="col-lg-6">
-                                                    {{ form_label(form.customer.phoneNumber, {}, {'label_attr': {'class': 'col-form-label'}}) }}
-                                                    {{ form_widget(form.customer.phoneNumber, {
-                                                        'attr': {
-                                                            'class' : 'm-input',
-                                                        }
-                                                    }) }}
-                                                </div>
-                                            </div>
-                                            <div id="customerAddresses" data-prototype="{% include 'site/schedule/_customer_address_collection.html.twig'
-                                                     with {'item': form.customer.customerAddresses.vars.prototype.address, 'prototype': true} %}">
-                                                {% for customerAddress in form.customer.customerAddresses %}
-                                                    {% include 'site/schedule/_customer_address_collection.html.twig'
-                                                        with {'item' : customerAddress.address, 'collection': true } %}
-                                                {% endfor %}
-                                            </div>
+                                            {% endif %}
                                             <div class="form-group m-form__group row">
                                                 <div class="col-lg-12">
                                                     {{ form_label(form.instructions, {}, {'label_attr': {'class': 'col-form-label'}}) }}
@@ -197,19 +200,6 @@
                         <div class="m-portlet__foot m-portlet__foot--fit m--margin-top-40">
                             <div class="m-form__actions m-form__actions">
                                 <div class="row">
-                                    {#<div class="col-lg-1"></div>
-                                    <div class="col-lg-4 m--align-left">
-                                        <a href="{{ path('site_index') }}"
-                                           class="btn btn-secondary m-btn m-btn--custom m-btn--icon">
-                                            <span>
-                                                <i class="la la-arrow-left"></i>
-                                                &nbsp;&nbsp;
-                                                <span>
-                                                    Back
-                                                </span>
-                                            </span>
-                                        </a>
-                                    </div>#}
                                     <div class="col-lg-11 m--align-right">
                                         <button type="submit" class="btn btn-warning m-btn m-btn--custom m-btn--icon">
                                             <span><span>Schedule</span>&nbsp;&nbsp;<i class="la la-check"></i></span>
@@ -335,6 +325,38 @@
             </div>
         </div>
     </div>
+
+    <!-- modal phone number -->
+    <form action="" method="post" class="m-form m-form--fit" id="form_phone_number" novalidate="novalidate">
+        <div class="modal fade" id="modalPhoneNumber" tabindex="-1" role="basic"
+             aria-labelledby="modalPhoneNumberLabel">
+
+            <div class="modal-dialog modal-dialog-centered" role="document">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Check Phone Number</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group m-form__group" style="padding-left:0; padding-right: 0;">
+                            <input type="text" class="form-control m-input maskPhoneNumber" name="phone_number"
+                                   id="phone_number"
+                                   required="required" aria-describedby="phoneNumber" placeholder="Enter phone number"
+                                   minlength="2" maxlength="50">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-accent m-btn m-btn--custom m-btn--icon m-btn--air"
+                                id="btn-check-phone-number">
+                            <span><i class="fa fa-check"></i><span>Check</span></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- end modal phone number -->
+
 {% endblock %}
 
 {% block javascripts %}
@@ -342,14 +364,46 @@
         {% block javascripts_page_snippets %}
             <script src="{{ asset('assets/widgets/bootstrap-datepicker.js') }}"></script>
             <script src="{{ asset('assets/widgets/bootstrap-datetimepicker.js') }}"></script>
-            <script src="{{ asset('site/custom/customerAddresses.js') }}"></script>
+            <script src="{{ asset('assets/widgets/input-mask.js') }}"></script>
+            {% if not app.request.session.has('phoneNumber') %}
+                <script src="{{ asset('site/custom/customerAddresses.js') }}"></script>
+            {% endif %}
             <script type="text/javascript">
+
                 $('#m_form').validate({
                     rules: {
                         schedule_site_customer_phoneNumber: {required: true, phoneUS: true},
                         schedule_site_date: {required: true, dateISO: true},
                     }
+                });
+
+                $('#modalPhoneNumber').modal({
+                    backdrop: 'static',
+                    keyboard: false,
+                    show: {% if app.request.session.has('phoneNumber') %}false{% else %}true{% endif %}
+                }).on('shown.bs.modal', function (e) {
+                    $('#phone_number').focus();
+                });
+
+                $('#form_phone_number').validate({
+                    rules: {
+                        phone_number: {required: true, phoneUS: true},
+                    }, invalidHandler: function (e, t) {
+                        //...
+                    }, submitHandler: function (e) {
+                        $('#btn-check-phone-number').addClass('m-loader m-loader--light m-loader--right');
+                        $.post("{{ path('site_schedule_find_customer')|escape('js') }}", {'phone_number': $('#phone_number').inputmask('unmaskedvalue')}, function (data) {
+                            if (data.success != null) {
+                                window.location.href = "{{ path('site_schedule_step_2')|escape('js') }}";
+                            }
+                        }).fail(function () {
+                            $('#modalPhoneNumber').modal('hide');
+                        }).always(function () {
+                            $('#btn-check-phone-number').removeClass('m-loader m-loader--light m-loader--right');
+                        });
+                    }
                 })
+
             </script>
         {% endblock %}
     {% endembed %}

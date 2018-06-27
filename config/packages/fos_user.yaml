@@ -2,14 +2,19 @@ fos_user:
     db_driver: orm
     firewall_name: main
     user_class: App\Entity\User
+    service:
+        mailer: fos_user.mailer.twig_swift
     from_email:
-        address: test@test.com
-        sender_name: test
-    #registration:
-    #    confirmation:
-    #        enabled: true
+        address: '%email_from_address%'
+        sender_name: '%title_site%'
+    registration:
+        form:
+            type: App\Form\RegistrationType
+    profile:
+        form:
+            type: App\Form\ProfileType
     resetting:
         email:
             from_email:
-                address:        resetting@example.com
-                sender_name:    Demo Resetting
+                address:        '%email_from_address%'
+                sender_name:    '%title_site%'

@@ -53,13 +53,16 @@ class ScheduleSiteType extends AbstractType
             ->add('instructions', TextareaType::class, [
                 'label' => 'schedule.fields.instructions',
                 'required' => false
-            ])
-            ->add('customer', CustomerType::class, [
+            ]);
+
+        if (!$options['hasPhoneNumber']) {
+            $builder->add('customer', CustomerType::class, [
                 'label' => 'customer.title_single',
                 'constraints' => [
                     new Valid()
                 ]
             ]);
+        }
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $schedule = $event->getData();
@@ -85,6 +88,7 @@ class ScheduleSiteType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Schedule::class,
+            'hasPhoneNumber' => false
         ]);
     }
 }

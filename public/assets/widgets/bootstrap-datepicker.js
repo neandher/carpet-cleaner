@@ -16,6 +16,9 @@ var BootstrapDatepicker = {
             else {
                 timerpick.datetimepicker('setHoursDisabled', [0,1,2,3,4,5,6,7,21,22,23]);
             }
+            var newDate = e.date;
+            timerpick.datetimepicker('setStartDate', new Date(newDate.setMinutes(0)));
+            timerpick.datetimepicker('setInitialDate', new Date(newDate.setMinutes(0)));
             timerpick.val("");
             timerpick.datetimepicker('update');
         });
