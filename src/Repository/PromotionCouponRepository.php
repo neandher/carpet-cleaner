@@ -41,4 +41,40 @@ class PromotionCouponRepository extends BaseRepository
 
         return $paginator;
     }
+
+    /**
+     * @param $code
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByCodeCustom($code)
+    {
+        $qb = $this->createQueryBuilder('p');
+        return $qb
+            ->where('p.code = :code')->setParameter('code', $code)
+            ->andWhere('p.isEnabled = 1')
+            ->andWhere(
+                $qb->expr()->andX()->add(
+                    $qb->expr()->orx()
+                        ->add($qb->expr()->andX()
+                            ->add($qb->expr()->isNotNull('p.expiresAt'))
+                            ->add($qb->expr()->gte('p.expiresAt', ':now'))
+                        )
+                        ->add($qb->expr()->isNull('p.expiresAt'))
+                )
+            )
+            ->andWhere(
+                $qb->expr()->andX()->add(
+                    $qb->expr()->orx()
+                        ->add($qb->expr()->andX()
+                            ->add($qb->expr()->isNotNull('p.usageLimit'))
+                            ->add($qb->expr()->gte('p.usageLimit', 'IFNULL(p.used, 0)'))
+                        )
+                        ->add($qb->expr()->isNull('p.usageLimit'))
+                )
+            )
+            ->setParameter('now', new \DateTime())
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

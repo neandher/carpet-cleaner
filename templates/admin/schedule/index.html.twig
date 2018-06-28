@@ -1,0 +1,197 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ 'schedule.title'|trans }}{% endblock %}
+
+{% block page_content %}
+
+    {% embed 'admin/_partials/_default_table_list.html.twig' %}
+
+        {% block icon_list %}
+            <i class="flaticon-time"></i>
+        {% endblock %}
+
+        {% block caption_subject %}
+            {{ 'resource.caption'|trans({'%resourceName%': 'schedule.title'|trans, '%nbResults%' : schedules.nbResults}) }}
+        {% endblock %}
+
+        {% block head_tools_actions %}{% endblock %}
+        {% block head_tools_dropdown %}{% endblock %}
+
+        {% block filters_actions %}
+            <div class="row m--margin-bottom-20">
+                <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                    <label for="search">
+                        {{ 'resource.filters.search'|trans }}:
+                    </label>
+                    <input type="text" class="form-control m-input m-input--solid" data-col-index="0"
+                           placeholder="{{ 'resource.filters.search'|trans }}" name="search" id="search"
+                           value="{% if app.request.query.has('search') %}{{ app.request.query.get('search') }}{% endif %}">
+                </div>
+                <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                    <label for="customer">
+                        {{ 'customer.title_single'|trans }}:
+                    </label>
+                    <select class="form-control m-input m-select2" name="customer" id="customer" onchange="submit();">
+                        <option value=""></option>
+                        {% for customer in customers %}
+                            <option value="{{ customer.id }}"
+                                    {% if app.request.query.has('customer') %}{% if app.request.query.get('customer') == customer.id %}selected{% endif %}{% endif %}>{{ customer.fullName }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {#<div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                    <label>
+                        {{ 'resource.filters.date'|trans }}:
+                    </label>
+                    <div class="input-daterange input-group" id="m_datepicker">
+                        <input type="text" class="form-control m-input" name="date_start" readonly
+                               placeholder="{{ 'resource.filters.date_start'|trans }}" id="m_datepicker_1"
+                               value="{% if app.request.query.has('date_start') %}{{ app.request.query.get('date_start') }}{% endif %}"/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">
+                                <i class="la la-ellipsis-h"></i>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control m-input" name="date_end" readonly
+                               placeholder="{{ 'resource.filters.date_end'|trans }}" id="m_datepicker_1"
+                               value="{% if app.request.query.has('date_end') %}{{ app.request.query.get('date_end') }}{% endif %}"/>
+                    </div>
+                </div>#}
+                <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                    <label for="num_items">
+                        {{ 'resource.filters.num_items'|trans }}:
+                    </label>
+                    <input type="number" class="form-control" name="num_items" id="num_items"
+                           value="{{ app.request.query.get('num_items', pagination.routeParams('num_items')) }}"
+                           min="5">
+                </div>
+            </div>
+            <div class="m-separator m-separator--md m-separator--dashed"></div>
+            <div class="row m--margin-bottom-20">
+                <div class="col-lg-12">
+                    <button type="submit" class="btn btn-brand m-btn m-btn--icon">
+                        <span><i class="la la-search"></i><span>{{ 'resource.filters.search'|trans }}</span></span>
+                    </button>
+                    &nbsp;&nbsp;
+                    <a href="{{ path('admin_schedule_index') }}"
+                       class="btn btn-secondary m-btn m-btn--icon">
+                        <span><i class="la la-close"></i><span>{{ 'resource.actions.items.reset'|trans }}</span></span>
+                    </a>
+                </div>
+            </div>
+        {% endblock %}
+
+        {% block table_tr_th %}
+            <tr>
+                <th>ID</th>
+                <th>
+                    <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('firstName') }}">
+                        {{ 'customer.fields.fullName'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('state') }}">
+                        {{ 'schedule.fields.state'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('startDateAt') }}">
+                        {{ 'schedule.fields.startDateAt'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('endDateAt') }}">
+                        {{ 'schedule.fields.endDateAt'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('itemsTotal') }}">
+                        {{ 'schedule.fields.itemsTotal'|trans }}
+                    </a>
+                </th>
+                <th>
+                    {{ 'schedule.fields.instructions'|trans }}
+                </th>
+                <th>
+                    <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
+                        {{ 'resource.timestampable.createdAt'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('updatedAt') }}">
+                        {{ 'resource.timestampable.updatedAt'|trans }}
+                    </a>
+                </th>
+                <th>{{ 'resource.actions.title'|trans }}</th>
+            </tr>
+        {% endblock %}
+
+        {% block table_tr_td %}
+            {% for schedule in schedules %}
+                <tr>
+                    <td>{{ schedule.id }}</td>
+                    <td>{{ schedule.customer.fullName }}</td>
+                    <td>
+                        {% if schedule.state == constant('App\\Entity\\Schedule::STATE_NEW') %}
+                            <span class="m-badge  m-badge--success m-badge--wide">
+                                {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_NEW'))|trans }}
+                            </span>
+                        {% elseif schedule.state == constant('App\\Entity\\Schedule::STATE_CONFIRMED') %}
+                            <span class="m-badge  m-badge--danger m-badge--wide">
+                                {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_CONFIRMED'))|trans }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>{{ schedule.startDateAt|date('d/m/Y H:i') }}</td>
+                    <td>{{ schedule.endDateAt|date('d/m/Y H:i') }}</td>
+                    <td>${{ schedule.itemsTotal|number_format }}</td>
+                    <td>{{ schedule.instructions }}</td>
+                    <td>{{ schedule.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>{{ schedule.updatedAt|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% embed 'admin/_partials/_actions_btn_group.html.twig' %}
+                            {% block li_actions %}
+                                <a class="dropdown-item" href="javascript:;" data-toggle="modal"
+                                   data-target="#modalConfirmation"
+                                   data-path="{{ path('admin_schedule_delete', {id: schedule.id})|escape }}"
+                                   data-crf="{{ form_widget(delete_forms[schedule.id]._token)|escape }}"
+                                >
+                                    <i class="fa fa-trash"></i> {{ 'resource.actions.items.delete'|trans }}
+                                </a>
+                            {% endblock %}
+                        {% endembed %}
+                        <a href="{{ path('admin_schedule_edit', { id: schedule.id }) ~ pagination.buildQuery }}"
+                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                           title="{{ 'resource.actions.items.edit'|trans }}"> <i class="la la-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block list_info %}
+            {{ 'resource.pagination.list_info'|trans({
+                '%currentPageOffsetStart%': schedules.currentPageOffsetStart,
+                '%currentPageOffsetEnd%': schedules.currentPageOffsetEnd,
+                '%nbResults%': schedules.nbResults
+            }) }}
+        {% endblock %}
+
+        {% block list_pagination %}
+            {{ pagerfanta(schedules, 'twitter_bootstrap4',{
+                routeName: 'admin_schedule_index',
+                routeParams: app.request.query.all
+            }) }}
+        {% endblock %}
+
+    {% endembed %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {% embed 'admin/_partials/_block_javascripts.html.twig' %}
+        {% block javascripts_page_snippets %}
+            <script src="{{ asset('assets/widgets/select2.js') }}"></script>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

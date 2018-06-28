@@ -1,0 +1,44 @@
+<div class="form-group m-form__group row">
+    <div class="col-lg-6">
+        <label class="col-form-label form-control-label" for="firstName">{{ 'customer.fields.firstName'|trans }}</label>
+        <div class="form-control">{{ schedule.customer.firstName }}</div>
+    </div>
+    <div class="col-lg-6">
+        <label class="col-form-label form-control-label" for="lastName">{{ 'customer.fields.lastName'|trans }}</label>
+        <div class="form-control">{{ schedule.customer.lastName }}</div>
+    </div>
+</div>
+<div class="form-group m-form__group row">
+    <div class="col-lg-6">
+        <label class="col-form-label form-control-label" for="email">{{ 'customer.fields.email'|trans }}</label>
+        <div class="form-control">{{ schedule.customer.email }}</div>
+    </div>
+    <div class="col-lg-6">
+        <label class="col-form-label form-control-label" for="phoneNumber">{{ 'customer.fields.phoneNumber'|trans }}</label>
+        <div class="form-control">{{ schedule.customer.phoneNumber }}</div>
+    </div>
+</div>
+<div id="customerAddresses">
+    <div class="form-group m-form__group row">
+        <div class="col-lg-12">
+            <label class="col-form-label form-control-label" for="address">{{ 'address.fields.address'|trans }}</label>
+            <div class="form-control">{{ schedule.customer.customerAddresses.first.address.address }}</div>
+        </div>
+    </div>
+    <div class="form-group m-form__group row">
+        <div class="col-lg-6">
+            <label class="col-form-label form-control-label" for="city">{{ 'address.fields.city'|trans }}</label>
+            <div class="form-control">{{ schedule.customer.customerAddresses.first.address.city }}</div>
+        </div>
+        <div class="col-lg-6">
+            <label class="col-form-label form-control-label" for="state">{{ 'address.fields.state'|trans }}</label>
+            <div class="form-control">{{ schedule.customer.customerAddresses.first.address.state }}</div>
+        </div>
+    </div>
+    <div class="form-group m-form__group row">
+        <div class="col-lg-6">
+            <label class="col-form-label form-control-label" for="zipCode">{{ 'address.fields.zipCode'|trans }}</label>
+            <div class="form-control">{{ schedule.customer.customerAddresses.first.address.zipCode }}</div>
+        </div>
+    </div>
+</div>

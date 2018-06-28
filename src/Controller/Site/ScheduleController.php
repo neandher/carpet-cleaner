@@ -6,6 +6,7 @@ use App\Entity\CleaningItem;
 use App\Entity\CleaningItemCategory;
 use App\Entity\CleaningItemOptions;
 use App\Entity\Customer;
+use App\Entity\PromotionCoupon;
 use App\Entity\Schedule;
 use App\Entity\ScheduleItems;
 use App\Entity\ZipCode;
@@ -196,16 +197,31 @@ class ScheduleController extends AbstractController
                 'hasPhoneNumber' => $hasPhoneNumber
             ]);
 
+            if ($hasPhoneNumber) {
+                $customer = $this->getDoctrine()->getRepository(Customer::class)->findOneBy([
+                    'phoneNumber' => $request->getSession()->get('phoneNumber')
+                ]);
+                $schedule->setCustomer($customer);
+            }
+            /** @var PromotionCoupon|null $promotionCoupon */
+            $promotionCoupon = null;
+
+            if ($request->getSession()->has('couponCode')) {
+                $promotionCoupon = $this->getDoctrine()->getRepository(PromotionCoupon::class)->findOneBy([
+                    'code' => $request->getSession()->get('couponCode')
+                ]);
+                if (!$checkout['discount'] > 0) {
+                    $checkout['discount'] = round($promotionCoupon->getPercentage() * $checkout['subtotal'], 2);
+                    $checkout['total'] = $checkout['total'] - $checkout['discount'];
+                    $request->getSession()->set('checkout', $checkout);
+                }
+            }
+
             $scheduleForm->handleRequest($request);
 
             if ($scheduleForm->isSubmitted() && $scheduleForm->isValid()) {
 
-                if ($hasPhoneNumber) {
-                    $customer = $this->getDoctrine()->getRepository(Customer::class)->findOneBy([
-                        'phoneNumber' => $request->getSession()->get('phoneNumber')
-                    ]);
-                    $schedule->setCustomer($customer);
-                }
+                $em = $this->getDoctrine()->getManager();
 
                 $schedule->setItemsTotal($checkout['total']);
 
@@ -224,7 +240,14 @@ class ScheduleController extends AbstractController
                     $schedule->addScheduleItem($scheduleItems);
                 }
 
-                $em = $this->getDoctrine()->getManager();
+                if ($promotionCoupon) {
+                    $used = $promotionCoupon->getUsed() ? $promotionCoupon->getUsed() + 1 : 1;
+                    $promotionCoupon->setUsed($used);
+                    $em->persist($promotionCoupon);
+
+                    $schedule->setPromotionCoupon($promotionCoupon);
+                }
+
                 $em->persist($schedule);
                 $em->flush();
 
@@ -233,6 +256,7 @@ class ScheduleController extends AbstractController
                 $request->getSession()->remove('checkout');
                 $request->getSession()->remove('zipCode');
                 $request->getSession()->remove('phoneNumber');
+                $request->getSession()->remove('couponCode');
 
                 /*$this->flashBag->newMessage(
                     FlashBagEvents::MESSAGE_TYPE_SUCCESS,
@@ -244,7 +268,8 @@ class ScheduleController extends AbstractController
 
             return $this->render('site/schedule/step-2.html.twig', [
                 'form' => $scheduleForm->createView(),
-                'hasPhoneNumber' => $hasPhoneNumber
+                'hasPhoneNumber' => $hasPhoneNumber,
+                'schedule' => $schedule
             ]);
         }
 
@@ -326,6 +351,58 @@ class ScheduleController extends AbstractController
                 } else {
                     $data['error'] = 'Not found';
                     $status = 404;
+                }
+            } else {
+                $data['error'] = 'Parameter not found';
+                $status = 404;
+            }
+        } else {
+            $data['error'] = 'Invalid request';
+            $status = 400;
+        }
+
+        return new JsonResponse($data, $status);
+    }
+
+    /**
+     * @Route("/find-coupon-code", name="find_coupon_code")
+     * @Method("POST")
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findCouponCode(Request $request)
+    {
+        $data = [];
+
+        if ($request->isXmlHttpRequest()) {
+
+            $couponCode = $request->request->get('coupon_code', null);
+
+            if ($couponCode) {
+
+                if ($request->getSession()->has('couponCode') && $request->getSession()->get('couponCode') == $couponCode) {
+                    $data['error'] = 'This coupon code is already in use';
+                    $status = 400;
+                } else {
+                    if ($findPromotionCoupon = $this->getDoctrine()->getRepository(PromotionCoupon::class)->findByCodeCustom($couponCode)) {
+
+                        if ($request->getSession()->has('couponCode')) {
+                            $request->getSession()->remove('couponCode');
+                        }
+                        $request->getSession()->set('couponCode', $couponCode);
+
+                        $this->flashBag->newMessage(
+                            FlashBagEvents::MESSAGE_TYPE_SUCCESS,
+                            'Promotional coupon has been apllied successfully'
+                        );
+
+                        $data['success'] = 'Done';
+                        $status = 200;
+                    } else {
+                        $data['error'] = 'No promotional coupon are found with this code';
+                        $status = 404;
+                    }
                 }
             } else {
                 $data['error'] = 'Parameter not found';

@@ -24,7 +24,7 @@ class CustomerAddresses
     private $customer;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Address", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Address", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid()
      */

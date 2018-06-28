@@ -3,9 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Controller\BaseController;
-use App\Entity\PromotionCoupon;
+use App\Entity\Customer;
 use App\Event\FlashBagEvents;
-use App\Form\PromotionCouponType;
+use App\Form\CustomerType;
 use App\Util\FlashBag;
 use App\Util\Pagination;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -15,12 +15,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class PromotionCouponController
+ * Class CustomerController
  * @package App\Controller\Admin
  *
- * @Route("/promotion-coupon", name="admin_promotion_coupon_")
+ * @Route("/customer", name="admin_customer_")
  */
-class PromotionCouponController extends BaseController
+class CustomerController extends BaseController
 {
     /**
      * @var Pagination
@@ -32,7 +32,7 @@ class PromotionCouponController extends BaseController
     private $flashBag;
 
     /**
-     * PromotionCouponController constructor.
+     * CustomerController constructor.
      * @param Pagination $pagination
      * @param FlashBag $flashBag
      */
@@ -49,17 +49,17 @@ class PromotionCouponController extends BaseController
      */
     public function index(Request $request)
     {
-        $pagination = $this->pagination->handle($request, PromotionCoupon::class);
+        $pagination = $this->pagination->handle($request, Customer::class);
 
-        $promotionCoupons = $this->getDoctrine()->getRepository(PromotionCoupon::class)->findLatest($pagination);
+        $customers = $this->getDoctrine()->getRepository(Customer::class)->findLatest($pagination);
 
         $deleteForms = [];
-        foreach ($promotionCoupons as $promotionCoupon) {
-            $deleteForms[$promotionCoupon->getId()] = $this->createDeleteForm($promotionCoupon)->createView();
+        foreach ($customers as $customer) {
+            $deleteForms[$customer->getId()] = $this->createDeleteForm($customer)->createView();
         }
 
-        return $this->render('admin/promotionCoupon/index.html.twig', [
-            'promotionCoupons' => $promotionCoupons,
+        return $this->render('admin/customer/index.html.twig', [
+            'customers' => $customers,
             'pagination' => $pagination,
             'delete_forms' => $deleteForms,
         ]);
@@ -73,18 +73,18 @@ class PromotionCouponController extends BaseController
      */
     public function newAction(Request $request)
     {
-        $pagination = $this->pagination->handle($request, PromotionCoupon::class);
+        $pagination = $this->pagination->handle($request, Customer::class);
 
-        $promotionCoupon = new PromotionCoupon();
+        $customer = new Customer();
 
-        $form = $this->createForm(PromotionCouponType::class, $promotionCoupon);
+        $form = $this->createForm(CustomerType::class, $customer);
         $this->addDefaultSubmitButtons($form);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($promotionCoupon);
+            $em->persist($customer);
             $em->flush();
 
             $this->flashBag->newMessage(
@@ -94,17 +94,17 @@ class PromotionCouponController extends BaseController
 
             $handleSubmitButtons = $this->handleSubmitButtons(
                 $form,
-                'admin_promotion_coupon_new',
-                'admin_promotion_coupon_edit',
-                ['id' => $promotionCoupon->getId()],
+                'admin_customer_new',
+                'admin_customer_edit',
+                ['id' => $customer->getId()],
                 $pagination->getRouteParams()
             );
 
-            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_promotion_coupon_index', $pagination->getRouteParams());
+            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_customer_index', $pagination->getRouteParams());
         }
 
-        return $this->render('admin/promotionCoupon/new.html.twig', [
-            'promotionCoupon' => $promotionCoupon,
+        return $this->render('admin/customer/new.html.twig', [
+            'customer' => $customer,
             'form' => $form->createView(),
             'pagination' => $pagination
         ]);
@@ -114,14 +114,14 @@ class PromotionCouponController extends BaseController
      * @Route("/{id}/edit", requirements={"id" : "\d+"}, name="edit")
      * @Method({"GET", "POST"})
      * @param Request $request
-     * @param PromotionCoupon $promotionCoupon
+     * @param Customer $customer
      * @return Response
      */
-    public function editAction(PromotionCoupon $promotionCoupon, Request $request)
+    public function editAction(Customer $customer, Request $request)
     {
-        $pagination = $this->pagination->handle($request, PromotionCoupon::class);
+        $pagination = $this->pagination->handle($request, Customer::class);
 
-        $form = $this->createForm(PromotionCouponType::class, $promotionCoupon, ['is_edit' => true]);
+        $form = $this->createForm(CustomerType::class, $customer);
 
         $this->addDefaultSubmitButtons($form);
 
@@ -130,7 +130,7 @@ class PromotionCouponController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $em = $this->getDoctrine()->getManager();
-            $em->persist($promotionCoupon);
+            $em->persist($customer);
             $em->flush();
 
             $this->flashBag->newMessage(
@@ -140,17 +140,17 @@ class PromotionCouponController extends BaseController
 
             $handleSubmitButtons = $this->handleSubmitButtons(
                 $form,
-                'admin_promotion_coupon_new',
-                'admin_promotion_coupon_edit',
-                ['id' => $promotionCoupon->getId()],
+                'admin_customer_new',
+                'admin_customer_edit',
+                ['id' => $customer->getId()],
                 $pagination->getRouteParams()
             );
 
-            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_promotion_coupon_index');
+            return $handleSubmitButtons ? $handleSubmitButtons : $this->redirectToRoute('admin_customer_index');
         }
 
-        return $this->render('admin/promotionCoupon/edit.html.twig', [
-            'promotionCoupon' => $promotionCoupon,
+        return $this->render('admin/customer/edit.html.twig', [
+            'customer' => $customer,
             'form' => $form->createView(),
             'pagination' => $pagination
         ]);
@@ -160,21 +160,21 @@ class PromotionCouponController extends BaseController
      * @Route("/{id}/delete", requirements={"id" : "\d+"}, name="delete")
      * @Method("DELETE")
      * @param Request $request
-     * @param PromotionCoupon $promotionCoupon
+     * @param Customer $customer
      * @return Response
      */
-    public function deletAction(Request $request, PromotionCoupon $promotionCoupon)
+    public function deletAction(Request $request, Customer $customer)
     {
-        $pagination = $this->pagination->handle($request, PromotionCoupon::class);
+        $pagination = $this->pagination->handle($request, Customer::class);
 
-        $form = $this->createDeleteForm($promotionCoupon);
+        $form = $this->createDeleteForm($customer);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             $em = $this->getDoctrine()->getManager();
-            $em->remove($promotionCoupon);
+            $em->remove($customer);
             $em->flush();
 
             $this->flashBag->newMessage(
@@ -188,19 +188,19 @@ class PromotionCouponController extends BaseController
             );
         }
 
-        return $this->redirectToRoute('admin_promotion_coupon_index', $pagination->getRouteParams());
+        return $this->redirectToRoute('admin_customer_index', $pagination->getRouteParams());
     }
 
     /**
-     * @param PromotionCoupon $promotionCoupon
+     * @param Customer $customer
      * @return FormInterface
      */
-    private function createDeleteForm(PromotionCoupon $promotionCoupon)
+    private function createDeleteForm(Customer $customer)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('admin_promotion_coupon_delete', ['id' => $promotionCoupon->getId()]))
+            ->setAction($this->generateUrl('admin_customer_delete', ['id' => $customer->getId()]))
             ->setMethod('DELETE')
-            ->setData($promotionCoupon)
+            ->setData($customer)
             ->getForm();
     }
 }

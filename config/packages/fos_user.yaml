@@ -15,6 +15,7 @@ fos_user:
             type: App\Form\ProfileType
     resetting:
         email:
+            template: 'bundles/FOSUserBundle/Resetting/email.html.twig'
             from_email:
                 address:        '%email_from_address%'
                 sender_name:    '%title_site%'

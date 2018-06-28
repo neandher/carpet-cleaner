@@ -1,23 +1,23 @@
 {% extends 'admin/base.html.twig' %}
-{% block title %}{{ 'promotionCoupon.actions.new'|trans }}{% endblock %}
+{% block title %}{{ 'customer.actions.new'|trans }}{% endblock %}
 
 {% block page_content %}
 
-    {% embed 'admin/_partials/_default_resource.html.twig' with {'route_index' : 'admin_promotion_coupon_index'} %}
+    {% embed 'admin/_partials/_default_resource.html.twig' with {'route_index' : 'admin_customer_index'} %}
 
         {% block form_start %}
-            {{ form_start(form, {'action': path('admin_promotion_coupon_new') ~ pagination.buildQuery}) }}
+            {{ form_start(form, {'action': path('admin_customer_new') ~ pagination.buildQuery}) }}
         {% endblock %}
 
         {% block icon_list %}
             <span class="m-portlet__head-icon">
-                <i class="flaticon-interface-10"></i>
+                <i class="flaticon-user"></i>
             </span>
         {% endblock %}
 
         {% block caption_subject %}
             <span class="caption-subject font-green-sharp bold uppercase">
-                {{ 'promotionCoupon.actions.new'|trans }}
+                {{ 'customer.actions.new'|trans }}
             </span>
         {% endblock %}
 
@@ -25,10 +25,13 @@
             <li class="nav-item">
                 <a href="#geral" class="nav-link active" data-toggle="tab">{{ 'resource.tabs.details'|trans }}</a>
             </li>
+            <li class="nav-item">
+                <a href="#addresses" class="nav-link" data-toggle="tab">{{ 'customer.tabs.addresses'|trans }}</a>
+            </li>
         {% endblock %}
 
         {% block tab_pane %}
-            {% include 'admin/promotionCoupon/_form.html.twig' with {'form': form, 'item': promotionCoupon} %}
+            {% include 'admin/customer/_form.html.twig' with {'form': form} %}
         {% endblock %}
 
     {% endembed %}
@@ -38,8 +41,8 @@
 {% block javascripts %}
     {% embed 'admin/_partials/_block_javascripts.html.twig' %}
         {% block javascripts_page_snippets %}
-            <script src="{{ asset('assets/widgets/bootstrap-switch.js') }}"></script>
-            <script src="{{ asset('assets/widgets/bootstrap-datetimepicker.js') }}"></script>
+            <script src="{{ asset('assets/widgets/input-mask.js') }}"></script>
+            <script src="{{ asset('assets/custom/customerAddresses.js') }}"></script>
         {% endblock %}
     {% endembed %}
 {% endblock %}

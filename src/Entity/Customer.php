@@ -7,10 +7,12 @@ use App\Resource\Model\ToggleableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
+ * @UniqueEntity(fields={"phoneNumber"}, message="This phone number is already in use.")
  */
 class Customer
 {
@@ -49,7 +51,7 @@ class Customer
     private $phoneNumber;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CustomerAddresses", mappedBy="customer", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="App\Entity\CustomerAddresses", mappedBy="customer", cascade={"persist"}, orphanRemoval=true)
      * @Assert\Valid()
      * @Assert\Count(min="1")
      */

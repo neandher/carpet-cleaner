@@ -63,6 +63,9 @@
                     </a>
                 </th>
                 <th>
+                    {{ 'promotionCoupon.fields.percentage'|trans }}
+                </th>
+                <th>
                     <a href="{{ path('admin_promotion_coupon_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('expiresAt') }}">
                         {{ 'promotionCoupon.fields.expiresAt'|trans }}
                     </a>
@@ -93,6 +96,7 @@
                     <td>{{ promotionCoupon.id }}</td>
                     <td>{{ promotionCoupon.title }}</td>
                     <td>{{ promotionCoupon.code }}</td>
+                    <td>{{ promotionCoupon.percentage * 100 }}%</td>
                     <td>{% if promotionCoupon.expiresAt %}{{ promotionCoupon.expiresAt|date('d/m/Y H:i') }}{% else %}-{% endif %}</td>
                     <td>{% if promotionCoupon.usageLimit %}{{ promotionCoupon.usageLimit }}{% else %}0{% endif %}</td>
                     <td>{% if promotionCoupon.used %}{{ promotionCoupon.used }}{% else %}0{% endif %}</td>

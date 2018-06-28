@@ -28,7 +28,7 @@
         {% endblock %}
 
         {% block tab_pane %}
-            {% include 'admin/promotionCoupon/_form.html.twig' with {'form': form} %}
+            {% include 'admin/promotionCoupon/_form.html.twig' with {'form': form, 'item': promotionCoupon} %}
         {% endblock %}
 
     {% endembed %}

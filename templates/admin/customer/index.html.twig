@@ -1,23 +1,23 @@
 {% extends 'admin/base.html.twig' %}
-{% block title %}{{ 'resource.fields.description'|trans }}{% endblock %}
+{% block title %}{{ 'customer.title'|trans }}{% endblock %}
 
 {% block page_content %}
 
     {% embed 'admin/_partials/_default_table_list.html.twig' %}
 
         {% block icon_list %}
-            <i class="flaticon-map-location"></i>
+            <i class="flaticon-user"></i>
         {% endblock %}
 
         {% block caption_subject %}
-            {{ 'resource.caption'|trans({'%resourceName%': 'zipCode.title'|trans, '%nbResults%' : zipCodes.nbResults}) }}
+            {{ 'resource.caption'|trans({'%resourceName%': 'customer.title'|trans, '%nbResults%' : customers.nbResults}) }}
         {% endblock %}
 
         {% block head_tools_actions %}
             <li class="m-portlet__nav-item">
-                <a href="{{ path('admin_zip_code_new') ~ pagination.buildQuery }}"
+                <a href="{{ path('admin_customer_new') ~ pagination.buildQuery }}"
                    class="btn btn-accent m-btn m-btn--custom m-btn--icon">
-                    <span><i class="la la-plus"></i><span> {{ 'zipCode.actions.new'|trans }}</span></span>
+                    <span><i class="la la-plus"></i><span> {{ 'customer.actions.new'|trans }}</span></span>
                 </a>
             </li>
         {% endblock %}
@@ -30,7 +30,7 @@
                         {{ 'resource.filters.search'|trans }}:
                     </label>
                     <input type="text" class="form-control m-input m-input--solid" data-col-index="0"
-                           placeholder="{{ 'resource.fields.description'|trans }}" name="search" id="search"
+                           placeholder="{{ 'resource.filters.search'|trans }}" name="search" id="search"
                            value="{% if app.request.query.has('search') %}{{ app.request.query.get('search') }}{% endif %}">
                 </div>
             </div>
@@ -41,7 +41,7 @@
                         <span><i class="la la-search"></i><span>{{ 'resource.filters.search'|trans }}</span></span>
                     </button>
                     &nbsp;&nbsp;
-                    <a href="{{ path('admin_zip_code_index') }}"
+                    <a href="{{ path('admin_customer_index') }}"
                        class="btn btn-secondary m-btn m-btn--icon">
                         <span><i class="la la-close"></i><span>{{ 'resource.actions.items.reset'|trans }}</span></span>
                     </a>
@@ -53,22 +53,18 @@
             <tr>
                 <th>ID</th>
                 <th>
-                    <a href="{{ path('admin_zip_code_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('description') }}">
-                        {{ 'resource.fields.description'|trans }}
+                    {{ 'customer.fields.fullName'|trans }}
+                </th>
+                <th>
+                    <a href="{{ path('admin_customer_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('displayOrder') }}">
+                        {{ 'customer.fields.email'|trans }}
                     </a>
                 </th>
                 <th>
-                    <a href="{{ path('admin_zip_code_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('percentage') }}">
-                        {{ 'zipCode.fields.percentage'|trans }}
-                    </a>
+                    {{ 'customer.fields.phoneNumber'|trans }}
                 </th>
                 <th>
-                    <a href="{{ path('admin_zip_code_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('isEnabled') }}">
-                        {{ 'resource.toglleable.is_enabled_title'|trans }}
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ path('admin_zip_code_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
+                    <a href="{{ path('admin_customer_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
                         {{ 'resource.timestampable.createdAt'|trans }}
                     </a>
                 </th>
@@ -77,38 +73,28 @@
         {% endblock %}
 
         {% block table_tr_td %}
-            {% for zipCode in zipCodes %}
+            {% for customer in customers %}
                 <tr>
-                    <td>{{ zipCode.id }}</td>
-                    <td>{{ zipCode.description }}</td>
-                    <td>{{ zipCode.percentage * 100 }} %</td>
-                    <td>
-                        {% if zipCode.isEnabled == '1' %}
-                            <span class="m-badge  m-badge--success m-badge--wide">
-                                <i class="fa fa-check"></i>
-                            </span>
-                        {% else %}
-                            <span class="m-badge  m-badge--danger m-badge--wide">
-                                <i class="fa fa-remove"></i>
-                            </span>
-                        {% endif %}
-                    </td>
-                    <td>{{ zipCode.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>{{ customer.id }}</td>
+                    <td>{{ customer.fullName }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>{{ customer.phoneNumber }}</td>
+                    <td>{{ customer.createdAt|date('d/m/Y H:i') }}</td>
                     <td>
                         {% embed 'admin/_partials/_actions_btn_group.html.twig' %}
                             {% block li_actions %}
                                 <a class="dropdown-item" href="javascript:;" data-toggle="modal"
                                    data-target="#modalConfirmation"
-                                   data-path="{{ path('admin_zip_code_delete', {id: zipCode.id})|escape }}"
-                                   data-crf="{{ form_widget(delete_forms[zipCode.id]._token)|escape }}"
+                                   data-path="{{ path('admin_customer_delete', {id: customer.id})|escape }}"
+                                   data-crf="{{ form_widget(delete_forms[customer.id]._token)|escape }}"
                                 >
                                     <i class="fa fa-trash"></i> {{ 'resource.actions.items.delete'|trans }}
                                 </a>
                             {% endblock %}
                         {% endembed %}
-                        <a href="{{ path('admin_zip_code_edit', { id: zipCode.id }) ~ pagination.buildQuery }}"
+                        <a href="{{ path('admin_customer_edit', { id: customer.id }) ~ pagination.buildQuery }}"
                            class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
-                           description="{{ 'resource.actions.items.edit'|trans }}"> <i class="la la-edit"></i>
+                           title="{{ 'resource.actions.items.edit'|trans }}"> <i class="la la-edit"></i>
                         </a>
                     </td>
                 </tr>
@@ -117,15 +103,15 @@
 
         {% block list_info %}
             {{ 'resource.pagination.list_info'|trans({
-                '%currentPageOffsetStart%': zipCodes.currentPageOffsetStart,
-                '%currentPageOffsetEnd%': zipCodes.currentPageOffsetEnd,
-                '%nbResults%': zipCodes.nbResults
+                '%currentPageOffsetStart%': customers.currentPageOffsetStart,
+                '%currentPageOffsetEnd%': customers.currentPageOffsetEnd,
+                '%nbResults%': customers.nbResults
             }) }}
         {% endblock %}
 
         {% block list_pagination %}
-            {{ pagerfanta(zipCodes, 'twitter_bootstrap4',{
-                routeName: 'admin_zip_code_index',
+            {{ pagerfanta(customers, 'twitter_bootstrap4',{
+                routeName: 'admin_customer_index',
                 routeParams: app.request.query.all
             }) }}
         {% endblock %}

@@ -1,0 +1,28 @@
+<div role="tabpanel" class="tab-pane active" id="geral">
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.firstName, {'attr': {'autofocus': true}}) }}</div>
+        <div class="col-md-6">{{ form_row(form.lastName) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.email) }}</div>
+        <div class="col-md-6">{{ form_row(form.phoneNumber, {'attr': {'class':'maskPhoneNumber'}}) }}</div>
+    </div>
+</div>
+
+<div role="tabpanel" class="tab-pane" id="addresses">
+    <div id="customerAddress" data-prototype="{% include 'admin/customer/collection/_customerAddresses.html.twig'
+        with {'item': form.customerAddresses.vars.prototype.address, 'prototype': true} %}">
+
+        {% for customerAddress in form.customerAddresses %}
+            {% include 'admin/customer/collection/_customerAddresses.html.twig'
+                with {'item' : customerAddress.address, 'collection': true } %}
+        {% endfor %}
+
+        <div id="panel_add_customerAddress" class="m--hide">
+            <a href="#" class="btn btn-brand m-btn m-btn--icon m-btn--air" id="btn_add_customerAddress">
+                <span><i class="la la-plus"></i><span>{{ 'resource.actions.items.add'|trans }}</span></span>
+            </a>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>

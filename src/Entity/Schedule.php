@@ -66,6 +66,12 @@ class Schedule
      */
     private $scheduleItems;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\PromotionCoupon")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $promotionCoupon;
+
     public function __construct()
     {
         $this->scheduleItems = new ArrayCollection();
@@ -175,6 +181,18 @@ class Schedule
     public function setEndDateAt(?\DateTimeInterface $endDateAt): self
     {
         $this->endDateAt = $endDateAt;
+
+        return $this;
+    }
+
+    public function getPromotionCoupon(): ?PromotionCoupon
+    {
+        return $this->promotionCoupon;
+    }
+
+    public function setPromotionCoupon(?PromotionCoupon $promotionCoupon): self
+    {
+        $this->promotionCoupon = $promotionCoupon;
 
         return $this;
     }

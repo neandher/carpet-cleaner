@@ -5,10 +5,12 @@ namespace App\Entity;
 use App\Resource\Model\TimestampableTrait;
 use App\Resource\Model\ToggleableTrait;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PromotionCouponRepository")
+ * @UniqueEntity(fields={"code"}, message="This code is already in use.")
  */
 class PromotionCoupon
 {
@@ -28,10 +30,17 @@ class PromotionCoupon
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="string", length=20, unique=true)
      * @Assert\NotBlank()
      */
     private $code;
+
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @Assert\NotBlank()
+     * @Assert\LessThan(value="99999999.99")
+     */
+    private $percentage;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -41,12 +50,12 @@ class PromotionCoupon
     /**
      * @ORM\Column(type="smallint", nullable=true)
      */
-    private $usageLimit;
+    private $usageLimit = 0;
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
      */
-    private $used;
+    private $used = 0;
 
     public function getId()
     {
@@ -61,6 +70,30 @@ class PromotionCoupon
     public function setCode(string $code): self
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getPercentage()
+    {
+        return $this->percentage;
+    }
+
+    public function setPercentage($percentage): self
+    {
+        $this->percentage = $percentage;
 
         return $this;
     }
@@ -97,18 +130,6 @@ class PromotionCoupon
     public function setUsed(?int $used): self
     {
         $this->used = $used;
-
-        return $this;
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): self
-    {
-        $this->title = $title;
 
         return $this;
     }

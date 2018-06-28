@@ -1,0 +1,59 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ 'schedule.actions.edit'|trans }}{% endblock %}
+
+{% block page_content %}
+
+    {% embed 'admin/_partials/_default_resource.html.twig' with {'route_index' : 'admin_schedule_index'} %}
+
+        {% block form_start %}
+            {{ form_start(form, {'action': path('admin_schedule_edit', {id : schedule.id}) ~ pagination.buildQuery}) }}
+        {% endblock %}
+
+        {% block icon_list %}
+            <span class="m-portlet__head-icon">
+                <i class="flaticon-time"></i>
+            </span>
+        {% endblock %}
+
+        {% block caption_subject %}
+            <span class="caption-subject font-green-sharp bold uppercase">
+                {{ 'schedule.actions.edit'|trans }}
+            </span>
+        {% endblock %}
+
+        {% block actions %}
+            <li class="m-portlet__nav-item">
+                <button type="submit"
+                        class="m-portlet__nav-link btn btn-success m-btn m-btn--air">
+                    <i class="fa fa-check"></i> {{ 'resource.actions.items.save_and_close'|trans }}
+                </button>
+            </li>
+            <li class="m-portlet__nav-item">
+                <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery }}"
+                   class="m-portlet__nav-link btn btn-danger m-btn m-btn--air">
+                    <span class="fa fa-arrow-left"></span> {{ 'resource.actions.items.go_back'|trans }}
+                </a>
+            </li>
+        {% endblock %}
+
+        {% block nav_tabs %}
+            <li class="nav-item">
+                <a href="#geral" class="nav-link active" data-toggle="tab">{{ 'resource.tabs.details'|trans }}</a>
+            </li>
+        {% endblock %}
+
+        {% block tab_pane %}
+            {% include 'admin/schedule/_form.html.twig' with {'form': form} %}
+        {% endblock %}
+
+    {% endembed %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {% embed 'admin/_partials/_block_javascripts.html.twig' %}
+        {% block javascripts_page_snippets %}
+            <script src="{{ asset('assets/widgets/bootstrap-datetimepicker.js') }}"></script>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

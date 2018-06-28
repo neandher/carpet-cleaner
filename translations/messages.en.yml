@@ -16,6 +16,7 @@ resource:
         num_items: Per Page
         date_start: Date Start
         date_end: Date End
+        date: Date
     toglleable:
         is_enabled_title: Enabled
         is_enabled: Yes
@@ -138,9 +139,14 @@ customer:
     fields:
         firstName: First Name
         lastName: Last Name
+        fullName: Name
         email: E-mail
         phoneNumber: Phone Number
+    tabs:
+        addresses: Address
     actions:
+        new: New Customer
+        edit: Edit Customer
 
 address:
     title: Address
@@ -157,12 +163,17 @@ schedule:
     fields:
         state: Status
         itemsTotal: Total
-        startDateAt: Data/Hora Inicial
-        endDateAt: Data/Hora Final
-        date: Data
+        startDateAt: Date Start
+        endDateAt: Date End
+        date: Date
         startTime: Start Time
         endTime: End Time
         instructions: Special Instructions
+    states:
+        new: New
+        confirmed: Confirmed
+    actions:
+        edit: Edit Schedule
 
 promotionCoupon:
     title: Promotion Coupons
@@ -172,6 +183,7 @@ promotionCoupon:
         expiresAt: Expires At
         usageLimit: Usage Limit
         used: Used
+        percentage: Discount Percentage
     actions:
-        new: New
-        edit: Edit
+        new: New Promotion Coupon
+        edit: Edit Promotion Coupon

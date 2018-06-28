@@ -1,0 +1,25 @@
+{% if prototype is defined %}
+    <div class='row'>
+        <div class='col-md-6'>{{ form_row(item.address)|e('html_attr') }}</div>
+        <div class='col-md-6'>{{ form_row(item.city)|e('html_attr') }}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-6'>{{ form_row(item.state)|e('html_attr') }}</div>
+        <div class='col-md-6'>{{ form_row(item.zipCode)|e('html_attr') }}</div>
+    </div>
+{% endif %}
+
+{% if collection is defined %}
+    <div class='m-portlet m-portlet--rounded'>
+        <div class='m-portlet__body'>
+            <div class='row'>
+                <div class='col-md-6'>{{ form_row(item.address) }}</div>
+                <div class='col-md-6'>{{ form_row(item.city) }}</div>
+            </div>
+            <div class='row'>
+                <div class='col-md-6'>{{ form_row(item.state) }}</div>
+                <div class='col-md-6'>{{ form_row(item.zipCode) }}</div>
+            </div>
+        </div>
+    </div>
+{% endif %}

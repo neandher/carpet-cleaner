@@ -65,23 +65,23 @@
             <i class="m-menu__section-icon flaticon-more-v3"></i>
         </li>
         <li class="m-menu__item " aria-haspopup="true">
-            <a href="#" class="m-menu__link ">
+            <a href="{{ path('admin_schedule_index') }}" class="m-menu__link ">
                 <span class="m-menu__item-here"></span>
                 <i class="m-menu__link-icon flaticon-time"></i>
                 <span class="m-menu__link-title">
                     <span class="m-menu__link-wrap">
-                        <span class="m-menu__link-text">Schedule</span>
+                        <span class="m-menu__link-text">{{ 'schedule.title'|trans }}</span>
                     </span>
                 </span>
             </a>
         </li>
         <li class="m-menu__item " aria-haspopup="true">
-            <a href="#" class="m-menu__link ">
+            <a href="{{ path('admin_customer_index') }}" class="m-menu__link ">
                 <span class="m-menu__item-here"></span>
                 <i class="m-menu__link-icon flaticon-user"></i>
                 <span class="m-menu__link-title">
                     <span class="m-menu__link-wrap">
-                        <span class="m-menu__link-text">Customer</span>
+                        <span class="m-menu__link-text">{{ 'customer.title'|trans }}</span>
                     </span>
                 </span>
             </a>
