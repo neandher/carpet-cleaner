@@ -1,0 +1,149 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}{{ 'promotionCoupon.title'|trans }}{% endblock %}
+
+{% block page_content %}
+
+    {% embed 'admin/_partials/_default_table_list.html.twig' %}
+
+        {% block icon_list %}
+            <i class="flaticon-interface-10"></i>
+        {% endblock %}
+
+        {% block caption_subject %}
+            {{ 'resource.caption'|trans({'%resourceName%': 'promotionCoupon.title'|trans, '%nbResults%' : promotionCoupons.nbResults}) }}
+        {% endblock %}
+
+        {% block head_tools_actions %}
+            <li class="m-portlet__nav-item">
+                <a href="{{ path('admin_promotion_coupon_new') ~ pagination.buildQuery }}"
+                   class="btn btn-accent m-btn m-btn--custom m-btn--icon">
+                    <span><i class="la la-plus"></i><span> {{ 'promotionCoupon.actions.new'|trans }}</span></span>
+                </a>
+            </li>
+        {% endblock %}
+        {% block head_tools_dropdown %}{% endblock %}
+
+        {% block filters_actions %}
+            <div class="row m--margin-bottom-20">
+                <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                    <label for="search">
+                        {{ 'resource.filters.search'|trans }}:
+                    </label>
+                    <input type="text" class="form-control m-input m-input--solid" data-col-index="0"
+                           placeholder="{{ 'resource.fields.title'|trans }}" name="search" id="search"
+                           value="{% if app.request.query.has('search') %}{{ app.request.query.get('search') }}{% endif %}">
+                </div>
+            </div>
+            <div class="m-separator m-separator--md m-separator--dashed"></div>
+            <div class="row m--margin-bottom-20">
+                <div class="col-lg-12">
+                    <button type="submit" class="btn btn-brand m-btn m-btn--icon">
+                        <span><i class="la la-search"></i><span>{{ 'resource.filters.search'|trans }}</span></span>
+                    </button>
+                    &nbsp;&nbsp;
+                    <a href="{{ path('admin_promotion_coupon_index') }}"
+                       class="btn btn-secondary m-btn m-btn--icon">
+                        <span><i class="la la-close"></i><span>{{ 'resource.actions.items.reset'|trans }}</span></span>
+                    </a>
+                </div>
+            </div>
+        {% endblock %}
+
+        {% block table_tr_th %}
+            <tr>
+                <th>ID</th>
+                <th>
+                    <a href="{{ path('admin_promotion_coupon_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('title') }}">
+                        {{ 'resource.fields.title'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_promotion_coupon_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('code') }}">
+                        {{ 'promotionCoupon.fields.code'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_promotion_coupon_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('expiresAt') }}">
+                        {{ 'promotionCoupon.fields.expiresAt'|trans }}
+                    </a>
+                </th>
+                <th>
+                    {{ 'promotionCoupon.fields.usageLimit'|trans }}
+                </th>
+                <th>
+                    {{ 'promotionCoupon.fields.used'|trans }}
+                </th>
+                <th>
+                    <a href="{{ path('admin_promotion_coupon_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('isEnabled') }}">
+                        {{ 'resource.toglleable.is_enabled_title'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_promotion_coupon_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
+                        {{ 'resource.timestampable.createdAt'|trans }}
+                    </a>
+                </th>
+                <th>{{ 'resource.actions.title'|trans }}</th>
+            </tr>
+        {% endblock %}
+
+        {% block table_tr_td %}
+            {% for promotionCoupon in promotionCoupons %}
+                <tr>
+                    <td>{{ promotionCoupon.id }}</td>
+                    <td>{{ promotionCoupon.title }}</td>
+                    <td>{{ promotionCoupon.code }}</td>
+                    <td>{% if promotionCoupon.expiresAt %}{{ promotionCoupon.expiresAt|date('d/m/Y H:i') }}{% else %}-{% endif %}</td>
+                    <td>{% if promotionCoupon.usageLimit %}{{ promotionCoupon.usageLimit }}{% else %}0{% endif %}</td>
+                    <td>{% if promotionCoupon.used %}{{ promotionCoupon.used }}{% else %}0{% endif %}</td>
+                    <td>
+                        {% if promotionCoupon.isEnabled == '1' %}
+                            <span class="m-badge  m-badge--success m-badge--wide">
+                                <i class="fa fa-check"></i>
+                            </span>
+                        {% else %}
+                            <span class="m-badge  m-badge--danger m-badge--wide">
+                                <i class="fa fa-remove"></i>
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>{{ promotionCoupon.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% embed 'admin/_partials/_actions_btn_group.html.twig' %}
+                            {% block li_actions %}
+                                <a class="dropdown-item" href="javascript:;" data-toggle="modal"
+                                   data-target="#modalConfirmation"
+                                   data-path="{{ path('admin_promotion_coupon_delete', {id: promotionCoupon.id})|escape }}"
+                                   data-crf="{{ form_widget(delete_forms[promotionCoupon.id]._token)|escape }}"
+                                >
+                                    <i class="fa fa-trash"></i> {{ 'resource.actions.items.delete'|trans }}
+                                </a>
+                            {% endblock %}
+                        {% endembed %}
+                        <a href="{{ path('admin_promotion_coupon_edit', { id: promotionCoupon.id }) ~ pagination.buildQuery }}"
+                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                           title="{{ 'resource.actions.items.edit'|trans }}"> <i class="la la-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block list_info %}
+            {{ 'resource.pagination.list_info'|trans({
+                '%currentPageOffsetStart%': promotionCoupons.currentPageOffsetStart,
+                '%currentPageOffsetEnd%': promotionCoupons.currentPageOffsetEnd,
+                '%nbResults%': promotionCoupons.nbResults
+            }) }}
+        {% endblock %}
+
+        {% block list_pagination %}
+            {{ pagerfanta(promotionCoupons, 'twitter_bootstrap4',{
+                routeName: 'admin_promotion_coupon_index',
+                routeParams: app.request.query.all
+            }) }}
+        {% endblock %}
+
+    {% endembed %}
+
+{% endblock %}

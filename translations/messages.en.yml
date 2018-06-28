@@ -9,7 +9,7 @@ resource:
             updated: An error has occurred
             deleted: An error has occurred
     fields:
-        title: Title
+        title: Name
         description: Description
     filters:
         search: Search
@@ -163,3 +163,15 @@ schedule:
         startTime: Start Time
         endTime: End Time
         instructions: Special Instructions
+
+promotionCoupon:
+    title: Promotion Coupons
+    title_single: Promotion Coupon
+    fields:
+        code: Code
+        expiresAt: Expires At
+        usageLimit: Usage Limit
+        used: Used
+    actions:
+        new: New
+        edit: Edit

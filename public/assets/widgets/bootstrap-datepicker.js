@@ -10,14 +10,17 @@ var BootstrapDatepicker = {
             templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
         }).on('changeDate', function (e) {
             var timerpick = $(".input_timepicker");
-            if (e.date.getDay() === 6) {
+            var newDate = e.date;
+
+            if (newDate.getDay() === 6) {
                 timerpick.datetimepicker('setHoursDisabled', [0, 1, 2, 3, 4, 5, 6, 7, 8, 19, 20, 21, 22, 23]);
             }
             else {
                 timerpick.datetimepicker('setHoursDisabled', [0,1,2,3,4,5,6,7,21,22,23]);
             }
-            var newDate = e.date;
+
             timerpick.datetimepicker('setStartDate', new Date(newDate.setMinutes(0)));
+            timerpick.datetimepicker('setEndDate', new Date(newDate.setHours(23)));
             timerpick.datetimepicker('setInitialDate', new Date(newDate.setMinutes(0)));
             timerpick.val("");
             timerpick.datetimepicker('update');

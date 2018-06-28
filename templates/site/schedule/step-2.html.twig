@@ -388,21 +388,22 @@
                 $('#form_phone_number').validate({
                     rules: {
                         phone_number: {required: true, phoneUS: true},
-                    }, invalidHandler: function (e, t) {
-                        //...
                     }, submitHandler: function (e) {
                         $('#btn-check-phone-number').addClass('m-loader m-loader--light m-loader--right');
-                        $.post("{{ path('site_schedule_find_customer')|escape('js') }}", {'phone_number': $('#phone_number').inputmask('unmaskedvalue')}, function (data) {
-                            if (data.success != null) {
-                                window.location.href = "{{ path('site_schedule_step_2')|escape('js') }}";
-                            }
-                        }).fail(function () {
-                            $('#modalPhoneNumber').modal('hide');
-                        }).always(function () {
-                            $('#btn-check-phone-number').removeClass('m-loader m-loader--light m-loader--right');
-                        });
+                        $.post("{{ path('site_schedule_find_customer')|escape('js') }}", {'phone_number': $('#phone_number').inputmask('unmaskedvalue')},
+                            function (data) {
+                                if (data.success != null) {
+                                    window.location.href = "{{ path('site_schedule_step_2')|escape('js') }}";
+                                }
+                            })
+                            .fail(function () {
+                                $('#modalPhoneNumber').modal('hide');
+                            })
+                            .always(function () {
+                                $('#btn-check-phone-number').removeClass('m-loader m-loader--light m-loader--right');
+                            });
                     }
-                })
+                });
 
             </script>
         {% endblock %}
