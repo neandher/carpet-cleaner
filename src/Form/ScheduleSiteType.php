@@ -64,6 +64,11 @@ class ScheduleSiteType extends AbstractType
             ]);
         }
 
+        /*$builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $schedule['customer']['customerAddresses'][0]['address']['zipCode'] = '456';
+            $event->setData($schedule);
+        });*/
+
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $schedule = $event->getData();
 
@@ -79,8 +84,6 @@ class ScheduleSiteType extends AbstractType
 
             $schedule['startDateAt'] = $startDateAt;
             $schedule['endDateAt'] = $endDateAt;
-
-            $event->setData($schedule);
         });
     }
 

@@ -27,6 +27,40 @@
                            value="{% if app.request.query.has('search') %}{{ app.request.query.get('search') }}{% endif %}">
                 </div>
                 <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                    <label>
+                        {{ 'resource.filters.date'|trans }}:
+                    </label>
+                    <div class="input-daterange input-group" id="m_datepicker">
+                        <input type="text" class="form-control m-input input_datetimepicker" name="start_date" readonly
+                               placeholder="{{ 'resource.filters.start_date'|trans }}"
+                               value="{% if app.request.query.has('start_date') %}{{ app.request.query.get('start_date') }}{% endif %}"/>
+                        <div class="input-group-append">
+                            <span class="input-group-text">
+                                <i class="la la-ellipsis-h"></i>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control m-input input_datetimepicker" name="end_date" readonly
+                               placeholder="{{ 'resource.filters.end_date'|trans }}"
+                               value="{% if app.request.query.has('end_date') %}{{ app.request.query.get('end_date') }}{% endif %}"/>
+                    </div>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                    <label for="state">
+                        {{ 'schedule.fields.state'|trans }}:
+                    </label>
+                    <select class="form-control m-input" name="state" id="state" onchange="submit();">
+                        <option value=""></option>
+                        <option value="{{ constant('App\\Entity\\Schedule::STATE_NEW') }}"
+                                {% if app.request.query.has('state') %}{% if app.request.query.get('state') == constant('App\\Entity\\Schedule::STATE_NEW') %}selected{% endif %}{% endif %}>
+                            {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_NEW'))|trans }}
+                        </option>
+                        <option value="{{ constant('App\\Entity\\Schedule::STATE_CONFIRMED') }}"
+                                {% if app.request.query.has('state') %}{% if app.request.query.get('state') == constant('App\\Entity\\Schedule::STATE_CONFIRMED') %}selected{% endif %}{% endif %}>
+                            {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_CONFIRMED'))|trans }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
                     <label for="customer">
                         {{ 'customer.title_single'|trans }}:
                     </label>
@@ -39,29 +73,15 @@
                         {% endfor %}
                     </select>
                 </div>
-                {#<div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
-                    <label>
-                        {{ 'resource.filters.date'|trans }}:
-                    </label>
-                    <div class="input-daterange input-group" id="m_datepicker">
-                        <input type="text" class="form-control m-input" name="date_start" readonly
-                               placeholder="{{ 'resource.filters.date_start'|trans }}" id="m_datepicker_1"
-                               value="{% if app.request.query.has('date_start') %}{{ app.request.query.get('date_start') }}{% endif %}"/>
-                        <div class="input-group-append">
-                            <span class="input-group-text">
-                                <i class="la la-ellipsis-h"></i>
-                            </span>
-                        </div>
-                        <input type="text" class="form-control m-input" name="date_end" readonly
-                               placeholder="{{ 'resource.filters.date_end'|trans }}" id="m_datepicker_1"
-                               value="{% if app.request.query.has('date_end') %}{{ app.request.query.get('date_end') }}{% endif %}"/>
-                    </div>
-                </div>#}
+            </div>
+            <div class="m-separator m-separator--md m-separator--dashed"></div>
+            <div class="row m--margin-bottom-20">
                 <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
                     <label for="num_items">
                         {{ 'resource.filters.num_items'|trans }}:
                     </label>
-                    <input type="number" class="form-control" name="num_items" id="num_items"
+                    <input type="number" class="form-control col-md-4"
+                           name="num_items" id="num_items"
                            value="{{ app.request.query.get('num_items', pagination.routeParams('num_items')) }}"
                            min="5">
                 </div>
@@ -130,15 +150,19 @@
             {% for schedule in schedules %}
                 <tr>
                     <td>{{ schedule.id }}</td>
-                    <td>{{ schedule.customer.fullName }}</td>
+                    <td>
+                        <a href="{{ path('admin_customer_edit', {'id': schedule.customer.id}) }}">
+                            {{ schedule.customer.fullName }}
+                        </a>
+                    </td>
                     <td>
                         {% if schedule.state == constant('App\\Entity\\Schedule::STATE_NEW') %}
                             <span class="m-badge  m-badge--success m-badge--wide">
-                                {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_NEW'))|trans }}
+                                {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_NEW'))|trans|lower }}
                             </span>
                         {% elseif schedule.state == constant('App\\Entity\\Schedule::STATE_CONFIRMED') %}
                             <span class="m-badge  m-badge--danger m-badge--wide">
-                                {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_CONFIRMED'))|trans }}
+                                {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_CONFIRMED'))|trans|lower }}
                             </span>
                         {% endif %}
                     </td>
@@ -157,6 +181,10 @@
                                    data-crf="{{ form_widget(delete_forms[schedule.id]._token)|escape }}"
                                 >
                                     <i class="fa fa-trash"></i> {{ 'resource.actions.items.delete'|trans }}
+                                </a>
+                                <a href="javascript:;" class=" dropdown-item scheduleItemsShow"
+                                   data-id="{{ schedule.id }}">
+                                    <i class="fa fa-search"></i> {{ 'schedule.actions.viewItems'|trans }}
                                 </a>
                             {% endblock %}
                         {% endembed %}
@@ -186,12 +214,89 @@
 
     {% endembed %}
 
+    <!-- modal schedule items -->
+    <div class="modal fade" id="modalScheduleItems" tabindex="-1" role="basic"
+         aria-labelledby="modalScheduleItemsLabel">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ 'scheduleItems.title'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>{{ 'cleaningItem.title_single'|trans }}</th>
+                            <th>{{ 'scheduleItems.fields.unitPrice'|trans }}</th>
+                            <th>{{ 'scheduleItems.fields.quantity'|trans }}</th>
+                            <th>{{ 'scheduleItems.fields.total'|trans }}</th>
+                        </tr>
+                        </thead>
+                        <tbody class="showAjaxItems"></tbody>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end modal phone number -->
+
 {% endblock %}
 
 {% block javascripts %}
     {% embed 'admin/_partials/_block_javascripts.html.twig' %}
         {% block javascripts_page_snippets %}
+            <script src="{{ asset('assets/widgets/bootstrap-datetimepicker.js') }}"></script>
             <script src="{{ asset('assets/widgets/select2.js') }}"></script>
+
+            <script type="text/javascript">
+
+                $('.scheduleItemsShow').click(function () {
+
+                    $('#modalScheduleItems').modal();
+
+                    var $modalBody = $('.showAjaxItems');
+
+                    $modalBody.html('<tr><td colspan="5">loading...</td><tr>');
+
+                    $.get("{{ path('admin_schedule_items')|escape('js') }}", {'id': $(this).data('id')}, function (data) {
+
+                        $modalBody.html('');
+
+                        $.each(data, function (key, value) {
+
+                            console.log(value);
+
+                            $.each(value.scheduleItems, function (_key, _value) {
+
+                                var item = _value.cleaningItem.title;
+                                var category = _value.cleaningItem.cleaningItemCategory.title;
+                                var option = _value.cleaningItemOption.title;
+                                var unitPrice = _value.unitPrice;
+                                var quantity = _value.quantity;
+                                var total = _value.total;
+
+                                $modalBody.append('<tr><td>' + item + ' - ' + category + ' - ' + option + '</td><td>$' + unitPrice + '</td><td>' + quantity + '</td><td>$' + total + '</td></tr>');
+                            });
+
+                            var subTotal = value.itemsSubTotal;
+                            var discount = value.itemsDiscount != null ? value.itemsDiscount : '0.00';
+
+                            $modalBody.append('<tr><td colspan="3" align="right" style="font-weight: 500;">SubTotal: </td><td style="font-weight: 500;">$' + subTotal + '</td></tr>');
+                            $modalBody.append('<tr><td colspan="3" align="right" style="font-weight: 500;">Discount: </td><td style="font-weight: 500;">$' + discount + '</td></tr>');
+                            $modalBody.append('<tr><td colspan="3" align="right" style="font-weight: 500;">Total: </td><td style="font-weight: 500;">$' + value.itemsTotal + '</td></tr>');
+                        });
+                    });
+                });
+
+            </script>
         {% endblock %}
     {% endembed %}
 {% endblock %}

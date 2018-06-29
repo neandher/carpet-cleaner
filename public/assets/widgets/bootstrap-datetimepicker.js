@@ -18,7 +18,7 @@ var BootstrapDatetimepicker = {
         });
 
         $(".input_datetimepicker").datetimepicker({
-            todayHighlight: true,
+            todayHighlight: false,
             autoclose: true,
             clearBtn : true,
             pickerPosition: "bottom-right",

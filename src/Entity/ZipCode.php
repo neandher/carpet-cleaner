@@ -5,10 +5,12 @@ namespace App\Entity;
 use App\Resource\Model\TimestampableTrait;
 use App\Resource\Model\ToggleableTrait;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ZipCodeRepository")
+ * @UniqueEntity(fields={"description"}, message="This zip code is already in use.")
  */
 class ZipCode
 {
@@ -22,7 +24,7 @@ class ZipCode
     private $id;
 
     /**
-     * @ORM\Column(type="smallint")
+     * @ORM\Column(type="smallint", unique=true)
      */
     private $description;
 

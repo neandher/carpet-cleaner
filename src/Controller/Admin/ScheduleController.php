@@ -12,9 +12,13 @@ use App\Util\FlashBag;
 use App\Util\Pagination;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Class ScheduleController
@@ -153,5 +157,48 @@ class ScheduleController extends BaseController
             ->setMethod('DELETE')
             ->setData($schedule)
             ->getForm();
+    }
+
+    /**
+     * @Route("/items", name="items")
+     * @Method("GET")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getItems(Request $request)
+    {
+        $data = [];
+
+        if ($request->isXmlHttpRequest()) {
+
+            $scheduleId = $request->query->get('id', null);
+
+            if ($scheduleId) {
+
+                $encoder = new JsonEncoder();
+                $normalizer = new ObjectNormalizer();
+                $normalizer->setCircularReferenceHandler(function ($object) {
+                    return $object->getId();
+                });
+
+                $serializer = new Serializer([$normalizer], [$encoder]);
+
+                $data = $serializer->normalize(
+                    $this->getDoctrine()->getRepository(Schedule::class)->findItemsById($scheduleId),
+                    'json',
+                    ['groups' => ['scheduleItems']]
+                );
+
+                $status = 200;
+            } else {
+                $data['error'] = 'Parameter not found';
+                $status = 404;
+            }
+        } else {
+            $data['error'] = 'Invalid request';
+            $status = 400;
+        }
+
+        return new JsonResponse($data, $status);
     }
 }

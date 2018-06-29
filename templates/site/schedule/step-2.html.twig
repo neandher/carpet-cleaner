@@ -93,6 +93,7 @@
                                     <div class="col-xl-10 offset-xl-1">
 
                                         {{ include('_partials/_flash_messages.html.twig') }}
+                                        {{ form_errors(form) }}
 
                                         <div class="m-form__section m-form__section--first">
                                             <div class="m-form__heading">
@@ -129,7 +130,25 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="m-form__section">
+
+                                        <!-- check availability -->
+                                        <div class="m-form__section m--hide" id="check_availability">
+                                            <div class="form-group m-form__group row">
+                                                <div class="col-lg-12">
+                                                    <div id="check_availability_result" class="m--hide text-danger">
+                                                        <span class="m-badge m-badge--danger m-badge--wide m-badge--rounded">
+                                                            Schedule not available in this period.
+                                                        </span>
+                                                    </div>
+                                                    <div class="m-loader m-loader--primary m--hide"
+                                                         id="check_availability_loader"
+                                                         style="width: 30px; display: inline-block;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- end check availability -->
+
+                                        <div class="m-form__section" id="client_details">
                                             <div class="m-form__heading">
                                                 <h3 class="m-form__heading-title">
                                                     {% if not hasPhoneNumber %}Client Details{% else %}Details{% endif %}
@@ -159,11 +178,12 @@
                         </div>
                         <!--end: Form Body -->
                         <!--begin: Form Actions -->
-                        <div class="m-portlet__foot m-portlet__foot--fit m--margin-top-40">
+                        <div class="m-portlet__foot m-portlet__foot--fit __m--margin-top-40">
                             <div class="m-form__actions m-form__actions">
                                 <div class="row">
                                     <div class="col-lg-11 m--align-right">
-                                        <button type="submit" class="btn btn-warning m-btn m-btn--custom m-btn--icon">
+                                        <button type="submit" class="btn btn-warning m-btn m-btn--custom m-btn--icon"
+                                                id="schedule_submit">
                                             <span><span>Schedule</span>&nbsp;&nbsp;<i class="la la-check"></i></span>
                                         </button>
                                     </div>
@@ -392,6 +412,42 @@
                             })
                             .always(function () {
                                 $('#btn-check-coupon-code').removeClass('m-loader m-loader--light m-loader--right');
+                            });
+                    }
+                });
+
+                $('.input_timepicker').change(function (e) {
+
+                    var date = $('#schedule_site_date').val();
+                    var time_start = $('#schedule_site_startTime').val();
+                    var time_end = $('#schedule_site_endTime').val();
+
+                    if (date !== "" && time_start !== "" && time_end !== "") {
+
+                        $('#check_availability').removeClass('m--hide');
+                        $('#check_availability_loader').removeClass('m--hide');
+
+                        $.post("{{ path('site_schedule_check_availability')|escape('js') }}", {
+                                'date': date,
+                                'start_time': time_start,
+                                'end_time': time_end,
+                            },
+                            function (data) {
+                                if (data.notavailable != null) {
+                                    $('#check_availability_result').removeClass('m--hide');
+                                    $('#check_availability_loader').addClass('m--hide');
+                                    $('#client_details').addClass('m--hide');
+                                    $('#schedule_submit').attr('disabled', true);
+                                }
+                                else {
+                                    $('#check_availability_result').addClass('m--hide');
+                                    $('#check_availability').addClass('m--hide');
+                                    $('#client_details').removeClass('m--hide');
+                                    $('#schedule_submit').attr('disabled', false);
+                                }
+                            })
+                            .always(function () {
+                                $('#check_availability_loader').addClass('m--hide');
                             });
                     }
                 });

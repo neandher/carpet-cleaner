@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ScheduleItemsRepository")
@@ -18,24 +19,35 @@ class ScheduleItems
 
     /**
      * @ORM\Column(type="smallint")
+     * @Groups({"scheduleItems"})
      */
     private $quantity;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @Groups({"scheduleItems"})
      */
     private $unitPrice;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @Groups({"scheduleItems"})
      */
     private $total;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\CleaningItem")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"scheduleItems"})
      */
     private $cleaningItem;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\CleaningItemOption")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"scheduleItems"})
+     */
+    private $cleaningItemOption;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Schedule", inversedBy="scheduleItems")
@@ -104,6 +116,18 @@ class ScheduleItems
     public function setSchedule(?Schedule $schedule): self
     {
         $this->schedule = $schedule;
+
+        return $this;
+    }
+
+    public function getCleaningItemOption(): ?CleaningItemOption
+    {
+        return $this->cleaningItemOption;
+    }
+
+    public function setCleaningItemOption(?CleaningItemOption $cleaningItemOption): self
+    {
+        $this->cleaningItemOption = $cleaningItemOption;
 
         return $this;
     }

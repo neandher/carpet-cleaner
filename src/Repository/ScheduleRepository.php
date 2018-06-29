@@ -5,8 +5,10 @@ namespace App\Repository;
 use App\Entity\Schedule;
 use App\Util\Pagination;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
+use function Sodium\add;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ScheduleRepository extends BaseRepository
@@ -38,17 +40,13 @@ class ScheduleRepository extends BaseRepository
             )->setParameter('search', '%' . $routeParams['search'] . '%');
         }
 
-        if ((isset($routeParams['date_start']) && !empty($routeParams['date_start'])) && (isset($routeParams['date_end']) && !empty($routeParams['date_end']))) {
+        if ((isset($routeParams['start_date']) && !empty($routeParams['start_date'])) && (isset($routeParams['end_date']) && !empty($routeParams['end_date']))) {
 
-            $routeParams['date_start'] .= ' 00:00';
-            $routeParams['date_end'] .= ' 23:59';
+            $startDate = \DateTime::createFromFormat('m/d/Y H:i', $routeParams['start_date'])->format('Y-m-d H:i');
+            $endDate = \DateTime::createFromFormat('m/d/Y H:i', $routeParams['end_date'])->format('Y-m-d H:i');
 
-            $date_start = \DateTime::createFromFormat('d/m/Y H:i', $routeParams['date_start'])->format('Y-m-d H:i');
-            $date_end = \DateTime::createFromFormat('d/m/Y H:i', $routeParams['date_end'])->format('Y-m-d H:i');
-
-            if ($date_start && $date_end) {
-                //$qb->andWhere('schedule.startDateAt >= :date_start')->setParameter('date_start', $date_start);
-                //$qb->andWhere('schedule.endDateAt <= :date_end')->setParameter('date_end', $date_end);
+            if ($startDate && $endDate) {
+                $qb->andWhere($this->findByDateStartEndExpr($qb, $startDate, $endDate));
             }
         }
 
@@ -67,5 +65,54 @@ class ScheduleRepository extends BaseRepository
         $paginator->setCurrentPage($routeParams['page']);
 
         return $paginator;
+    }
+
+    public function findByDateStartEnd($startDate, $endDate)
+    {
+        $qb = $this->createQueryBuilder('schedule');
+
+        $dateStart = \DateTime::createFromFormat('m/d/Y H:i', $startDate)->format('Y-m-d H:i');
+        $dateEnd = \DateTime::createFromFormat('m/d/Y H:i', $endDate)->format('Y-m-d H:i');
+
+        return $qb
+            ->where($this->findByDateStartEndExpr($qb, $dateStart, $dateEnd))
+            ->getQuery()
+            ->getResult();
+    }
+
+    private function findByDateStartEndExpr(QueryBuilder $qb, $startDate, $endDate)
+    {
+        $qb->setParameter('start_date', $startDate)
+            ->setParameter('start_end', $endDate);
+
+        return $qb->expr()->andX()->add(
+            $qb->expr()->orX()
+                ->add($qb->expr()->eq('schedule.startDateAt', ':start_date'))
+                ->add($qb->expr()->eq('schedule.endDateAt', ':start_date'))
+                ->add(
+                    $qb->expr()->andX()
+                        ->add($qb->expr()->gte('schedule.startDateAt', ':start_date'))
+                        ->add($qb->expr()->lte('schedule.startDateAt', ':start_end'))
+                )
+                ->add(
+                    $qb->expr()->andX()
+                        ->add($qb->expr()->lte('schedule.startDateAt', ':start_date'))
+                        ->add($qb->expr()->gte('schedule.endDateAt', ':start_date'))
+                )
+        );
+    }
+
+    public function findItemsById($id)
+    {
+        return $this->createQueryBuilder('schedule')
+            ->innerJoin('schedule.scheduleItems', 'scheduleItems')
+            ->addSelect('scheduleItems')
+            ->innerJoin('scheduleItems.cleaningItem', 'cleaningItem')
+            ->addSelect('cleaningItem')
+            ->leftJoin('schedule.promotionCoupon', 'promotionCoupon')
+            ->addSelect('promotionCoupon')
+            ->where('schedule.id = :id')->setParameter(':id', $id)
+            ->getQuery()
+            ->getResult();
     }
 }

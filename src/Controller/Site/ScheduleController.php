@@ -4,6 +4,7 @@ namespace App\Controller\Site;
 
 use App\Entity\CleaningItem;
 use App\Entity\CleaningItemCategory;
+use App\Entity\CleaningItemOption;
 use App\Entity\CleaningItemOptions;
 use App\Entity\Customer;
 use App\Entity\PromotionCoupon;
@@ -117,7 +118,7 @@ class ScheduleController extends AbstractController
                             /** @var CleaningItem $cleaningItem */
                             $cleaningItem = $this->getDoctrine()->getRepository(CleaningItem::class)->findOneBy(['id' => $item['id']]);
 
-                            $itemTotal = $cleaningItem->getAmount() * $item['quantity'];
+                            $unitPrice = $cleaningItem->getAmount();
 
                             /** @var CleaningItemOptions $cleaningItemOption |null */
                             $cleaningItemOption = null;
@@ -125,7 +126,7 @@ class ScheduleController extends AbstractController
                             if (!empty($item['item_option'])) {
                                 $cleaningItemOption = $this->getDoctrine()->getRepository(CleaningItemOptions::class)->findOneBy(['id' => $item['item_option']]);
                                 if ($cleaningItemOption->getPercentage() > 0) {
-                                    $itemTotal = (($cleaningItemOption->getPercentage() * $cleaningItem->getAmount()) + $cleaningItem->getAmount()) * $item['quantity'];
+                                    $unitPrice = ($cleaningItemOption->getPercentage() * $cleaningItem->getAmount()) + $cleaningItem->getAmount();
                                 }
                             }
 
@@ -135,18 +136,21 @@ class ScheduleController extends AbstractController
                             );
 
                             if ($zipCode->getPercentage() > 0) {
-                                $itemTotal = ($zipCode->getPercentage() * $itemTotal) + $itemTotal;
+                                $unitPrice = ($zipCode->getPercentage() * $unitPrice) + $unitPrice;
                             }
 
+                            $itemTotal = $unitPrice * $item['quantity'];
                             $total += $itemTotal;
 
                             $checkout['items'][$item['id']]['item'] = [
                                 'title' => $cleaningItem->getTitle(),
                                 'categoryTitle' => $cleaningItem->getCleaningItemCategory()->getTitle(),
+                                'unitPrice' => $unitPrice,
                                 'quantity' => $item['quantity'],
                                 'total' => round($itemTotal, 2)
                             ];
                             $checkout['items'][$item['id']]['item_option'] = !empty($item['item_option']) ? [
+                                'id' => $cleaningItemOption->getCleaningItemOption()->getId(),
                                 'title' => $cleaningItemOption->getCleaningItemOption()->getTitle(),
                             ] : null;
                             $checkout['items'][$item['id']]['item_total'] = $itemTotal;
@@ -223,11 +227,18 @@ class ScheduleController extends AbstractController
 
                 $em = $this->getDoctrine()->getManager();
 
-                $schedule->setItemsTotal($checkout['total']);
+                $schedule->setItemsTotal($checkout['total'])
+                    ->setItemsSubTotal($checkout['subtotal']);
+
+                if ($checkout['discount'] > 0)
+                    $schedule->setItemsDiscount($checkout['discount']);
 
                 foreach ($checkout['items'] as $itemId => $item) {
 
-                    $cleaningItem = $this->getDoctrine()->getRepository(CleaningItem::class)->findOneBy(['id' => $itemId]);
+                    $cleaningItem = $this->getDoctrine()->getRepository(CleaningItem::class)
+                        ->findOneBy(['id' => $itemId]);
+                    $cleaningItemOption = $this->getDoctrine()->getRepository(CleaningItemOption::class)
+                        ->findOneBy(['id' => $item['item_option']['id']]);
 
                     $scheduleItems = new ScheduleItems();
                     $scheduleItems
@@ -235,7 +246,8 @@ class ScheduleController extends AbstractController
                         ->setCleaningItem($cleaningItem)
                         ->setSchedule($schedule)
                         ->setTotal($item['item']['total'])
-                        ->setUnitPrice($item['item_total']);
+                        ->setUnitPrice($item['item']['unitPrice'])
+                        ->setCleaningItemOption($cleaningItemOption);
 
                     $schedule->addScheduleItem($scheduleItems);
                 }
@@ -257,11 +269,6 @@ class ScheduleController extends AbstractController
                 $request->getSession()->remove('zipCode');
                 $request->getSession()->remove('phoneNumber');
                 $request->getSession()->remove('couponCode');
-
-                /*$this->flashBag->newMessage(
-                    FlashBagEvents::MESSAGE_TYPE_SUCCESS,
-                    FlashBagEvents::MESSAGE_SUCCESS_INSERTED
-                );*/
 
                 return $this->redirectToRoute('site_schedule_success');
             }
@@ -407,6 +414,54 @@ class ScheduleController extends AbstractController
             } else {
                 $data['error'] = 'Parameter not found';
                 $status = 404;
+            }
+        } else {
+            $data['error'] = 'Invalid request';
+            $status = 400;
+        }
+
+        return new JsonResponse($data, $status);
+    }
+
+    /**
+     * @Route("/check-availability", name="check_availability")
+     * @Method("POST")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function checkAvailability(Request $request)
+    {
+        $data = [];
+        if ($request->isXmlHttpRequest()) {
+
+            $date = $request->request->get('date', null);
+            $startTime = $request->request->get('start_time', null);
+            $endTime = $request->request->get('end_time', null);
+
+            if ($date && $startTime && $endTime) {
+
+                $startDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $startTime)->format('m/d/Y H:i');
+                $endDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $endTime)->format('m/d/Y H:i');
+
+                if ($startDate && $endDate) {
+
+                    /** @var Schedule[]|null $check */
+                    $schedulesNotAvailable = $this->getDoctrine()->getRepository(Schedule::class)->findByDateStartEnd($startDate, $endDate);
+
+                    if (count($schedulesNotAvailable) > 0) {
+                        $data['notavailable'] = 'true';
+                        $status = 200;
+                    } else {
+                        $data['success'] = 'true';
+                        $status = 200;
+                    }
+                } else {
+                    $data['error'] = 'Invalid request parameters';
+                    $status = 400;
+                }
+            } else {
+                $data['error'] = 'Request parameters not found';
+                $status = 400;
             }
         } else {
             $data['error'] = 'Invalid request';

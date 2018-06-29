@@ -10,18 +10,30 @@ var BootstrapDatepicker = {
             templates: {leftArrow: '<i class="la la-angle-left"></i>', rightArrow: '<i class="la la-angle-right"></i>'}
         }).on('changeDate', function (e) {
             var timerpick = $(".input_timepicker");
-            var newDate = e.date;
+            var newDate = new Date(e.date);
+
+            newDate.setMinutes(0);
 
             if (newDate.getDay() === 6) {
                 timerpick.datetimepicker('setHoursDisabled', [0, 1, 2, 3, 4, 5, 6, 7, 8, 19, 20, 21, 22, 23]);
+                newDate.setHours(9);
             }
             else {
-                timerpick.datetimepicker('setHoursDisabled', [0,1,2,3,4,5,6,7,21,22,23]);
+                timerpick.datetimepicker('setHoursDisabled', [0, 1, 2, 3, 4, 5, 6, 7, 21, 22, 23]);
+                newDate.setHours(8);
             }
 
-            timerpick.datetimepicker('setStartDate', new Date(newDate.setMinutes(0)));
-            timerpick.datetimepicker('setEndDate', new Date(newDate.setHours(23)));
-            timerpick.datetimepicker('setInitialDate', new Date(newDate.setMinutes(0)));
+            dateNow = new Date();
+            compareDateOne = new Date(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate());
+            compareDateTwo = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+
+            if (compareDateOne.getTime() === compareDateTwo.getTime()) {
+                newDate.setHours((new Date()).getHours() + 1);
+            }
+
+            timerpick.datetimepicker('setStartDate', newDate);
+            timerpick.datetimepicker('setEndDate', new Date(e.date.setHours(23)));
+            timerpick.datetimepicker('setInitialDate', newDate);
             timerpick.val("");
             timerpick.datetimepicker('update');
         });
