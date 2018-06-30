@@ -23,11 +23,14 @@
 
         {% block actions %}
             <li class="m-portlet__nav-item">
+                {{ form_widget(form.save_and_confirm, {'attr' : {'class' : 'm-portlet__nav-link btn btn-success m-btn m-btn--air'}}) }}
+            </li>
+            {#<li class="m-portlet__nav-item">
                 <button type="submit"
                         class="m-portlet__nav-link btn btn-success m-btn m-btn--air">
-                    <i class="fa fa-check"></i> {{ 'resource.actions.items.save_and_close'|trans }}
+                    {{ 'resource.actions.items.save_and_close'|trans }}
                 </button>
-            </li>
+            </li>#}
             <li class="m-portlet__nav-item">
                 <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery }}"
                    class="m-portlet__nav-link btn btn-danger m-btn m-btn--air">
@@ -47,6 +50,8 @@
         {% endblock %}
 
     {% endembed %}
+
+    {#{% include 'admin/schedule/invoice.html.twig' %}#}
 
 {% endblock %}
 

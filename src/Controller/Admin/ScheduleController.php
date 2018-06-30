@@ -6,11 +6,17 @@ use App\Controller\BaseController;
 use App\Entity\Customer;
 use App\Entity\Schedule;
 use App\Event\FlashBagEvents;
+use App\Event\ScheduleEvents;
 use App\Form\Model\SubmitActionsType;
 use App\Form\ScheduleType;
 use App\Util\FlashBag;
 use App\Util\Pagination;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,16 +42,22 @@ class ScheduleController extends BaseController
      * @var FlashBag
      */
     private $flashBag;
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
 
     /**
      * ScheduleController constructor.
      * @param Pagination $pagination
      * @param FlashBag $flashBag
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(Pagination $pagination, FlashBag $flashBag)
+    public function __construct(Pagination $pagination, FlashBag $flashBag, EventDispatcherInterface $dispatcher)
     {
         $this->pagination = $pagination;
         $this->flashBag = $flashBag;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -88,9 +100,26 @@ class ScheduleController extends BaseController
 
         $form = $this->createForm(ScheduleType::class, $schedule);
 
+        $form
+            ->add('send_email', ChoiceType::class, [
+                'mapped' => false,
+                'label' => 'Send Client Email',
+                'choices' => [
+                    'Yes' => 'yes',
+                    'No' => 'no'
+                ]
+            ])
+            ->add('save_and_confirm', SubmitType::class, [
+                'label' => 'Save and Confirm'
+            ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            if ($form->get('save_and_confirm')->isClicked()) {
+                $schedule->setState(Schedule::STATE_CONFIRMED);
+            }
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($schedule);
@@ -100,6 +129,12 @@ class ScheduleController extends BaseController
                 FlashBagEvents::MESSAGE_TYPE_SUCCESS,
                 FlashBagEvents::MESSAGE_SUCCESS_UPDATED
             );
+
+            if ($form->get('save_and_confirm')->isClicked()) {
+                if ($form->get('send_email')->getData() == 'yes') {
+                    $this->dispatcher->dispatch(ScheduleEvents::SCHEDULE_UPDATE_CONFIRM, new GenericEvent($schedule));
+                }
+            }
 
             return $this->redirectToRoute('admin_schedule_index', $pagination->getRouteParams());
         }

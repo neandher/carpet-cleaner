@@ -10,7 +10,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class ScheduleCreateSubscriber implements EventSubscriberInterface
+class ScheduleConfirmEmailSubscriber implements EventSubscriberInterface
 {
     /**
      * @var \Swift_Mailer
@@ -26,16 +26,11 @@ class ScheduleCreateSubscriber implements EventSubscriberInterface
      * @var UserRepository
      */
     private $userRepository;
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
 
     /**
      * ScheduleCreateSubscriber constructor.
      * @param \Swift_Mailer $mailer
      * @param \Twig_Environment $twig
-     * @param TokenStorageInterface $tokenStorage
      * @param UserRepository $userRepository
      * @param $emailFromAddress
      * @param $siteTitle
@@ -43,7 +38,6 @@ class ScheduleCreateSubscriber implements EventSubscriberInterface
     public function __construct(
         \Swift_Mailer $mailer,
         \Twig_Environment $twig,
-        TokenStorageInterface $tokenStorage,
         UserRepository $userRepository,
         $emailFromAddress,
         $siteTitle
@@ -54,7 +48,6 @@ class ScheduleCreateSubscriber implements EventSubscriberInterface
         $this->emailFromAddress = $emailFromAddress;
         $this->siteTitle = $siteTitle;
         $this->userRepository = $userRepository;
-        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -64,7 +57,7 @@ class ScheduleCreateSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ScheduleEvents::SCHEDULE_CREATE_COMPLETED => 'onCreateCompleted'
+            ScheduleEvents::SCHEDULE_UPDATE_CONFIRM => 'onUpdateConfirm'
         ];
     }
 
@@ -74,48 +67,19 @@ class ScheduleCreateSubscriber implements EventSubscriberInterface
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function onCreateCompleted(GenericEvent $event)
+    public function onUpdateConfirm(GenericEvent $event)
     {
         /** @var Schedule $schedule */
         $schedule = $event->getSubject();
 
-        /********* USER ADMIN EMAILS **********/
-
-        /** @var User[] $users */
-        $users = $this->userRepository->queryLatestForm()->getQuery()->getResult();
-
-        $emailsUserAdmin = [];
-        foreach ($users as $user) {
-            if ($user->getReceiveEmails()) {
-                $emailsUserAdmin[] = $user->getEmail();
-            }
-        }
-
-        if (count($emailsUserAdmin) > 0) {
-            $message = (new \Swift_Message())
-                ->setSubject('New appointment received')
-                ->setFrom([$this->emailFromAddress => $this->siteTitle])
-                ->setTo($emailsUserAdmin)
-                ->setBody(
-                    $this->twig->render('site/schedule/emailAdmin.html.twig', [
-                        'schedule' => $schedule,
-                        'user' => $this->tokenStorage->getToken()->getUser()
-                    ]),
-                    'text/html'
-                );
-
-            $this->mailer->send($message);
-        }
-
         /********* CUSTOMER EMAIL **********/
         $message = (new \Swift_Message())
-            ->setSubject('Thanks for booking')
+            ->setSubject('Appointment updated')
             ->setFrom([$this->emailFromAddress => $this->siteTitle])
             ->setTo($schedule->getCustomer()->getEmail())
             ->setBody(
-                $this->twig->render('site/schedule/email.html.twig', [
+                $this->twig->render('site/schedule/emailUpdateConfirm.html.twig', [
                     'schedule' => $schedule,
-                    'user' => $this->tokenStorage->getToken()->getUser()
                 ]),
                 'text/html'
             );

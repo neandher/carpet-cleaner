@@ -94,7 +94,7 @@
                                             {{ include('_partials/_flash_messages.html.twig') }}
 
                                             {% for category in categories %}
-                                                <div class="m-form__section {% if loop.index == 1 %}m-form__section--first{% endif %}">
+                                                <div class="m-form__section {% if loop.index == 1 %}m-form__section--first{% endif %}" style="margin-top: 10px; margin-bottom: 30px;">
                                                     <div class="m-form__heading">
                                                         <h3 class="m-form__heading-title">
                                                             {{ category.title }}
@@ -138,7 +138,7 @@
                                                     {% endfor %}
                                                 </div>
                                                 {% if not loop.last %}
-                                                    <div class="m-separator m-separator--dashed m-separator--lg"></div>
+                                                    {#<div class="m-separator m-separator--dashed m-separator--lg"></div>#}
                                                 {% endif %}
                                             {% endfor %}
                                         </div>
@@ -148,7 +148,7 @@
                             </div>
                             <!--end: Form Body -->
                             <!--begin: Form Actions -->
-                            <div class="m-portlet__foot m-portlet__foot--fit m--margin-top-40">
+                            <div class="m-portlet__foot m-portlet__foot--fit __m--margin-top-40">
                                 <div class="m-form__actions m-form__actions">
                                     <div class="row">
                                         <div class="col-lg-1"></div>

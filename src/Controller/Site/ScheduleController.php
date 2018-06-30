@@ -2,11 +2,13 @@
 
 namespace App\Controller\Site;
 
+use App\Entity\Address;
 use App\Entity\CleaningItem;
 use App\Entity\CleaningItemCategory;
 use App\Entity\CleaningItemOption;
 use App\Entity\CleaningItemOptions;
 use App\Entity\Customer;
+use App\Entity\CustomerAddresses;
 use App\Entity\PromotionCoupon;
 use App\Entity\Schedule;
 use App\Entity\ScheduleItems;
@@ -197,6 +199,21 @@ class ScheduleController extends AbstractController
             $hasPhoneNumber = $request->getSession()->has('phoneNumber');
 
             $schedule = new Schedule();
+
+            if (!$hasPhoneNumber) {
+                $phoneNumber = $request->getSession()->has('newPhoneNumber') ? $request->getSession()->get('newPhoneNumber') : '';
+                $schedule->setCustomer(
+                    (new Customer())
+                        ->setPhoneNumber($phoneNumber)
+                        ->addCustomerAddress(
+                            (new CustomerAddresses())
+                                ->setAddress(
+                                    (new Address())->setZipCode($request->getSession()->get('zipCode'))
+                                )
+                        )
+                );
+            }
+
             $scheduleForm = $this->createForm(ScheduleSiteType::class, $schedule, [
                 'hasPhoneNumber' => $hasPhoneNumber
             ]);
@@ -207,6 +224,7 @@ class ScheduleController extends AbstractController
                 ]);
                 $schedule->setCustomer($customer);
             }
+
             /** @var PromotionCoupon|null $promotionCoupon */
             $promotionCoupon = null;
 
@@ -265,10 +283,7 @@ class ScheduleController extends AbstractController
 
                 $this->dispatcher->dispatch(ScheduleEvents::SCHEDULE_CREATE_COMPLETED, new GenericEvent($schedule));
 
-                $request->getSession()->remove('checkout');
-                $request->getSession()->remove('zipCode');
-                $request->getSession()->remove('phoneNumber');
-                $request->getSession()->remove('couponCode');
+                $this->clearSession($request);
 
                 return $this->redirectToRoute('site_schedule_success');
             }
@@ -281,6 +296,27 @@ class ScheduleController extends AbstractController
         }
 
         return $this->redirectToRoute('site_schedule_step_1');
+    }
+
+    /**
+     * @Route("/restart", name="restart")
+     * @Method("GET")
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function restart(Request $request)
+    {
+        $this->clearSession($request);
+        return $this->redirectToRoute('site_schedule_step_1');
+    }
+
+    private function clearSession(Request $request)
+    {
+        $request->getSession()->remove('checkout');
+        $request->getSession()->remove('zipCode');
+        $request->getSession()->remove('phoneNumber');
+        $request->getSession()->remove('newPhoneNumber');
+        $request->getSession()->remove('couponCode');
     }
 
     /**
@@ -356,6 +392,7 @@ class ScheduleController extends AbstractController
                     $data['success'] = 'Done';
                     $status = 200;
                 } else {
+                    $request->getSession()->set('newPhoneNumber', $phoneNumber);
                     $data['error'] = 'Not found';
                     $status = 404;
                 }

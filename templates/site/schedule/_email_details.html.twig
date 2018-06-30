@@ -1,0 +1,77 @@
+<table align="center" cellpadding="0" cellspacing="0" border="0" style="border-collapse: separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width: 100%;">
+    <tbody>
+    <tr style="background-color:#fff;">
+        <td width="258" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left;" colspan="4"><strong>{{ 'schedule.title_single'|trans }} details:</strong></td>
+    </tr>
+    <tr style="background-color:#fff;">
+        <td width="258" valign="middle" colspan="4" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">When: {{ schedule.startDateAt|date('m/d/Y H:i') }} to {{ schedule.endDateAt|date('H:i') }}</td>
+    </tr>
+    <tr style="background-color:#fff;">
+        <td width="258" valign="middle" colspan="4" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'promotionCoupon.title_single'|trans }}: {% if schedule.promotionCoupon %}{{ schedule.promotionCoupon.code }}{% else %}Not applied{% endif %}</td>
+    </tr>
+    <tr style="background-color:#fff;">
+        <td width="129" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'cleaningItem.title_single'|trans }}</td>
+        <td width="129" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'scheduleItems.fields.unitPrice'|trans }}</td>
+        <td width="129" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'scheduleItems.fields.quantity'|trans }}</td>
+        <td width="129" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'scheduleItems.fields.total'|trans }}</td>
+    </tr>
+    {% for item in schedule.scheduleItems %}
+        <tr style="background-color:{% if loop.index0 % 2 == 0 %}#f4f5f8{% else %}#fff{% endif %};">
+            <td width="396" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ item.cleaningItem.title }} <small>({{ item.cleaningItemOption.title }})</small></td>
+            <td width="40" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">${{ item.unitPrice|number_format }}</td>
+            <td width="40" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ item.quantity }}</td>
+            <td width="40" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">${{ item.total|number_format }}</td>
+        </tr>
+    {% endfor %}
+    <tr style="background-color:#fff;">
+        <td width="129" valign="middle" height="44" colspan="3" style="font-family: sans-serif;font-size: 13px;text-align: right;padding-left: 10px;"><strong>{{ 'schedule.fields.subTotal'|trans }}: </strong></td>
+        <td width="129" valign="middle" height="44" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">${{ schedule.itemsSubTotal|number_format }}</td>
+    </tr>
+    <tr style="background-color:#fff;">
+        <td width="129" valign="middle" height="44" colspan="3" style="font-family: sans-serif;font-size: 13px;text-align: right;padding-left: 10px;"><strong>{{ 'schedule.fields.discount'|trans }}: </strong></td>
+        <td width="129" valign="middle" height="44" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">${% if schedule.itemsDiscount %}{{ schedule.itemsDiscount|number_format }}{% else %}0.00{% endif %}</td>
+    </tr>
+    <tr style="background-color:#fff;">
+        <td width="129" valign="middle" height="44" colspan="3" style="font-family: sans-serif;font-size: 13px;text-align: right;padding-left: 10px;"><strong>{{ 'schedule.fields.itemsTotal'|trans }}: </strong></td>
+        <td width="129" valign="middle" height="44" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">${{ schedule.itemsTotal|number_format }}</td>
+    </tr>
+    </tbody>
+</table>
+<table align="center" cellpadding="0" cellspacing="0" border="0" style="border-collapse: separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width: 100%;">
+    <tbody>
+    <tr style="background-color:#fff;">
+        <td width="516" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left;" colspan="2"><strong>{{ 'customer.title_single'|trans }} details:</strong></td>
+    </tr>
+    <tr style="background-color:#fff;">
+        <td width="108" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'customer.fields.email'|trans }}:</td>
+        <td width="358" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ schedule.customer.email }}</td>
+    </tr>
+    <tr style="background-color:#f4f5f8;">
+        <td width="108" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'customer.fields.phoneNumber'|trans }}:</td>
+        <td width="358" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ schedule.customer.phoneNumber }}</td>
+    </tr>
+    <tr style="background-color:#fff;">
+        <td width="108" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'address.fields.address'|trans }}:</td>
+        <td width="358" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ schedule.customer.customerAddresses.first.address.address }}</td>
+    </tr>
+    <tr style="background-color:#f4f5f8;">
+        <td width="108" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'address.fields.city'|trans }}:</td>
+        <td width="358" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ schedule.customer.customerAddresses.first.address.city }}</td>
+    </tr>
+    <tr style="background-color:#fff;">
+        <td width="108" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'address.fields.state'|trans }}:</td>
+        <td width="358" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ schedule.customer.customerAddresses.first.address.state }}</td>
+    </tr>
+    <tr style="background-color:#f4f5f8;">
+        <td width="108" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'address.fields.zipCode'|trans }}:</td>
+        <td width="358" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ schedule.customer.customerAddresses.first.address.zipCode }}</td>
+    </tr>
+    <tr style="background-color:#fff;">
+        <td width="108" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ 'schedule.fields.instructions'|trans }}:</td>
+        <td width="358" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ schedule.instructions }}</td>
+    </tr>
+    <tr>
+        <td colspan="2" height="20" style="font-size:0;line-height:0;">&nbsp;</td>
+    </tr>
+    </tbody>
+</table>

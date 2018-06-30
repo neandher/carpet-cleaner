@@ -1,8 +1,8 @@
 {% extends 'base_email.html.twig' %}
 
-{% block preview %}Appointment received{% endblock %}
+{% block preview %}Appointment updated{% endblock %}
 {% block email_main_content %}
     <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Hi {{ schedule.customer.fullName }},</p>
-    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Your appointment is all set. If you have any questions, feel free to get in touch:</p>
+    <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Your appointment has been updated:</p>
     {% include 'site/schedule/_email_details.html.twig' with {'schedule': schedule} %}
 {% endblock %}

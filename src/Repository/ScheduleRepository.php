@@ -40,6 +40,10 @@ class ScheduleRepository extends BaseRepository
             )->setParameter('search', '%' . $routeParams['search'] . '%');
         }
 
+        if (isset($routeParams['state']) && !empty($routeParams['state'])) {
+            $qb->andWhere('schedule.state = :state')->setParameter('state', $routeParams['state']);
+        }
+
         if ((isset($routeParams['start_date']) && !empty($routeParams['start_date'])) && (isset($routeParams['end_date']) && !empty($routeParams['end_date']))) {
 
             $startDate = \DateTime::createFromFormat('m/d/Y H:i', $routeParams['start_date'])->format('Y-m-d H:i');

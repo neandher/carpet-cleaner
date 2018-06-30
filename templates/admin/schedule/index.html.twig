@@ -106,7 +106,7 @@
                 <th>ID</th>
                 <th>
                     <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('firstName') }}">
-                        {{ 'customer.fields.fullName'|trans }}
+                        {{ 'customer.title_single'|trans }}
                     </a>
                 </th>
                 <th>
@@ -125,12 +125,14 @@
                     </a>
                 </th>
                 <th>
-                    <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('itemsTotal') }}">
-                        {{ 'schedule.fields.itemsTotal'|trans }}
+                    <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('promotionalCoupon.code') }}">
+                        {{ 'promotionCoupon.title_single'|trans }}
                     </a>
                 </th>
                 <th>
-                    {{ 'schedule.fields.instructions'|trans }}
+                    <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('itemsTotal') }}">
+                        {{ 'schedule.fields.itemsTotal'|trans }}
+                    </a>
                 </th>
                 <th>
                     <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('createdAt') }}">
@@ -157,40 +159,45 @@
                     </td>
                     <td>
                         {% if schedule.state == constant('App\\Entity\\Schedule::STATE_NEW') %}
-                            <span class="m-badge  m-badge--success m-badge--wide">
+                            <span class="m-badge  m-badge--info m-badge--wide">
                                 {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_NEW'))|trans|lower }}
                             </span>
                         {% elseif schedule.state == constant('App\\Entity\\Schedule::STATE_CONFIRMED') %}
-                            <span class="m-badge  m-badge--danger m-badge--wide">
+                            <span class="m-badge  m-badge--success m-badge--wide">
                                 {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_CONFIRMED'))|trans|lower }}
                             </span>
                         {% endif %}
                     </td>
                     <td>{{ schedule.startDateAt|date('d/m/Y H:i') }}</td>
                     <td>{{ schedule.endDateAt|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% if schedule.promotionCoupon %}
+                            <a href="{{ path('admin_promotion_coupon_edit', {'id' : schedule.promotionCoupon.id}) }}">
+                                {{ schedule.promotionCoupon.code }}
+                            </a>
+                        {% else %}-{% endif %}
+                    </td>
                     <td>${{ schedule.itemsTotal|number_format }}</td>
-                    <td>{{ schedule.instructions }}</td>
                     <td>{{ schedule.createdAt|date('d/m/Y H:i') }}</td>
                     <td>{{ schedule.updatedAt|date('d/m/Y H:i') }}</td>
                     <td>
-                        {% embed 'admin/_partials/_actions_btn_group.html.twig' %}
-                            {% block li_actions %}
-                                <a class="dropdown-item" href="javascript:;" data-toggle="modal"
-                                   data-target="#modalConfirmation"
-                                   data-path="{{ path('admin_schedule_delete', {id: schedule.id})|escape }}"
-                                   data-crf="{{ form_widget(delete_forms[schedule.id]._token)|escape }}"
-                                >
-                                    <i class="fa fa-trash"></i> {{ 'resource.actions.items.delete'|trans }}
-                                </a>
-                                <a href="javascript:;" class=" dropdown-item scheduleItemsShow"
-                                   data-id="{{ schedule.id }}">
-                                    <i class="fa fa-search"></i> {{ 'schedule.actions.viewItems'|trans }}
-                                </a>
-                            {% endblock %}
-                        {% endembed %}
+                        <a href="javascript:;"
+                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                           data-toggle="modal"
+                           data-target="#modalConfirmation"
+                           data-path="{{ path('admin_schedule_delete', {id: schedule.id})|escape }}"
+                           data-crf="{{ form_widget(delete_forms[schedule.id]._token)|escape }}"
+                           title="{{ 'resource.actions.items.delete'|trans }}"
+                        >
+                            <i class="fa fa-trash"></i>
+                        </a>
                         <a href="{{ path('admin_schedule_edit', { id: schedule.id }) ~ pagination.buildQuery }}"
                            class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
                            title="{{ 'resource.actions.items.edit'|trans }}"> <i class="la la-edit"></i>
+                        </a>
+                        <a href="javascript:;" data-id="{{ schedule.id }}"
+                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill scheduleItemsShow"
+                           title="View"> <i class="fa fa-search"></i>
                         </a>
                     </td>
                 </tr>
@@ -226,19 +233,19 @@
                     </button>
                 </div>
                 <div class="modal-body">
-
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th>{{ 'cleaningItem.title_single'|trans }}</th>
-                            <th>{{ 'scheduleItems.fields.unitPrice'|trans }}</th>
-                            <th>{{ 'scheduleItems.fields.quantity'|trans }}</th>
-                            <th>{{ 'scheduleItems.fields.total'|trans }}</th>
-                        </tr>
-                        </thead>
-                        <tbody class="showAjaxItems"></tbody>
-                    </table>
-
+                    <div class="m-scrollable" data-axis="x" data-scrollable="true">
+                        <table class="table table-bordered m-table">
+                            <thead>
+                            <tr>
+                                <th>{{ 'cleaningItem.title_single'|trans }}</th>
+                                <th>{{ 'scheduleItems.fields.unitPrice'|trans }}</th>
+                                <th>{{ 'scheduleItems.fields.quantity'|trans }}</th>
+                                <th>{{ 'scheduleItems.fields.total'|trans }}</th>
+                            </tr>
+                            </thead>
+                            <tbody class="showAjaxItems"></tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -289,9 +296,9 @@
                             var subTotal = value.itemsSubTotal;
                             var discount = value.itemsDiscount != null ? value.itemsDiscount : '0.00';
 
-                            $modalBody.append('<tr><td colspan="3" align="right" style="font-weight: 500;">SubTotal: </td><td style="font-weight: 500;">$' + subTotal + '</td></tr>');
-                            $modalBody.append('<tr><td colspan="3" align="right" style="font-weight: 500;">Discount: </td><td style="font-weight: 500;">$' + discount + '</td></tr>');
-                            $modalBody.append('<tr><td colspan="3" align="right" style="font-weight: 500;">Total: </td><td style="font-weight: 500;">$' + value.itemsTotal + '</td></tr>');
+                            $modalBody.append('<tr><td colspan="3" align="right" style="font-weight: 500;">{{ 'schedule.fields.subTotal'|trans }}: </td><td style="font-weight: 500;">$' + subTotal + '</td></tr>');
+                            $modalBody.append('<tr><td colspan="3" align="right" style="font-weight: 500;">{{ 'schedule.fields.discount'|trans }}: </td><td style="font-weight: 500;">$' + discount + '</td></tr>');
+                            $modalBody.append('<tr><td colspan="3" align="right" style="font-weight: 500;">{{ 'scheduleItems.fields.total'|trans }}: </td><td style="font-weight: 500;">$' + value.itemsTotal + '</td></tr>');
                         });
                     });
                 });

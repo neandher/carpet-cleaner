@@ -19,6 +19,7 @@ var BootstrapDatetimepicker = {
 
         $(".input_datetimepicker").datetimepicker({
             todayHighlight: false,
+            minView: 1,
             autoclose: true,
             clearBtn : true,
             pickerPosition: "bottom-right",

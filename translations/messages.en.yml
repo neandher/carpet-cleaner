@@ -162,9 +162,12 @@ schedule:
     title_single: Schedule
     fields:
         state: State
+        subTotal: SubTotal
+        discount: Discount
         itemsTotal: Total
         startDateAt: Start Date
         endDateAt: End Date
+        period: Period
         date: Date
         startTime: Start Time
         endTime: End Time

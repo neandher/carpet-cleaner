@@ -181,7 +181,16 @@
                         <div class="m-portlet__foot m-portlet__foot--fit __m--margin-top-40">
                             <div class="m-form__actions m-form__actions">
                                 <div class="row">
-                                    <div class="col-lg-11 m--align-right">
+                                    <div class="col-lg-1"></div>
+                                    <div class="col-lg-4 m--align-left">
+                                        <a href="{{ path('site_schedule_restart') }}" class="btn btn-secondary m-btn m-btn--custom m-btn--icon">
+                                            <span>
+                                                <i class="la la-refresh"></i>&nbsp;&nbsp;
+                                                <span>Restart</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <div class="col-lg-6 m--align-right">
                                         <button type="submit" class="btn btn-warning m-btn m-btn--custom m-btn--icon"
                                                 id="schedule_submit">
                                             <span><span>Schedule</span>&nbsp;&nbsp;<i class="la la-check"></i></span>
@@ -244,7 +253,6 @@
                                 </div>
                                 <div class="col m--align-right">
                                     <span class="m-widget1__number m--font-success">
-                                        {#{% dump(app.request.session.get('checkout')['5']['item']['title']) %}#}
                                         ${{ checkout['subtotal']|number_format }}
                                     </span>
                                 </div>
@@ -365,7 +373,7 @@
                 $('#modalPhoneNumber').modal({
                     backdrop: 'static',
                     keyboard: false,
-                    show: {% if app.request.session.has('phoneNumber') %}false{% else %}true{% endif %}
+                    show: {% if app.request.session.has('phoneNumber') or app.request.session.has('newPhoneNumber') %}false{% else %}true{% endif %}
                 }).on('shown.bs.modal', function (e) {
                     $('#phone_number').focus();
                 });

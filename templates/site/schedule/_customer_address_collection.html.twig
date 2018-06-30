@@ -33,6 +33,7 @@
         {{ form_widget(item.zipCode, {
             'attr': {
                 'class' : 'm-input',
+                'readonly': true
             }
         })|e('html_attr') }}
     </div>
@@ -62,7 +63,7 @@
         {{ form_label(item.state, {}, {'label_attr': {'class': 'col-form-label'}}) }}
         {{ form_widget(item.state, {
             'attr': {
-                'class' : 'm-input',
+                'class' : 'm-input si',
             }
         }) }}
     </div>
@@ -73,6 +74,7 @@
         {{ form_widget(item.zipCode, {
             'attr': {
                 'class' : 'm-input',
+                'readonly': true
             }
         }) }}
     </div>
