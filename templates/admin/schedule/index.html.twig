@@ -285,12 +285,12 @@
 
                                 var item = _value.cleaningItem.title;
                                 var category = _value.cleaningItem.cleaningItemCategory.title;
-                                var option = _value.cleaningItemOption.title;
+                                var option = _value.cleaningItemOption != null ? ' - ' + _value.cleaningItemOption.title : '';
                                 var unitPrice = _value.unitPrice;
                                 var quantity = _value.quantity;
                                 var total = _value.total;
 
-                                $modalBody.append('<tr><td>' + item + ' - ' + category + ' - ' + option + '</td><td>$' + unitPrice + '</td><td>' + quantity + '</td><td>$' + total + '</td></tr>');
+                                $modalBody.append('<tr><td>' + item + option + '</td><td>$' + unitPrice + '</td><td>' + quantity + '</td><td>$' + total + '</td></tr>');
                             });
 
                             var subTotal = value.itemsSubTotal;

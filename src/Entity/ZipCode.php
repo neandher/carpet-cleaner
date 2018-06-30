@@ -31,6 +31,7 @@ class ZipCode
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @Assert\NotBlank()
      * @Assert\LessThan(value="99999999.99")
      */
     private $percentage;

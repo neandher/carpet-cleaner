@@ -44,7 +44,6 @@ class ScheduleItems
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\CleaningItemOption")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"scheduleItems"})
      */
     private $cleaningItemOption;

@@ -50,16 +50,26 @@ class CleaningItemRepository extends BaseRepository
 
     public function findAllCustom()
     {
-        return $this->createQueryBuilder('cleaningItem')
+        $qb = $this->createQueryBuilder('cleaningItem');
+        return $qb
             ->innerJoin('cleaningItem.cleaningItemCategory', 'cleaningItemCategory')
             ->addSelect('cleaningItemCategory')
             ->leftJoin('cleaningItem.cleaningItemOptions', 'cleaningItemOptions')
             ->addSelect('cleaningItemOptions')
             ->where('cleaningItem.isEnabled = 1')
-            ->andWhere('cleaningItemOptions.isEnabled = 1')
+            ->andWhere(
+                $qb->expr()->orX()
+                    ->add(
+                        $qb->expr()->andX()
+                            ->add($qb->expr()->isNotNull('cleaningItemOptions.id'))
+                            ->add($qb->expr()->eq('cleaningItemOptions.isEnabled', 1))
+                    )
+                    ->add($qb->expr()->isNull('cleaningItemOptions.id'))
+            )
             ->andWhere('cleaningItemCategory.isEnabled = 1')
             ->orderBy('cleaningItemCategory.displayOrder', 'DESC')
             ->addOrderBy('cleaningItem.displayOrder', 'DESC')
+            ->addOrderBy('cleaningItemOptions.id', 'ASC')
             ->getQuery()
             ->getResult();
     }

@@ -17,7 +17,7 @@
     </tr>
     {% for item in schedule.scheduleItems %}
         <tr style="background-color:{% if loop.index0 % 2 == 0 %}#f4f5f8{% else %}#fff{% endif %};">
-            <td width="396" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ item.cleaningItem.title }} <small>({{ item.cleaningItemOption.title }})</small></td>
+            <td width="396" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ item.cleaningItem.title }} {% if item.cleaningItemOption %}<small>({{ item.cleaningItemOption.title }})</small>{% endif %}</td>
             <td width="40" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">${{ item.unitPrice|number_format }}</td>
             <td width="40" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">{{ item.quantity }}</td>
             <td width="40" valign="middle" height="54" style="font-family: sans-serif;font-size: 13px;text-align: left; padding-left: 10px;">${{ item.total|number_format }}</td>
