@@ -45,7 +45,7 @@ class Customer
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=60, unique=true)
      * @Assert\NotBlank()
      */
     private $phoneNumber;

@@ -25,6 +25,7 @@ class ZipCode
 
     /**
      * @ORM\Column(type="smallint", unique=true)
+     * @Assert\NotBlank()
      */
     private $description;
 
