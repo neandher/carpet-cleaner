@@ -17,6 +17,7 @@ services:
         bind:
             $emailFromAddress: '%email_from_address%'
             $siteTitle: '%title_site%'
+            $zipCodePath: '%kernel.project_dir%\files\zip-codes.xlsx'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

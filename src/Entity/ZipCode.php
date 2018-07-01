@@ -24,7 +24,7 @@ class ZipCode
     private $id;
 
     /**
-     * @ORM\Column(type="smallint", unique=true)
+     * @ORM\Column(type="integer", unique=true)
      * @Assert\NotBlank()
      */
     private $description;
