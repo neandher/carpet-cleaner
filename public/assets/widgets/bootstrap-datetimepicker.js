@@ -22,6 +22,7 @@ var BootstrapDatetimepicker = {
             minView: 1,
             autoclose: true,
             clearBtn : true,
+            initialDate: new Date(initialDate.setMinutes(0)),
             pickerPosition: "bottom-right",
             format: "mm/dd/yyyy hh:ii",
             forceParse: 0
