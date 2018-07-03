@@ -71,7 +71,7 @@ class ScheduleRepository extends BaseRepository
         return $paginator;
     }
 
-    public function findByDateStartEnd($startDate, $endDate)
+    public function findByDateStartEndConflict($startDate, $endDate)
     {
         $qb = $this->createQueryBuilder('schedule');
 
@@ -80,6 +80,8 @@ class ScheduleRepository extends BaseRepository
 
         return $qb
             ->where($this->findByDateStartEndExpr($qb, $dateStart, $dateEnd))
+            ->andWhere("schedule.state <> '" . Schedule::STATE_CANCELED . "'")
+            ->andWhere("schedule.state <> '" . Schedule::STATE_EXECUTED . "'")
             ->getQuery()
             ->getResult();
     }

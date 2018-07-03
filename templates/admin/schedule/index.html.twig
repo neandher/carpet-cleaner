@@ -23,7 +23,7 @@
                         {{ 'resource.filters.search'|trans }}:
                     </label>
                     <input type="text" class="form-control m-input m-input--solid" data-col-index="0"
-                           placeholder="{{ 'resource.filters.search'|trans }}" name="search" id="search"
+                           placeholder="Customer name" name="search" id="search"
                            value="{% if app.request.query.has('search') %}{{ app.request.query.get('search') }}{% endif %}">
                 </div>
                 <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
@@ -58,9 +58,17 @@
                                 {% if app.request.query.has('state') %}{% if app.request.query.get('state') == constant('App\\Entity\\Schedule::STATE_CONFIRMED') %}selected{% endif %}{% endif %}>
                             {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_CONFIRMED'))|trans }}
                         </option>
+                        <option value="{{ constant('App\\Entity\\Schedule::STATE_EXECUTED') }}"
+                                {% if app.request.query.has('state') %}{% if app.request.query.get('state') == constant('App\\Entity\\Schedule::STATE_EXECUTED') %}selected{% endif %}{% endif %}>
+                            {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_EXECUTED'))|trans }}
+                        </option>
+                        <option value="{{ constant('App\\Entity\\Schedule::STATE_CANCELED') }}"
+                                {% if app.request.query.has('state') %}{% if app.request.query.get('state') == constant('App\\Entity\\Schedule::STATE_CANCELED') %}selected{% endif %}{% endif %}>
+                            {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_CANCELED'))|trans }}
+                        </option>
                     </select>
                 </div>
-                <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                {#<div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
                     <label for="customer">
                         {{ 'customer.title_single'|trans }}:
                     </label>
@@ -72,7 +80,7 @@
                             </option>
                         {% endfor %}
                     </select>
-                </div>
+                </div>#}
             </div>
             <div class="m-separator m-separator--md m-separator--dashed"></div>
             <div class="row m--margin-bottom-20">
@@ -163,8 +171,16 @@
                                 {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_NEW'))|trans|lower }}
                             </span>
                         {% elseif schedule.state == constant('App\\Entity\\Schedule::STATE_CONFIRMED') %}
-                            <span class="m-badge  m-badge--success m-badge--wide">
+                            <span class="m-badge  m-badge--primary m-badge--wide">
                                 {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_CONFIRMED'))|trans|lower }}
+                            </span>
+                        {% elseif schedule.state == constant('App\\Entity\\Schedule::STATE_EXECUTED') %}
+                            <span class="m-badge  m-badge--success m-badge--wide">
+                                {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_EXECUTED'))|trans|lower }}
+                            </span>
+                        {% elseif schedule.state == constant('App\\Entity\\Schedule::STATE_CANCELED') %}
+                            <span class="m-badge  m-badge--danger m-badge--wide">
+                                {{ ('schedule.states.'~constant('App\\Entity\\Schedule::STATE_CANCELED'))|trans|lower }}
                             </span>
                         {% endif %}
                     </td>
@@ -181,6 +197,25 @@
                     <td>{{ schedule.createdAt|date('d/m/Y H:i') }}</td>
                     <td>{{ schedule.updatedAt|date('d/m/Y H:i') }}</td>
                     <td>
+                        <a href="{{ path('admin_schedule_change_state_to', { id: schedule.id, state: constant('App\\Entity\\Schedule::STATE_EXECUTED') }) ~ pagination.buildQuery }}"
+                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                           title="{{ 'schedule.actions.stateChangeToExecuted'|trans }}" data-toggle="tooltip"
+                           data-placement="top"> <i class="la la-check-square"></i>
+                        </a>
+                        <a href="{{ path('admin_schedule_change_state_to', { id: schedule.id, state: constant('App\\Entity\\Schedule::STATE_CANCELED') }) ~ pagination.buildQuery }}"
+                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                           title="{{ 'schedule.actions.stateChangeToCanceled'|trans }}" data-toggle="tooltip"
+                           data-placement="top"> <i class="la la-ban"></i>
+                        </a>
+                        <a href="{{ path('admin_schedule_edit', { id: schedule.id }) ~ pagination.buildQuery }}"
+                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
+                           title="{{ 'schedule.actions.editAndConfirm'|trans }}" data-toggle="tooltip"
+                           data-placement="top"><i class="la la-edit"></i>
+                        </a>
+                        <a href="javascript:;" data-id="{{ schedule.id }}"
+                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill scheduleItemsShow"
+                           title="View" data-toggle="tooltip" data-placement="top"> <i class="fa fa-search"></i>
+                        </a>
                         <a href="javascript:;"
                            class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
                            data-toggle="modal"
@@ -190,14 +225,6 @@
                            title="{{ 'resource.actions.items.delete'|trans }}"
                         >
                             <i class="fa fa-trash"></i>
-                        </a>
-                        <a href="{{ path('admin_schedule_edit', { id: schedule.id }) ~ pagination.buildQuery }}"
-                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill"
-                           title="{{ 'resource.actions.items.edit'|trans }}"> <i class="la la-edit"></i>
-                        </a>
-                        <a href="javascript:;" data-id="{{ schedule.id }}"
-                           class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill scheduleItemsShow"
-                           title="View"> <i class="fa fa-search"></i>
                         </a>
                     </td>
                 </tr>

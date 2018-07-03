@@ -31,7 +31,7 @@ class ScheduleAvailableValidator extends ConstraintValidator
         $schedule = $this->context->getObject();
 
         if ($schedule->getStartDateAt() && $schedule->getEndDateAt()) {
-            $schedulesNotAvailable = $this->em->getRepository(Schedule::class)->findByDateStartEnd(
+            $schedulesNotAvailable = $this->em->getRepository(Schedule::class)->findByDateStartEndConflict(
                 $schedule->getStartDateAt()->format('m/d/Y H:i'),
                 $schedule->getEndDateAt()->format('m/d/Y H:i')
             );

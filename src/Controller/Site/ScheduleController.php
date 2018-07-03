@@ -17,6 +17,7 @@ use App\Event\FlashBagEvents;
 use App\Event\ScheduleEvents;
 use App\Form\ScheduleSiteType;
 use App\Util\FlashBag;
+use App\Validator\ScheduleAvailable;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -26,6 +27,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class ScheduleController
@@ -43,16 +46,22 @@ class ScheduleController extends AbstractController
      * @var EventDispatcherInterface
      */
     private $dispatcher;
+    /**
+     * @var ValidatorInterface
+     */
+    private $validator;
 
     /**
      * ScheduleController constructor.
      * @param FlashBag $flashBag
      * @param EventDispatcherInterface $dispatcher
+     * @param ValidatorInterface $validator
      */
-    public function __construct(FlashBag $flashBag, EventDispatcherInterface $dispatcher)
+    public function __construct(FlashBag $flashBag, EventDispatcherInterface $dispatcher, ValidatorInterface $validator)
     {
         $this->flashBag = $flashBag;
         $this->dispatcher = $dispatcher;
+        $this->validator = $validator;
     }
 
 
@@ -444,7 +453,7 @@ class ScheduleController extends AbstractController
                         $data['success'] = 'Done';
                         $status = 200;
                     } else {
-                        $data['error'] = 'No promotional coupon are found with this code';
+                        $data['error'] = 'No promotional coupon found with this code';
                         $status = 404;
                     }
                 }
@@ -477,15 +486,19 @@ class ScheduleController extends AbstractController
 
             if ($date && $startTime && $endTime) {
 
-                $startDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $startTime)->format('m/d/Y H:i');
-                $endDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $endTime)->format('m/d/Y H:i');
+                $startDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $startTime);
+                $endDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $endTime);
 
                 if ($startDate && $endDate) {
 
-                    /** @var Schedule[]|null $check */
-                    $schedulesNotAvailable = $this->getDoctrine()->getRepository(Schedule::class)->findByDateStartEnd($startDate, $endDate);
+                    $schedule = new Schedule();
+                    $schedule->setStartDateAt($startDate)
+                        ->setEndDateAt($endDate);
 
-                    if (count($schedulesNotAvailable) > 0) {
+                    /** @var ConstraintViolationListInterface $validation */
+                    $validation = $this->validator->validate($schedule);
+
+                    if ($validation->count() > 0) {
                         $data['notavailable'] = 'true';
                         $status = 200;
                     } else {

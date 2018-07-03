@@ -175,9 +175,15 @@ schedule:
     states:
         new: New
         confirmed: Confirmed
+        canceled: Canceled
+        executed: Executed
     actions:
         edit: Edit Schedule
+        editAndConfirm: Edit and Confirm
         viewItems: View Items
+        view: View
+        stateChangeToCanceled: Change to Canceled
+        stateChangeToExecuted: Change to Executed
 
 scheduleItems:
     title: Schedule Items

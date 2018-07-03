@@ -19,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -77,13 +78,13 @@ class ScheduleController extends BaseController
             $deleteForms[$schedule->getId()] = $this->createDeleteForm($schedule)->createView();
         }
 
-        $customers = $this->getDoctrine()->getRepository(Customer::class)->queryLatestForm()->getQuery()->getResult();
+        //$customers = $this->getDoctrine()->getRepository(Customer::class)->queryLatestForm()->getQuery()->getResult();
 
         return $this->render('admin/schedule/index.html.twig', [
             'schedules' => $schedules,
             'pagination' => $pagination,
             'delete_forms' => $deleteForms,
-            'customers' => $customers
+            //'customers' => $customers
         ]);
     }
 
@@ -235,5 +236,39 @@ class ScheduleController extends BaseController
         }
 
         return new JsonResponse($data, $status);
+    }
+
+    /**
+     * @Route("/{id}/change-state-to/{state}", requirements={"id" : "\d+"}, name="change_state_to")
+     *
+     * @param Request $request
+     * @param Schedule $schedule
+     * @param $state
+     * @return RedirectResponse
+     */
+    public function changeStateTo(Request $request, Schedule $schedule, $state)
+    {
+        $pagination = $this->pagination->handle($request, Schedule::class);
+
+        if (in_array($state, Schedule::$states)) {
+
+            $schedule->setState($state);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($schedule);
+            $em->flush();
+
+            $this->flashBag->newMessage(
+                FlashBagEvents::MESSAGE_TYPE_SUCCESS,
+                'State has ben updated successfuly'
+            );
+
+        } else {
+            $this->flashBag->newMessage(
+                FlashBagEvents::MESSAGE_TYPE_ERROR,
+                'Invalid state'
+            );
+        }
+
+        return $this->redirectToRoute('admin_schedule_index', $pagination->getRouteParams());
     }
 }

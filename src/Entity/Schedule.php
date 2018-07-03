@@ -19,6 +19,15 @@ class Schedule
 
     const STATE_NEW = 'new';
     const STATE_CONFIRMED = 'confirmed';
+    const STATE_CANCELED = 'canceled';
+    const STATE_EXECUTED = 'executed';
+
+    public static $states = [
+        self::STATE_NEW,
+        self::STATE_CONFIRMED,
+        self::STATE_CANCELED,
+        self::STATE_EXECUTED,
+    ];
 
     /**
      * @ORM\Id()

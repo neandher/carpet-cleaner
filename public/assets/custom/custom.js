@@ -1,5 +1,6 @@
 $(document).ready(function () {
     showTabError();
+    tooltipInit();
 });
 
 $('#modalConfirmation').on('show.bs.modal', function (event) {
@@ -55,4 +56,10 @@ function showTabError() {
 
         return false;
     });
+}
+
+function tooltipInit(){
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 }
