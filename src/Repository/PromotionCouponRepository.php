@@ -68,7 +68,7 @@ class PromotionCouponRepository extends BaseRepository
                     $qb->expr()->orx()
                         ->add($qb->expr()->andX()
                             ->add($qb->expr()->isNotNull('p.usageLimit'))
-                            ->add($qb->expr()->gte('p.usageLimit', 'IFNULL(p.used, 0)'))
+                            ->add($qb->expr()->gt('p.usageLimit', 'IFNULL(p.used, 0)'))
                         )
                         ->add($qb->expr()->isNull('p.usageLimit'))
                 )
