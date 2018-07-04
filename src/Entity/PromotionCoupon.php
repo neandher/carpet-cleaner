@@ -57,6 +57,12 @@ class PromotionCoupon
      */
     private $used = 0;
 
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
+     * @Assert\LessThan(value="99999999.99")
+     */
+    private $initialAmount;
+
     public function getId()
     {
         return $this->id;
@@ -133,4 +139,16 @@ class PromotionCoupon
 
         return $this;
     }
+
+    public function getInitialAmount()
+    {
+        return $this->initialAmount;
+    }
+
+    public function setInitialAmount($initialAmount): self
+    {
+        $this->initialAmount = $initialAmount;
+
+        return $this;
+    }   
 }

@@ -25,6 +25,7 @@ class CustomerType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
                 'label' => 'address.title_single',
+                'required' => true
             ]);
     }
 

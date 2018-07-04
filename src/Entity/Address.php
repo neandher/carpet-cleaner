@@ -102,7 +102,7 @@ class Address
         return $this->city;
     }
 
-    public function setCity(string $city): self
+    public function setCity(?string $city): self
     {
         $this->city = $city;
 
@@ -114,7 +114,7 @@ class Address
         return $this->zipCode;
     }
 
-    public function setZipCode(string $zipCode): self
+    public function setZipCode(?string $zipCode): self
     {
         $this->zipCode = $zipCode;
 
@@ -126,7 +126,7 @@ class Address
         return $this->state;
     }
 
-    public function setState(string $state): self
+    public function setState(?string $state): self
     {
         $this->state = $state;
 

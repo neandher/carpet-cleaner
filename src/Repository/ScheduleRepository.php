@@ -86,7 +86,7 @@ class ScheduleRepository extends BaseRepository
             ->getResult();
     }
 
-    private function findByDateStartEndExpr(QueryBuilder $qb, $startDate, $endDate)
+    /*private function findByDateStartEndExpr(QueryBuilder $qb, $startDate, $endDate)
     {
         $qb->setParameter('start_date', $startDate)
             ->setParameter('start_end', $endDate);
@@ -104,6 +104,27 @@ class ScheduleRepository extends BaseRepository
                     $qb->expr()->andX()
                         ->add($qb->expr()->lte('schedule.startDateAt', ':start_date'))
                         ->add($qb->expr()->gte('schedule.endDateAt', ':start_date'))
+                )
+        );
+    }*/
+
+    private function findByDateStartEndExpr(QueryBuilder $qb, $startDate, $endDate)
+    {
+        $qb->setParameter('start_date', $startDate)
+            ->setParameter('start_end', $endDate);
+
+        return $qb->expr()->andX()->add(
+            $qb->expr()->orX()
+                ->add($qb->expr()->eq('schedule.startDateAt', ':start_date'))
+                ->add(
+                    $qb->expr()->andX()
+                        ->add($qb->expr()->gt('schedule.startDateAt', ':start_date'))
+                        ->add($qb->expr()->lt('schedule.startDateAt', ':start_end'))
+                )
+                ->add(
+                    $qb->expr()->andX()
+                        ->add($qb->expr()->lt('schedule.startDateAt', ':start_date'))
+                        ->add($qb->expr()->gt('schedule.endDateAt', ':start_date'))
                 )
         );
     }

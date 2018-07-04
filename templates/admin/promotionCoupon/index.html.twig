@@ -77,6 +77,9 @@
                     {{ 'promotionCoupon.fields.used'|trans }}
                 </th>
                 <th>
+                    {{ 'promotionCoupon.fields.initialAmount'|trans }}
+                </th>
+                <th>
                     <a href="{{ path('admin_promotion_coupon_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('isEnabled') }}">
                         {{ 'resource.toglleable.is_enabled_title'|trans }}
                     </a>
@@ -97,9 +100,10 @@
                     <td>{{ promotionCoupon.title }}</td>
                     <td>{{ promotionCoupon.code }}</td>
                     <td>{{ promotionCoupon.percentage * 100 }}%</td>
-                    <td>{% if promotionCoupon.expiresAt %}{{ promotionCoupon.expiresAt|date('d/m/Y H:i') }}{% else %}-{% endif %}</td>
-                    <td>{% if promotionCoupon.usageLimit %}{{ promotionCoupon.usageLimit }}{% else %}0{% endif %}</td>
+                    <td>{% if promotionCoupon.expiresAt %}{{ promotionCoupon.expiresAt|date('d/m/Y H:i') }}{% else %}never{% endif %}</td>
+                    <td>{% if promotionCoupon.usageLimit %}{{ promotionCoupon.usageLimit }}{% else %}unlimited{% endif %}</td>
                     <td>{% if promotionCoupon.used %}{{ promotionCoupon.used }}{% else %}0{% endif %}</td>
+                    <td>{% if promotionCoupon.initialAmount %}${{ promotionCoupon.initialAmount|number_format }}{% else %}-{% endif %}</td>
                     <td>
                         {% if promotionCoupon.isEnabled == '1' %}
                             <span class="m-badge  m-badge--success m-badge--wide">

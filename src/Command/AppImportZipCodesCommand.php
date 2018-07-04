@@ -64,7 +64,8 @@ class AppImportZipCodesCommand extends Command
 
                 $codes[] = $data['C'];
                 $zipCode = new ZipCode();
-                $zipCode->setDescription($data['A']);
+                $zipCode->setDescription($data['A'])
+                    ->setCity($data['B']);
 
                 $persist = false;
 

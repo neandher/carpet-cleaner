@@ -22,6 +22,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,6 +39,14 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class ScheduleController extends AbstractController
 {
+
+    public $times = [
+        ['time_start' => '09:00', 'time_end' => '10:00', 'available' => false],
+        ['time_start' => '10:00', 'time_end' => '12:00', 'available' => false],
+        ['time_start' => '12:00', 'time_end' => '14:00', 'available' => false],
+        ['time_start' => '14:00', 'time_end' => '17:00', 'available' => false],
+    ];
+
     /**
      * @var FlashBag
      */
@@ -217,14 +226,17 @@ class ScheduleController extends AbstractController
                         ->addCustomerAddress(
                             (new CustomerAddresses())
                                 ->setAddress(
-                                    (new Address())->setZipCode($request->getSession()->get('zipCode'))
+                                    (new Address())
+                                        ->setZipCode($request->getSession()->get('zipCode'))
+                                        ->setCity($request->getSession()->get('city'))
                                 )
                         )
                 );
             }
 
             $scheduleForm = $this->createForm(ScheduleSiteType::class, $schedule, [
-                'hasPhoneNumber' => $hasPhoneNumber
+                'hasPhoneNumber' => $hasPhoneNumber,
+                'times' => $this->times
             ]);
 
             if ($hasPhoneNumber) {
@@ -300,7 +312,8 @@ class ScheduleController extends AbstractController
             return $this->render('site/schedule/step-2.html.twig', [
                 'form' => $scheduleForm->createView(),
                 'hasPhoneNumber' => $hasPhoneNumber,
-                'schedule' => $schedule
+                'schedule' => $schedule,
+                'times' => $this->times
             ]);
         }
 
@@ -323,6 +336,7 @@ class ScheduleController extends AbstractController
     {
         $request->getSession()->remove('checkout');
         $request->getSession()->remove('zipCode');
+        $request->getSession()->remove('city');
         $request->getSession()->remove('phoneNumber');
         $request->getSession()->remove('newPhoneNumber');
         $request->getSession()->remove('couponCode');
@@ -351,12 +365,16 @@ class ScheduleController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $zipCode = $request->request->get('zip_code', null);
             if ($zipCode) {
+                /** @var ZipCode $findZipCode */
                 $findZipCode = $this->getDoctrine()->getRepository(ZipCode::class)->findOneyCustomByDescription($zipCode);
                 if ($findZipCode) {
                     if ($request->getSession()->has('zipCode')) {
                         $request->getSession()->remove('zipCode');
+                        $request->getSession()->remove('city');
+
                     }
                     $request->getSession()->set('zipCode', $zipCode);
+                    $request->getSession()->set('city', $findZipCode->getCity());
 
                     $data['success'] = 'Done';
                     $status = 200;
@@ -438,7 +456,10 @@ class ScheduleController extends AbstractController
                     $data['error'] = 'This coupon code is already in use';
                     $status = 400;
                 } else {
-                    if ($findPromotionCoupon = $this->getDoctrine()->getRepository(PromotionCoupon::class)->findByCodeCustom($couponCode)) {
+                    if ($findPromotionCoupon = $this->getDoctrine()->getRepository(PromotionCoupon::class)->findByCodeCustom(
+                        $couponCode,
+                        $request->getSession()->get('checkout')['subtotal']
+                    )) {
 
                         if ($request->getSession()->has('couponCode')) {
                             $request->getSession()->remove('couponCode');
@@ -481,15 +502,14 @@ class ScheduleController extends AbstractController
         if ($request->isXmlHttpRequest()) {
 
             $date = $request->request->get('date', null);
-            $startTime = $request->request->get('start_time', null);
-            $endTime = $request->request->get('end_time', null);
 
-            if ($date && $startTime && $endTime) {
+            if ($date && \DateTime::createFromFormat('m/d/Y', $date)) {
 
-                $startDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $startTime);
-                $endDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $endTime);
+                $i = 0;
+                foreach ($this->times as $time) {
 
-                if ($startDate && $endDate) {
+                    $startDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $time['time_start']);
+                    $endDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $time['time_end']);
 
                     $schedule = new Schedule();
                     $schedule->setStartDateAt($startDate)
@@ -498,19 +518,17 @@ class ScheduleController extends AbstractController
                     /** @var ConstraintViolationListInterface $validation */
                     $validation = $this->validator->validate($schedule);
 
-                    if ($validation->count() > 0) {
-                        $data['notavailable'] = 'true';
-                        $status = 200;
-                    } else {
-                        $data['success'] = 'true';
-                        $status = 200;
+                    if (!$validation->count() > 0) {
+                        $this->times[$i]['available'] = true;
                     }
-                } else {
-                    $data['error'] = 'Invalid request parameters';
-                    $status = 400;
+                    $i++;
                 }
+
+                $data['success'] = $this->times;
+                $status = 200;
+
             } else {
-                $data['error'] = 'Request parameters not found';
+                $data['error'] = 'Request parameters not found or invalid request parameters';
                 $status = 400;
             }
         } else {

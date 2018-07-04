@@ -30,6 +30,12 @@ class ZipCode
     private $description;
 
     /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank()
+     */
+    private $city;
+
+    /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      * @Assert\NotBlank()
      * @Assert\LessThan(value="99999999.99")
@@ -61,6 +67,18 @@ class ZipCode
     public function setPercentage($percentage): self
     {
         $this->percentage = $percentage;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): self
+    {
+        $this->city = $city;
 
         return $this;
     }

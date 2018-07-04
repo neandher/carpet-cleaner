@@ -54,7 +54,12 @@
                 <th>ID</th>
                 <th>
                     <a href="{{ path('admin_zip_code_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('description') }}">
-                        {{ 'resource.fields.description'|trans }}
+                        {{ 'zipCode.fields.zipCode'|trans }}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('admin_zip_code_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('description') }}">
+                        {{ 'address.fields.city'|trans }}
                     </a>
                 </th>
                 <th>
@@ -81,6 +86,7 @@
                 <tr>
                     <td>{{ zipCode.id }}</td>
                     <td>{{ zipCode.description }}</td>
+                    <td>{{ zipCode.city }}</td>
                     <td>{{ zipCode.percentage * 100 }} %</td>
                     <td>
                         {% if zipCode.isEnabled == '1' %}

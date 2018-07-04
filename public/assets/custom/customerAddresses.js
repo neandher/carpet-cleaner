@@ -39,8 +39,8 @@ function addCustomerAddressForm($collectionHolder, $newLinkPanel) {
 
     $collectionHolder.data('index', new_index);
 
-    var $newFormPanelBody = $('<div class="m-portlet__body"></div>').append(newForm);
-    var $newFormPanel = $('<div class="m-portlet m-portlet--rounded"></div>').append($newFormPanelBody);
+    var $newFormPanelBody = $('<div class="m-portlet__body" style="padding:0;"></div>').append(newForm);
+    var $newFormPanel = $('<div class="m-portlet m-portlet--unair"></div>').append($newFormPanelBody);
     $newLinkPanel.before($newFormPanel);
 
     $('.make-switch').bootstrapSwitch();

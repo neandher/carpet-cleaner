@@ -4,8 +4,10 @@ namespace App\Form;
 
 use App\Entity\PromotionCoupon;
 use App\Form\Model\DateTimePickerType;
+use App\Form\Model\MoneyCustomType;
 use App\Form\Model\ToggleableType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PercentType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,6 +22,7 @@ class PromotionCouponType extends AbstractType
             ->add('title', TextType::class, ['label' => 'resource.fields.title'])
             ->add('expiresAt', DateTimePickerType::class, ['label' => 'promotionCoupon.fields.expiresAt'])
             ->add('usageLimit', NumberType::class, ['label' => 'promotionCoupon.fields.usageLimit'])
+            ->add('initialAmount', MoneyCustomType::class, ['label' => 'promotionCoupon.fields.initialAmount'])
             ->add('toggleable', ToggleableType::class, ['label' => 'resource.toglleable.is_enabled_title']);
 
         if (!$options['is_edit']) {

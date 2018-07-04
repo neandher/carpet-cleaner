@@ -47,7 +47,7 @@ class PromotionCouponRepository extends BaseRepository
      * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findByCodeCustom($code)
+    public function findByCodeCustom($code, $amountSubTotal)
     {
         $qb = $this->createQueryBuilder('p');
         return $qb
@@ -73,7 +73,18 @@ class PromotionCouponRepository extends BaseRepository
                         ->add($qb->expr()->isNull('p.usageLimit'))
                 )
             )
+            ->andWhere(
+                $qb->expr()->andX()->add(
+                    $qb->expr()->orx()
+                        ->add($qb->expr()->andX()
+                            ->add($qb->expr()->isNotNull('p.initialAmount'))
+                            ->add($qb->expr()->lte('p.initialAmount', ':amountSubTotal'))
+                        )
+                        ->add($qb->expr()->isNull('p.initialAmount'))
+                )
+            )
             ->setParameter('now', new \DateTime())
+            ->setParameter('amountSubTotal', $amountSubTotal)
             ->getQuery()
             ->getOneOrNullResult();
     }

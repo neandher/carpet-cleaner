@@ -95,60 +95,7 @@
                                         {{ include('_partials/_flash_messages.html.twig') }}
                                         {{ form_errors(form) }}
 
-                                        <div class="m-form__section m-form__section--first">
-                                            <div class="m-form__heading">
-                                                <h3 class="m-form__heading-title">
-                                                    Arrival Time
-                                                </h3>
-                                            </div>
-                                            <div class="form-group m-form__group row">
-                                                <div class="col-lg-12">
-                                                    {{ form_label(form.date, {}, {'label_attr': {'class': 'col-form-label'}}) }}
-                                                    {{ form_widget(form.date, {
-                                                        'attr': {
-                                                            'class' : 'm-input input_datepicker',
-                                                        }
-                                                    }) }}
-                                                </div>
-                                            </div>
-                                            <div class="form-group m-form__group row">
-                                                <div class="col-lg-6">
-                                                    {{ form_label(form.startTime, {}, {'label_attr': {'class': 'col-form-label'}}) }}
-                                                    {{ form_widget(form.startTime, {
-                                                        'attr': {
-                                                            'class' : 'm-input input_timepicker',
-                                                        }
-                                                    }) }}
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    {{ form_label(form.endTime, {}, {'label_attr': {'class': 'col-form-label'}}) }}
-                                                    {{ form_widget(form.endTime, {
-                                                        'attr': {
-                                                            'class' : 'm-input input_timepicker',
-                                                        }
-                                                    }) }}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- check availability -->
-                                        <div class="m-form__section m--hide" id="check_availability">
-                                            <div class="form-group m-form__group row">
-                                                <div class="col-lg-12">
-                                                    <div id="check_availability_result" class="m--hide text-danger">
-                                                        <span class="m-badge m-badge--danger m-badge--wide m-badge--rounded">
-                                                            Schedule not available in this period.
-                                                        </span>
-                                                    </div>
-                                                    <div class="m-loader m-loader--primary m--hide"
-                                                         id="check_availability_loader"
-                                                         style="width: 30px; display: inline-block;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- end check availability -->
-
-                                        <div class="m-form__section" id="client_details">
+                                        <div class="m-form__section m-form__section--first" id="client_details">
                                             <div class="m-form__heading">
                                                 <h3 class="m-form__heading-title">
                                                     {% if not hasPhoneNumber %}Client Details{% else %}Details{% endif %}
@@ -171,6 +118,82 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="m-form__section" style="margin-bottom: 0;">
+                                            <div class="m-form__heading">
+                                                <h3 class="m-form__heading-title">
+                                                    Arrival Time
+                                                </h3>
+                                            </div>
+                                            <div class="form-group m-form__group row" style="padding-bottom: 0;">
+                                                <div class="col-lg-12">
+                                                    {{ form_label(form.date, {}, {'label_attr': {'class': 'col-form-label'}}) }}
+                                                    {{ form_widget(form.date, {
+                                                        'attr': {
+                                                            'class' : 'm-input input_datepicker',
+                                                        }
+                                                    }) }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- check availability -->
+                                        <div class="m-form__section m--hide" id="check_availability" style="margin-top: 10px;">
+                                            <div class="form-group m-form__group row">
+                                                <div class="col-lg-12">
+                                                    <div id="check_availability_result" class="m--hide">
+                                                        <div class="m-scrollable" data-axis="x" data-scrollable="true">
+                                                            <table class="table m-table table-bordered">
+                                                                <thead>
+                                                                <tr align="center">
+                                                                    {% for time in times %}
+                                                                        <th align="center">{{ time['time_start'] }}
+                                                                            - {{ time['time_end'] }}</th>
+                                                                    {% endfor %}
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                <tr>
+                                                                    {% for time in form.times.vars.choices %}
+                                                                        <td align="center">
+                                                                            <label class="m-radio m-radio--solid m-radio--success">
+                                                                                <input title="Select a time"
+                                                                                       type="radio"
+                                                                                       name="{{ form.times.vars.full_name }}"
+                                                                                       id="{{ form.times.vars.id }}_{{ loop.index0 }}"
+                                                                                       value="{{ time.data }}"
+                                                                                       {% if times[loop.index0]['available'] == false %}disabled="disabled"{% endif %}>
+                                                                                <span></span>
+                                                                            </label>
+                                                                        </td>
+                                                                    {% endfor %}
+                                                                </tr>
+                                                                <tr>
+                                                                    {% for time in times %}
+                                                                        <td align="center">
+                                                                        <span class="m-badge m-badge--danger m-badge--wide {% if time['available'] == true %}m--hide{% endif %}"
+                                                                              id="time_{{ loop.index0 }}_badge_state_unvailable">
+                                                                            unvailable
+                                                                        </span>
+                                                                            <span class="m-badge m-badge--success m-badge--wide {% if time['available'] == false %}m--hide{% endif %}"
+                                                                                  id="time_{{ loop.index0 }}_badge_state_available">
+                                                                                available
+                                                                            </span>
+                                                                        </td>
+                                                                    {% endfor %}
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="m-loader m-loader--primary m--hide"
+                                                         id="check_availability_loader"
+                                                         style="width: 30px; display: inline-block;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- end check availability -->
+
                                     </div>
                                 </div>
                             </div>
@@ -183,7 +206,8 @@
                                 <div class="row">
                                     <div class="col-lg-1"></div>
                                     <div class="col-lg-4 m--align-left">
-                                        <a href="{{ path('site_schedule_restart') }}" class="btn btn-secondary m-btn m-btn--custom m-btn--icon">
+                                        <a href="{{ path('site_schedule_restart') }}"
+                                           class="btn btn-secondary m-btn m-btn--custom m-btn--icon">
                                             <span>
                                                 <i class="la la-refresh"></i>&nbsp;&nbsp;
                                                 <span>Restart</span>
@@ -363,6 +387,10 @@
             {% endif %}
             <script type="text/javascript">
 
+                $(document).ready(function () {
+                    $('#schedule_submit').attr('disabled', true);
+                });
+
                 $('#m_form').validate({
                     rules: {
                         schedule_site_customer_phoneNumber: {required: true, phoneUS: true},
@@ -424,35 +452,39 @@
                     }
                 });
 
-                $('.input_timepicker').change(function (e) {
+                $('input[name="schedule_site[times]"]').click(function () {
+                    $('#schedule_submit').attr('disabled', false);
+                });
+
+                $('.input_datepicker').change(function (e) {
 
                     var date = $('#schedule_site_date').val();
-                    var time_start = $('#schedule_site_startTime').val();
-                    var time_end = $('#schedule_site_endTime').val();
 
-                    if (date !== "" && time_start !== "" && time_end !== "") {
+                    if (date !== "") {
 
                         $('#check_availability').removeClass('m--hide');
                         $('#check_availability_loader').removeClass('m--hide');
 
                         $.post("{{ path('site_schedule_check_availability')|escape('js') }}", {
                                 'date': date,
-                                'start_time': time_start,
-                                'end_time': time_end,
                             },
                             function (data) {
-                                if (data.notavailable != null) {
-                                    $('#check_availability_result').removeClass('m--hide');
-                                    $('#check_availability_loader').addClass('m--hide');
-                                    $('#client_details').addClass('m--hide');
-                                    $('#schedule_submit').attr('disabled', true);
-                                }
-                                else {
-                                    $('#check_availability_result').addClass('m--hide');
-                                    $('#check_availability').addClass('m--hide');
-                                    $('#client_details').removeClass('m--hide');
-                                    $('#schedule_submit').attr('disabled', false);
-                                }
+
+                                $.each(data.success, function (key, value) {
+                                    if (value['available'] === true) {
+                                        $('#schedule_site_times_' + key).attr('disabled', false);
+                                        $('#time_' + key + '_badge_state_unvailable').addClass('m--hide');
+                                        $('#time_' + key + '_badge_state_available').removeClass('m--hide');
+                                    }
+                                    else {
+                                        $('#time_' + key + '_input').attr('disabled', true);
+                                        $('#time_' + key + '_badge_state_unvailable').removeClass('m--hide');
+                                        $('#time_' + key + '_badge_state_available').addClass('m--hide');
+                                    }
+                                });
+
+                                $('#check_availability_result').removeClass('m--hide');
+                                $('#check_availability_loader').addClass('m--hide');
                             })
                             .always(function () {
                                 $('#check_availability_loader').addClass('m--hide');

@@ -111,7 +111,6 @@
 
         {% block table_tr_th %}
             <tr>
-                <th>ID</th>
                 <th>
                     <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('firstName') }}">
                         {{ 'customer.title_single'|trans }}
@@ -130,11 +129,6 @@
                 <th>
                     <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('endDateAt') }}">
                         {{ 'schedule.fields.endDateAt'|trans }}
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ path('admin_schedule_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('promotionalCoupon.code') }}">
-                        {{ 'promotionCoupon.title_single'|trans }}
                     </a>
                 </th>
                 <th>
@@ -159,7 +153,6 @@
         {% block table_tr_td %}
             {% for schedule in schedules %}
                 <tr>
-                    <td>{{ schedule.id }}</td>
                     <td>
                         <a href="{{ path('admin_customer_edit', {'id': schedule.customer.id}) }}">
                             {{ schedule.customer.fullName }}
@@ -186,13 +179,6 @@
                     </td>
                     <td>{{ schedule.startDateAt|date('d/m/Y H:i') }}</td>
                     <td>{{ schedule.endDateAt|date('d/m/Y H:i') }}</td>
-                    <td>
-                        {% if schedule.promotionCoupon %}
-                            <a href="{{ path('admin_promotion_coupon_edit', {'id' : schedule.promotionCoupon.id}) }}">
-                                {{ schedule.promotionCoupon.code }}
-                            </a>
-                        {% else %}-{% endif %}
-                    </td>
                     <td>${{ schedule.itemsTotal|number_format }}</td>
                     <td>{{ schedule.createdAt|date('d/m/Y H:i') }}</td>
                     <td>{{ schedule.updatedAt|date('d/m/Y H:i') }}</td>
