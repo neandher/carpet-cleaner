@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
- * @UniqueEntity(fields={"phoneNumber"}, message="This phone number is already in use.")
+ * @UniqueEntity(fields={"email"}, message="This email is already in use.")
  */
 class Customer
 {
@@ -38,14 +38,14 @@ class Customer
     private $lastName;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=60, unique=true)
      * @Assert\NotBlank()
      * @Assert\Email()
      */
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=60, unique=true)
+     * @ORM\Column(type="string", length=60)
      * @Assert\NotBlank()
      */
     private $phoneNumber;

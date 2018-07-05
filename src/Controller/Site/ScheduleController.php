@@ -229,37 +229,12 @@ class ScheduleController extends AbstractController
         if ($request->getSession()->has('checkout')) {
 
             $checkout = $request->getSession()->get('checkout');
-            $hasPhoneNumber = $request->getSession()->has('phoneNumber');
+            $hasCustomer = $request->getSession()->has('email');
 
             $schedule = new Schedule();
-
-            if (!$hasPhoneNumber) {
-                $phoneNumber = $request->getSession()->has('newPhoneNumber') ? $request->getSession()->get('newPhoneNumber') : '';
-                $schedule->setCustomer(
-                    (new Customer())
-                        ->setPhoneNumber($phoneNumber)
-                        ->addCustomerAddress(
-                            (new CustomerAddresses())
-                                ->setAddress(
-                                    (new Address())
-                                        ->setZipCode($request->getSession()->get('zipCode'))
-                                        ->setCity($request->getSession()->get('city'))
-                                )
-                        )
-                );
-            }
-
             $scheduleForm = $this->createForm(ScheduleSiteType::class, $schedule, [
-                'hasPhoneNumber' => $hasPhoneNumber,
                 'times' => $this->times
             ]);
-
-            if ($hasPhoneNumber) {
-                $customer = $this->getDoctrine()->getRepository(Customer::class)->findOneBy([
-                    'phoneNumber' => $request->getSession()->get('phoneNumber')
-                ]);
-                $schedule->setCustomer($customer);
-            }
 
             /** @var PromotionCoupon|null $promotionCoupon */
             $promotionCoupon = null;
@@ -326,7 +301,7 @@ class ScheduleController extends AbstractController
 
             return $this->render('site/schedule/step-2.html.twig', [
                 'form' => $scheduleForm->createView(),
-                'hasPhoneNumber' => $hasPhoneNumber,
+                'hasCustomer' => $hasCustomer,
                 'schedule' => $schedule,
                 'times' => $this->times
             ]);
@@ -352,8 +327,8 @@ class ScheduleController extends AbstractController
         $request->getSession()->remove('checkout');
         $request->getSession()->remove('zipCode');
         $request->getSession()->remove('city');
-        $request->getSession()->remove('phoneNumber');
-        $request->getSession()->remove('newPhoneNumber');
+        $request->getSession()->remove('email');
+        $request->getSession()->remove('newEmail');
         $request->getSession()->remove('couponCode');
     }
 
@@ -386,7 +361,6 @@ class ScheduleController extends AbstractController
                     if ($request->getSession()->has('zipCode')) {
                         $request->getSession()->remove('zipCode');
                         $request->getSession()->remove('city');
-
                     }
                     $request->getSession()->set('zipCode', $zipCode);
                     $request->getSession()->set('city', $findZipCode->getCity());
@@ -421,20 +395,20 @@ class ScheduleController extends AbstractController
 
         if ($request->isXmlHttpRequest()) {
 
-            $phoneNumber = $request->request->get('phone_number', null);
+            $email = $request->request->get('email', null);
 
-            if ($phoneNumber) {
-                if ($findCustomer = $this->getDoctrine()->getRepository(Customer::class)->findOneBy(['phoneNumber' => $phoneNumber])) {
+            if ($email) {
+                if ($findCustomer = $this->getDoctrine()->getRepository(Customer::class)->findOneBy(['email' => $email])) {
 
-                    if ($request->getSession()->has('phoneNumber')) {
-                        $request->getSession()->remove('phoneNumber');
+                    if ($request->getSession()->has('email')) {
+                        $request->getSession()->remove('email');
                     }
-                    $request->getSession()->set('phoneNumber', $phoneNumber);
+                    $request->getSession()->set('email', $email);
 
                     $data['success'] = 'Done';
                     $status = 200;
                 } else {
-                    $request->getSession()->set('newPhoneNumber', $phoneNumber);
+                    $request->getSession()->set('newEmail', $email);
                     $data['error'] = 'Not found';
                     $status = 404;
                 }

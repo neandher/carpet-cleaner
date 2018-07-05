@@ -2,17 +2,16 @@
 
 namespace App\Form;
 
+use App\Entity\Address;
+use App\Entity\Customer;
+use App\Entity\CustomerAddresses;
 use App\Entity\Schedule;
 use App\Form\Model\DatePickerType;
-use App\Form\Model\DateTimePickerType;
-use App\Form\Model\TimePickerType;
+use App\Repository\CustomerRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -21,7 +20,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Time;
 use Symfony\Component\Validator\Constraints\Valid;
 
 class ScheduleSiteType extends AbstractType
@@ -30,14 +28,20 @@ class ScheduleSiteType extends AbstractType
      * @var SessionInterface
      */
     private $session;
+    /**
+     * @var CustomerRepository
+     */
+    private $customerRepository;
 
     /**
      * ScheduleSiteType constructor.
      * @param SessionInterface $session
+     * @param CustomerRepository $customerRepository
      */
-    public function __construct(SessionInterface $session)
+    public function __construct(SessionInterface $session, CustomerRepository $customerRepository)
     {
         $this->session = $session;
+        $this->customerRepository = $customerRepository;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -58,23 +62,7 @@ class ScheduleSiteType extends AbstractType
                 'required' => false
             ]);
 
-        /*$timeChoices = [];
-
-        foreach ($options['times'] as $time) {
-            $timeChoices[] = $time['time_start'] . '__' . $time['time_end'];
-        }
-
-        $builder->add('times', ChoiceType::class, [
-            'mapped' => false,
-            'expanded' => true,
-            'multiple' => false,
-            'choices' => $timeChoices,
-            'constraints' => [
-                new NotBlank()
-            ]
-        ]);*/
-
-        if (!$options['hasPhoneNumber']) {
+        if (!$options['hasCustomer']) {
             $builder->add('customer', CustomerType::class, [
                 'label' => 'customer.title_single',
                 'constraints' => [
@@ -83,7 +71,7 @@ class ScheduleSiteType extends AbstractType
             ]);
         }
 
-        $formModifier = function (FormInterface $form) use ($options){
+        $formModifier = function (FormInterface $form) use ($options) {
             /** @var \DateTime $date */
             $date = $form->get('date')->getData();
             $day = $date ? $date->format('N') : null;
@@ -106,12 +94,37 @@ class ScheduleSiteType extends AbstractType
             ));
         };
 
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($formModifier) {
-                $formModifier($event->getForm());
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier, $options) {
+
+            $formModifier($event->getForm());
+
+            /** @var Schedule $schedule */
+            $schedule = $event->getData();
+
+            if ($options['hasCustomer']) {
+                /** @var Customer $customer */
+                $customer = $this->customerRepository->findOneBy([
+                    'email' => $this->session->get('email')
+                ]);
+                $schedule->setCustomer($customer);
             }
-        );
+
+            if (!$options['hasCustomer']) {
+                $email = $this->session->has('newEmail') ? $this->session->get('newEmail') : '';
+                $schedule->setCustomer(
+                    (new Customer())
+                        ->setEmail($email)
+                        ->addCustomerAddress(
+                            (new CustomerAddresses())
+                                ->setAddress(
+                                    (new Address())
+                                        ->setZipCode($this->session->get('zipCode'))
+                                        ->setCity($this->session->get('city'))
+                                )
+                        )
+                );
+            }
+        });
 
         $builder->get('date')->addEventListener(
             FormEvents::POST_SUBMIT,
@@ -142,7 +155,7 @@ class ScheduleSiteType extends AbstractType
                 $schedule['endDateAt'] = $endDateAt;
             }
 
-            if (!$options['hasPhoneNumber']) {
+            if (!$options['hasCustomer']) {
                 $schedule['customer']['customerAddresses'][0]['address']['zipCode'] = $this->session->get('zipCode');
                 $schedule['customer']['customerAddresses'][0]['address']['city'] = $this->session->get('city');
             }
@@ -155,7 +168,7 @@ class ScheduleSiteType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Schedule::class,
-            'hasPhoneNumber' => false,
+            'hasCustomer' => $this->session->has('email'),
             'times' => []
         ]);
     }

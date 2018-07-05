@@ -98,10 +98,10 @@
                                         <div class="m-form__section m-form__section--first" id="client_details">
                                             <div class="m-form__heading">
                                                 <h3 class="m-form__heading-title">
-                                                    {% if not hasPhoneNumber %}Client Details{% else %}Details{% endif %}
+                                                    {% if not hasCustomer %}Client Details{% else %}Details{% endif %}
                                                 </h3>
                                             </div>
-                                            {% if not hasPhoneNumber %}
+                                            {% if not hasCustomer %}
                                             {% include 'site/schedule/customerNew.html.twig' %}
                                             {% else %}
                                             {% include 'site/schedule/customerShow.html.twig' %}
@@ -143,49 +143,6 @@
                                             <div class="form-group m-form__group row">
                                                 <div class="col-lg-12">
                                                     <div id="check_availability_result" class="m--hide">
-                                                        {#<div class="m-scrollable" data-axis="x" data-scrollable="true">
-                                                            <table class="table m-table table-bordered">
-                                                                <thead>
-                                                                <tr align="center">
-                                                                    {% for time in times %}
-                                                                        <th align="center">{{ time['time_start'] }}
-                                                                            - {{ time['time_end'] }}</th>
-                                                                    {% endfor %}
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                <tr>
-                                                                    {% for time in form.times.vars.choices %}
-                                                                        <td align="center">
-                                                                            <label class="m-radio m-radio--solid m-radio--success">
-                                                                                <input title="Select a time"
-                                                                                       type="radio"
-                                                                                       name="{{ form.times.vars.full_name }}"
-                                                                                       id="{{ form.times.vars.id }}_{{ loop.index0 }}"
-                                                                                       value="{{ time.data }}"
-                                                                                       {% if times[loop.index0]['available'] == false %}disabled="disabled"{% endif %}>
-                                                                                <span></span>
-                                                                            </label>
-                                                                        </td>
-                                                                    {% endfor %}
-                                                                </tr>
-                                                                <tr>
-                                                                    {% for time in times %}
-                                                                        <td align="center">
-                                                                        <span class="m-badge m-badge--danger m-badge--wide {% if time['available'] == true %}m--hide{% endif %}"
-                                                                              id="time_{{ loop.index0 }}_badge_state_unvailable">
-                                                                            unvailable
-                                                                        </span>
-                                                                            <span class="m-badge m-badge--success m-badge--wide {% if time['available'] == false %}m--hide{% endif %}"
-                                                                                  id="time_{{ loop.index0 }}_badge_state_available">
-                                                                                available
-                                                                            </span>
-                                                                        </td>
-                                                                    {% endfor %}
-                                                                </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>#}
                                                     </div>
                                                     <div class="m-loader m-loader--primary m--hide"
                                                          id="check_availability_loader"
@@ -344,21 +301,21 @@
         </div>
     </div>
 
-    <!-- modal phone number -->
-    <form action="" method="post" class="m-form m-form--fit" id="form_phone_number" novalidate="novalidate">
-        <div class="modal fade" id="modalPhoneNumber" tabindex="-1" role="basic"
-             aria-labelledby="modalPhoneNumberLabel">
+    <!-- modal email -->
+    <form action="" method="post" class="m-form m-form--fit" id="form_email" novalidate="novalidate">
+        <div class="modal fade" id="modalEmail" tabindex="-1" role="basic"
+             aria-labelledby="modalEmailLabel">
 
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Enter your phone number</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Enter your email</h5>
                     </div>
                     <div class="modal-body">
                         <div class="form-group m-form__group" style="padding-left:0; padding-right: 0;">
-                            <input type="text" class="form-control m-input maskPhoneNumber" name="phone_number"
-                                   id="phone_number"
-                                   required="required" aria-describedby="phoneNumber" placeholder="Enter phone number"
+                            <input type="email" class="form-control m-input" name="email"
+                                   id="email"
+                                   required="required" aria-describedby="email" placeholder="Enter email"
                                    minlength="2" maxlength="50">
                         </div>
                     </div>
@@ -372,7 +329,7 @@
             </div>
         </div>
     </form>
-    <!-- end modal phone number -->
+    <!-- end modal email -->
 
 {% endblock %}
 
@@ -382,7 +339,7 @@
                 <script src="{{ asset('assets/widgets/bootstrap-datepicker.js') }}"></script>
                 <script src="{{ asset('assets/widgets/bootstrap-datetimepicker.js') }}"></script>
                 <script src="{{ asset('assets/widgets/input-mask.js') }}"></script>
-                {% if not app.request.session.has('phoneNumber') %}
+                {% if not app.request.session.has('email') %}
                     <script src="{{ asset('site/custom/customerAddresses.js') }}"></script>
                 {% endif %}
                 <script type="text/javascript">
@@ -393,33 +350,33 @@
 
                     $('#m_form').validate({
                         rules: {
-                            schedule_site_customer_phoneNumber: {required: true, phoneUS: true},
+                            schedule_site_customer_email: {required: true, phoneUS: true},
                             schedule_site_date: {required: true, dateISO: true},
                         }
                     });
 
-                    $('#modalPhoneNumber').modal({
+                    $('#modalEmail').modal({
                         backdrop: 'static',
                         keyboard: false,
-                        show: {% if app.request.session.has('phoneNumber') or app.request.session.has('newPhoneNumber') %}false{% else %}true{% endif %}
+                        show: {% if app.request.session.has('email') or app.request.session.has('newEmail') %}false{% else %}true{% endif %}
                     }).on('shown.bs.modal', function (e) {
-                        $('#phone_number').focus();
+                        $('#email').focus();
                     });
 
-                    $('#form_phone_number').validate({
+                    $('#form_email').validate({
                         rules: {
-                            phone_number: {required: true, phoneUS: true},
+                            email: {required: true, email: true},
                         }, submitHandler: function (e) {
                             $('#btn-check-phone-number').addClass('m-loader m-loader--light m-loader--right');
-                            $.post("{{ path('site_schedule_find_customer')|escape('js') }}", {'phone_number': $('#phone_number').inputmask('unmaskedvalue')},
+                            $.post("{{ path('site_schedule_find_customer')|escape('js') }}", {'email': $('#email').val()},
                                 function (data) {
                                     if (data.success != null) {
                                         window.location.href = "{{ path('site_schedule_step_2')|escape('js') }}";
                                     }
                                 })
                                 .fail(function () {
-                                    $('#modalPhoneNumber').modal('hide');
-                                    $('#schedule_site_customer_phoneNumber').inputmask('setvalue', $('#phone_number').val());
+                                    $('#modalEmail').modal('hide');
+                                    $('#schedule_site_customer_email').val($('#email').val());
                                 })
                                 .always(function () {
                                     $('#btn-check-phone-number').removeClass('m-loader m-loader--light m-loader--right');

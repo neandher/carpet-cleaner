@@ -22,6 +22,7 @@
         {{ form_widget(form.customer.email, {
             'attr': {
                 'class' : 'm-input',
+                'readonly' : true
             }
         }) }}
     </div>
@@ -30,7 +31,6 @@
         {{ form_widget(form.customer.phoneNumber, {
             'attr': {
                 'class' : 'm-input maskPhoneNumber',
-                'readonly' : true
             }
         }) }}
     </div>
