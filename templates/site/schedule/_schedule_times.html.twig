@@ -1,0 +1,42 @@
+<div class="m-scrollable" data-axis="x" data-scrollable="true">
+    <table class="table m-table table-bordered">
+        <thead>
+        <tr align="center">
+            {% for time in times %}
+                <th align="center">{{ time['time_start'] }} - {{ time['time_end'] }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            {% for time in times %}
+                <td align="center">
+                    <label class="m-radio m-radio--solid m-radio--success">
+                        <input title="Select a time"
+                               type="radio"
+                               name="schedule_site[times]"
+                               id="schedule_site_times__{{ loop.index0 }}"
+                               value="{{ time['time_start'] }}__{{ time['time_end'] }}"
+                               {% if times[loop.index0]['available'] == false %}disabled="disabled"{% endif %}>
+                        <span></span>
+                    </label>
+                </td>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for time in times %}
+                <td align="center">
+                    <span class="m-badge m-badge--danger m-badge--wide {% if time['available'] == true %}m--hide{% endif %}"
+                          id="time_{{ loop.index0 }}_badge_state_unvailable">
+                        unvailable
+                    </span>
+                    <span class="m-badge m-badge--success m-badge--wide {% if time['available'] == false %}m--hide{% endif %}"
+                          id="time_{{ loop.index0 }}_badge_state_available">
+                        available
+                    </span>
+                </td>
+            {% endfor %}
+        </tr>
+        </tbody>
+    </table>
+</div>

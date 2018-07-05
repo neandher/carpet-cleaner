@@ -41,10 +41,25 @@ class ScheduleController extends AbstractController
 {
 
     public $times = [
-        ['time_start' => '09:00', 'time_end' => '10:00', 'available' => false],
-        ['time_start' => '10:00', 'time_end' => '12:00', 'available' => false],
-        ['time_start' => '12:00', 'time_end' => '14:00', 'available' => false],
-        ['time_start' => '14:00', 'time_end' => '17:00', 'available' => false],
+        'week' => [
+            'options' => [
+                ['time_start' => '08:00', 'time_end' => '10:00', 'available' => false],
+                ['time_start' => '10:00', 'time_end' => '12:00', 'available' => false],
+                ['time_start' => '12:00', 'time_end' => '14:00', 'available' => false],
+                ['time_start' => '14:00', 'time_end' => '16:00', 'available' => false],
+                ['time_start' => '16:00', 'time_end' => '18:00', 'available' => false],
+                ['time_start' => '18:00', 'time_end' => '20:00', 'available' => false],
+            ]
+        ],
+        'weekend' => [
+            'options' => [
+                ['time_start' => '09:00', 'time_end' => '11:00', 'available' => false],
+                ['time_start' => '11:00', 'time_end' => '13:00', 'available' => false],
+                ['time_start' => '13:00', 'time_end' => '15:00', 'available' => false],
+                ['time_start' => '15:00', 'time_end' => '17:00', 'available' => false],
+                ['time_start' => '17:00', 'time_end' => '18:00', 'available' => false],
+            ]
+        ]
     ];
 
     /**
@@ -494,7 +509,7 @@ class ScheduleController extends AbstractController
      * @Route("/check-availability", name="check_availability")
      * @Method("POST")
      * @param Request $request
-     * @return JsonResponse
+     * @return string
      */
     public function checkAvailability(Request $request)
     {
@@ -503,10 +518,13 @@ class ScheduleController extends AbstractController
 
             $date = $request->request->get('date', null);
 
-            if ($date && \DateTime::createFromFormat('m/d/Y', $date)) {
+            if ($date && $dateValid = \DateTime::createFromFormat('m/d/Y', $date)) {
+
+                $timesWeek = $dateValid->format('N') == 6 ? 'weekend' : 'week';
+                $times = $dateValid->format('N') == 6 ? $this->times[$timesWeek]['options'] : $this->times[$timesWeek]['options'];
 
                 $i = 0;
-                foreach ($this->times as $time) {
+                foreach ($times as $time) {
 
                     $startDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $time['time_start']);
                     $endDate = \DateTime::createFromFormat('m/d/Y H:i', $date . $time['time_end']);
@@ -519,13 +537,18 @@ class ScheduleController extends AbstractController
                     $validation = $this->validator->validate($schedule);
 
                     if (!$validation->count() > 0) {
-                        $this->times[$i]['available'] = true;
+                        $times[$i]['available'] = true;
                     }
                     $i++;
                 }
 
-                $data['success'] = $this->times;
-                $status = 200;
+                $this->times[$timesWeek]['options'] = $times;
+
+                return new Response(
+                    $this->renderView('site/schedule/_schedule_times.html.twig', [
+                        'times' => $this->times[$timesWeek]['options']
+                    ])
+                );
 
             } else {
                 $data['error'] = 'Request parameters not found or invalid request parameters';
