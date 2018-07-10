@@ -27,7 +27,9 @@ class PromotionCouponType extends AbstractType
 
         if (!$options['is_edit']) {
             $builder->add('code', TextType::class, ['label' => 'promotionCoupon.fields.code'])
-                ->add('percentage', PercentType::class, ['label' => 'promotionCoupon.fields.percentage']);
+                ->add('percentage', PercentType::class, ['label' => 'promotionCoupon.fields.percentage'])
+                ->add('amount', MoneyCustomType::class, ['label' => 'promotionCoupon.fields.amount'])
+            ;
         }
     }
 

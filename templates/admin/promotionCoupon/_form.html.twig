@@ -32,13 +32,28 @@
                 {{ form_row(form.percentage) }}
             {% endif %}
         </div>
+        <div class="col-md-6">
+            {% if item.id %}
+                <div class="form-group">
+                    <label for="promotion_coupon_amount" class="form-control-label">
+                        {{ 'promotionCoupon.fields.amount'|trans }}
+                    </label>
+                    <div class="form-control" disabled="disabled">
+                        {{ item.amount|number_format }}
+                    </div>
+                </div>
+            {% else %}
+                {{ form_row(form.amount) }}
+            {% endif %}
+        </div>
+
+    </div>
+    <div class="row">
         <div class="col-md-6">{{ form_row(form.expiresAt) }}</div>
-    </div>
-    <div class="row">
         <div class="col-md-6">{{ form_row(form.usageLimit) }}</div>
-        <div class="col-md-6">{{ form_row(form.initialAmount) }}</div>
     </div>
     <div class="row">
+        <div class="col-md-6">{{ form_row(form.initialAmount) }}</div>
         <div class="col-md-6">{{ form_row(form.toggleable.isEnabled) }}</div>
     </div>
 </div>

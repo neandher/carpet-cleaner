@@ -36,8 +36,7 @@ class PromotionCoupon
     private $code;
 
     /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
-     * @Assert\NotBlank()
+     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
      * @Assert\LessThan(value="99999999.99")
      */
     private $percentage;
@@ -51,6 +50,12 @@ class PromotionCoupon
      * @ORM\Column(type="smallint", nullable=true)
      */
     private $usageLimit = 0;
+
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
+     * @Assert\LessThan(value="99999999.99")
+     */
+    private $amount;
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
@@ -148,6 +153,18 @@ class PromotionCoupon
     public function setInitialAmount($initialAmount): self
     {
         $this->initialAmount = $initialAmount;
+
+        return $this;
+    }
+
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    public function setAmount($amount): self
+    {
+        $this->amount = $amount;
 
         return $this;
     }   

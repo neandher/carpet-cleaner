@@ -203,6 +203,7 @@ promotionCoupon:
         usageLimit: Usage Limit
         used: Used
         percentage: Discount Percentage
+        amount: Discount Amount
         initialAmount: Initial Amount
     actions:
         new: New Promotion Coupon
