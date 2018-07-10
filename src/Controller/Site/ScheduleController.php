@@ -198,6 +198,14 @@ class ScheduleController extends AbstractController
                         $checkout['discount'] = 0.00;
                         $checkout['total'] = round($total, 2);
 
+                        if ($checkout['subtotal'] < 79) {
+                            $this->flashBag->newMessage(
+                                FlashBagEvents::MESSAGE_TYPE_ERROR,
+                                'Minimum value of service: $ 79.00!'
+                            );
+                            return $this->redirectToRoute('site_schedule_step_1');
+                        }
+
                         $request->getSession()->set('checkout', $checkout);
 
                         return $this->redirectToRoute('site_schedule_step_2');
