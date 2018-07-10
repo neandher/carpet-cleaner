@@ -13,3 +13,13 @@
 .datepicker table tr td.disabled, .datepicker table tr td.disabled:hover {
     color: #999 !important;
 }
+
+.items-step-1-one{
+    color: #fff !important;
+    font-weight: 400 !important;
+}
+
+.items-step-1-two{
+    color: #575962 !important;
+    font-weight: 500 !important;
+}

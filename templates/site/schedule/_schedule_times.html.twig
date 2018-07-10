@@ -77,3 +77,50 @@
         </tbody>
     </table>
 </div>
+
+
+{#<table class="table m-table table-striped">
+    <tbody>
+    {% for item in items %}
+        {% if item.cleaningItemCategory.id == category.id %}
+            <tr class="{% if loop.index0 % 2 == 0 %}_m-table__row--metal{% else %}_m-table__row--light{% endif %}">
+                <td align="center" style="font-weight: 400; color: #000; vertical-align: middle">
+                    {{ item.title }}:
+                    <input type="hidden"
+                           name="items[{{ item.id }}][id]"
+                           value="{{ item.id }}">
+                </td>
+                <td align="center" style="font-weight: 400; color: #000;vertical-align: middle">
+                    {% if item.cleaningItemOptions.count > 0 %}
+                        <div class="m-radio-inline">
+                            {% for option in  item.cleaningItemOptions %}
+                                <label class="m-radio m-radio--solid m-radio--success" style="font-weight: 400; color: #000;">
+                                    <input title="Select a option"
+                                           type="radio"
+                                           name="tems[{{ item.id }}][item_option]"
+                                           value="{{ option.id }}"
+                                           {% if loop.index0 == 0 %}checked{% endif %}
+                                    >
+                                    {{ option.cleaningItemOption.title }}
+                                    <span></span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        *{{ item.description }}
+                    {% endif %}
+                </td>
+                <td align="center" style="font-weight: 400; color: #000; vertical-align: middle">
+                    <select name="items[{{ item.id }}][quantity]"
+                            class="form-control m-input">
+                        <option value="0">Quantity</option>
+                        {% for i in 1..(item.maxQuantity) %}
+                            <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+    </tbody>
+</table>#}
