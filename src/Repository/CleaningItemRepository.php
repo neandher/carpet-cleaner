@@ -56,6 +56,8 @@ class CleaningItemRepository extends BaseRepository
             ->addSelect('cleaningItemCategory')
             ->leftJoin('cleaningItem.cleaningItemOptions', 'cleaningItemOptions')
             ->addSelect('cleaningItemOptions')
+            ->leftJoin('cleaningItemOptions.cleaningItemOption', 'cleaningItemOption')
+            ->addSelect('cleaningItemOption')
             ->where('cleaningItem.isEnabled = 1')
             ->andWhere(
                 $qb->expr()->orX()
@@ -63,6 +65,7 @@ class CleaningItemRepository extends BaseRepository
                         $qb->expr()->andX()
                             ->add($qb->expr()->isNotNull('cleaningItemOptions.id'))
                             ->add($qb->expr()->eq('cleaningItemOptions.isEnabled', 1))
+                            ->add($qb->expr()->eq('cleaningItemOption.isEnabled', 1))
                     )
                     ->add($qb->expr()->isNull('cleaningItemOptions.id'))
             )
