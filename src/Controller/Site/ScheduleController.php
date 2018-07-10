@@ -252,7 +252,12 @@ class ScheduleController extends AbstractController
                     'code' => $request->getSession()->get('couponCode')
                 ]);
                 if (!$checkout['discount'] > 0) {
-                    $checkout['discount'] = round($promotionCoupon->getPercentage() * $checkout['subtotal'], 2);
+                    if($promotionCoupon->getPercentage()){
+                        $checkout['discount'] = round($promotionCoupon->getPercentage() * $checkout['subtotal'], 2);
+                    }
+                    else if($promotionCoupon->getAmount()){
+                        $checkout['discount'] = $promotionCoupon->getAmount();
+                    }
                     $checkout['total'] = $checkout['total'] - $checkout['discount'];
                     $request->getSession()->set('checkout', $checkout);
                 }

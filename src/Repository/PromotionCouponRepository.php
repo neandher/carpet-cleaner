@@ -44,6 +44,7 @@ class PromotionCouponRepository extends BaseRepository
 
     /**
      * @param $code
+     * @param $amountSubTotal
      * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -71,6 +72,7 @@ class PromotionCouponRepository extends BaseRepository
                             ->add($qb->expr()->gt('p.usageLimit', 'IFNULL(p.used, 0)'))
                         )
                         ->add($qb->expr()->isNull('p.usageLimit'))
+                        ->add($qb->expr()->eq('p.usageLimit', 0))
                 )
             )
             ->andWhere(
