@@ -305,7 +305,7 @@ class ScheduleController extends AbstractController
                 $em->persist($schedule);
                 $em->flush();
 
-                $this->dispatcher->dispatch(ScheduleEvents::SCHEDULE_CREATE_COMPLETED, new GenericEvent($schedule));
+                //$this->dispatcher->dispatch(ScheduleEvents::SCHEDULE_CREATE_COMPLETED, new GenericEvent($schedule));
 
                 $this->clearSession($request);
 

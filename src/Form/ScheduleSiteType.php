@@ -120,6 +120,7 @@ class ScheduleSiteType extends AbstractType
                                     (new Address())
                                         ->setZipCode($this->session->get('zipCode'))
                                         ->setCity($this->session->get('city'))
+                                        ->setState('UT')
                                 )
                         )
                 );
@@ -158,6 +159,7 @@ class ScheduleSiteType extends AbstractType
             if (!$options['hasCustomer']) {
                 $schedule['customer']['customerAddresses'][0]['address']['zipCode'] = $this->session->get('zipCode');
                 $schedule['customer']['customerAddresses'][0]['address']['city'] = $this->session->get('city');
+                $schedule['customer']['customerAddresses'][0]['address']['state'] = 'UT';
             }
 
             $event->setData($schedule);
