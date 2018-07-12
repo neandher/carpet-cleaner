@@ -4,6 +4,7 @@ parameters:
     locale: 'en'
     title: AZAP ADMIN
     title_site: AZAP - Carpet Cleaner
+    powered: E-service Booking
     email_from_address: mailer@system.send
 
 services:
