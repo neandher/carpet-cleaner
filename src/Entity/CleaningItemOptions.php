@@ -37,6 +37,7 @@ class CleaningItemOptions
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      * @Assert\LessThan(value="99999999.99")
+     * @Assert\NotBlank()
      */
     private $percentage;
 
